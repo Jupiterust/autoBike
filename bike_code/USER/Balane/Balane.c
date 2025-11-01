@@ -25,21 +25,23 @@ void param_init(void)
 		param.M0_Flag =0;
 		param.M1_Flag =0;
 	
-		param.angular_v_kp = 0;
-		param.angular_v_ki = 0;
+		param.angular_v_kp = 1.2;
+		param.angular_v_ki = 0.5;
 		param.angular_v_kd = 0;
 	
-		param.angular_kp = 0;
+		param.angular_kp = -6.915;
 		param.angular_ki = 0;
-		param.angular_kd = 0;
+		param.angular_kd = -0.82;
 	
-		param.fly_wheel_speed_kp = 0;
+		param.fly_wheel_speed_kp = -0.179;
 		param.fly_wheel_speed_ki = 0;
-		param.fly_wheel_speed_kd = 0;
+		param.fly_wheel_speed_kd = -0.06;
 	
-		param.angular_zero = -1.55;
-	
-		param.Steer_Kp = 0;
+//		param.angular_zero = -1.55;
+		//增大0.18°
+		param.angular_zero = -1.37;
+		
+		param.Steer_Kp = 1;
 		param.Steer_Ki = 0;
 		param.Steer_Kd = 0;
 		
@@ -106,12 +108,15 @@ void balance(void)
 //				PWM_X = X_balance_Control(imu.rol,0,imu.vx);
     }	          
     odrive.set_speed0 = Angle_Velocity(imu.vx,PWM_X);   
-//    odrive.set_speed0 = Angle_Velocity(imu.vx,0);  
+//    odrive.set_speed0 = PWM_X;  
     odrive.set_speed0 = odrive.set_speed0>fly_wheel_rate_limit?fly_wheel_rate_limit:(odrive.set_speed0<-fly_wheel_rate_limit?(-fly_wheel_rate_limit):odrive.set_speed0); // 动量轮电机限幅																																																			 
 
-//调参时先解除保护
-//    if(fabs(error_zero)>5) { param.M0_Flag=0;param.M1_Flag =0;}   
+//调参时先增大保护范围
+//		if(fabs(error_zero)>10) { param.M0_Flag=0;param.M1_Flag =0;}   
 //    if(param.M0_Flag==0)odrive.set_speed0= 0;
+		
+    if(fabs(error_zero)>5) { param.M0_Flag=0;param.M1_Flag =0;}   
+    if(param.M0_Flag==0)odrive.set_speed0= 0;
 		
     odrive_speed_ctl(0,odrive.set_speed0);    //odrive_speed_ctrl(0,odrive.set_speed0);//can
 /************后轮控制**************************************************/	
