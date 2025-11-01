@@ -85,6 +85,7 @@
 #include "./upper/upper.h"
 #include "./A_blue/A_blue.h"
 #include "./A_Remote/A_Remote.h"
+#include "./vofa/vofa.h"
 
 
 	  

@@ -22,14 +22,18 @@ void Sys_All_Init(void)
 	
 		LED0 = 1;
 		LED1 = 1;
-		while(KEY_0==0);
+	
+		//保持直立三十秒
+//		while(KEY_0==0);
 		if(param.M0_Flag == 0)param.M0_Flag = 1;
 		else param.M0_Flag = 0;
-		for(uint8_t i =0;i<31;i++)
-		{
-			if(i%10 == 0)BEEP_ON;
-			HAL_Delay(1000);BEEP_OFF;
-		}
+//		for(uint8_t i =0;i<31;i++)
+//		{
+//			if(i%10 == 0)BEEP_ON;
+//			HAL_Delay(1000);BEEP_OFF;
+//		}
+		
+		
 		LED0 = 0;
 		LED1 = 0;
 		upper_Flag = 1;//使能上位机控制
@@ -45,8 +49,14 @@ void Sys_All_Init(void)
             if(param.M0_Flag == 0)param.M0_Flag = 1;
             else param.M0_Flag = 0;
         }
-        uart_data_treating();
-				data_treating();
+        
+
+//原串口处理
+//				uart_data_treating();
+//				data_treating();
+				
+				//vofa
+				vofa_apply();
 				
 				
 			

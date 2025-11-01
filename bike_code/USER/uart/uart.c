@@ -43,8 +43,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
    else if (huart == (&huart7))
     {
         //HAL_UART_Transmit_DMA(&huart7,USART_RX_BUF1,USART_RX_LEN1);
-				data_analysis(USART_RX_BUF2[0]);
-        HAL_UART_Receive_IT(&huart7, (uint8_t *)USART_RX_BUF2, USART_RX_LEN2);
+
+//原串口处理
+//				data_analysis(USART_RX_BUF2[0]);
+			
+			
+			vofa_get(USART_RX_BUF2[0]);
+			HAL_UART_Receive_IT(&huart7, (uint8_t *)USART_RX_BUF2, USART_RX_LEN2);
     }
 
 

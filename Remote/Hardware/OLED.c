@@ -1,6 +1,6 @@
 #include "OLED.h"
 
-//#define OLED_I2C   //使用I2C   
+#define OLED_I2C   //使用I2C   
 
 uint8_t OLED_DisplayBuf[8][128];
 
@@ -11,8 +11,11 @@ uint8_t OLED_DisplayBuf[8][128];
 
 #ifdef  OLED_I2C
 
-#define  OLED_W_SCL(x) sys_gpio_pin_set(GPIOB, SYS_GPIO_PIN5, x)
-#define  OLED_W_SDA(x) sys_gpio_pin_set(GPIOB, SYS_GPIO_PIN4, x)
+//#define  OLED_W_SCL(x) sys_gpio_pin_set(GPIOB, SYS_GPIO_PIN5, x)
+//#define  OLED_W_SDA(x) sys_gpio_pin_set(GPIO,B, SYS_GPIO_PIN4, x)
+
+#define  OLED_W_SCL(x) sys_gpio_pin_set(GPIOA, SYS_GPIO_PIN5, x)
+#define  OLED_W_SDA(x) sys_gpio_pin_set(GPIOA, SYS_GPIO_PIN7, x)
 
 #else
 
@@ -51,11 +54,13 @@ void OLED_GPIO_Init(void)
     }
 #ifdef  OLED_I2C    
     /*将SCL和SDA引脚初始化为开漏模式*/
-   RCC->APB2ENR |= 1 << 3;/* GPIOB时钟使能 */
-   sys_gpio_set(GPIOB, SYS_GPIO_PIN4 | SYS_GPIO_PIN5,
-                 SYS_GPIO_MODE_OUT, SYS_GPIO_OTYPE_OD, SYS_GPIO_SPEED_MID, SYS_GPIO_PUPD_PU);   /* LED0引脚模式设置 */
+//   RCC->APB2ENR |= 1 << 3;/* GPIOB时钟使能 */
+//   sys_gpio_set(GPIOB, SYS_GPIO_PIN4 | SYS_GPIO_PIN5,
+//                 SYS_GPIO_MODE_OUT, SYS_GPIO_OTYPE_OD, SYS_GPIO_SPEED_MID, SYS_GPIO_PUPD_PU);   /* LED0引脚模式设置 */
 
-    
+   RCC->APB2ENR |= 1 << 2;/* GPIOB时钟使能 */
+   sys_gpio_set(GPIOA, SYS_GPIO_PIN5 | SYS_GPIO_PIN7,
+                 SYS_GPIO_MODE_OUT, SYS_GPIO_OTYPE_OD, SYS_GPIO_SPEED_MID, SYS_GPIO_PUPD_PU);   /* LED0引脚模式设置 */
     /*释放SCL和SDA*/
     OLED_W_SCL(1);
     OLED_W_SDA(1);
