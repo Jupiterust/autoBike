@@ -69,8 +69,16 @@ void vofa_apply(void)
 									else param.M0_Flag = 0;
 						break;
 				case '7':
-									if(param.M1_Flag == 0)param.M1_Flag = 1;
-									else param.M1_Flag = 0;
+									if(param.M1_Flag == 0)
+									{
+										param.M1_Flag = 1;
+										M1_Ctl = 1.8f;
+									}
+									else
+									{
+										 param.M1_Flag = 0;
+											M1_Ctl = 0;
+									}
 						break;
 		}
 		vofa_flag = 0;
