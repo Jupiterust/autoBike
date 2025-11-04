@@ -25,8 +25,8 @@ void Sys_All_Init(void)
 	
 		//保持直立三十秒
 //		while(KEY_0==0);
-		if(param.M0_Flag == 0)param.M0_Flag = 1;
-		else param.M0_Flag = 0;
+//		if(param.M0_Flag == 0)param.M0_Flag = 1;
+//		else param.M0_Flag = 0;
 //		for(uint8_t i =0;i<31;i++)
 //		{
 //			if(i%10 == 0)BEEP_ON;
@@ -53,10 +53,10 @@ void Sys_All_Init(void)
 
 //原串口处理
 //				uart_data_treating();
-//				data_treating();
+				data_treating();
 				
 				//vofa
-				vofa_apply();
+//				vofa_apply();
 				
 				
 			

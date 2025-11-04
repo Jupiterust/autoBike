@@ -24,8 +24,16 @@ void Rx_pack(void)
     }
     if(rx_pack.bools[6] == 1)
     {
-        if(param.M1_Flag == 0)param.M1_Flag = 1;
-        else param.M1_Flag = 0;
+        if(param.M1_Flag == 0)
+				{
+					param.M1_Flag = 1;
+					M1_Ctl = 1.8f;
+				}
+				else
+				{
+					 param.M1_Flag = 0;
+						M1_Ctl = 0;
+				}
         rx_pack.bools[6] =0;
     }
 		
