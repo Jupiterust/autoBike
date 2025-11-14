@@ -1,0 +1,125 @@
+终端打开
+odrv0.erase_configuration()# 清除所有配置
+quit 退出到终端
+选择json路径
+odrivetool restore-config E:\嵌入式\2023室外专项\my_config.json
+
+
+
+odrv0.erase_configuration()# 清除所有配置
+
+odrv0.axis0.motor.config.requested_current_range = 120  # 轴0的电机请求电流范围，单位为安培
+odrv0.axis1.motor.config.requested_current_range = 120  # 轴1的电机请求电流范围，单位为安培
+odrv0.config.max_regen_current = 100  # 最大再生电流，单位为安培
+odrv0.config.brake_resistance = 2  # 制动电阻值，单位为欧姆
+odrv0.config.dc_bus_overvoltage_trip_level = 56  # 直流母线过压保护阈值，单位为伏特
+odrv0.config.dc_max_positive_current = 120  # 直流母线最大正向电流，单位为安培
+odrv0.config.dc_max_negative_current = -30  # 直流母线最大负向电流，单位为安培
+
+
+
+# 配置轴0的电机参数
+odrv0.axis0.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT  # 电机类型为高电流电机
+odrv0.axis0.motor.config.pole_pairs = 20  # 电机极对数
+odrv0.axis0.motor.config.calibration_current = 10  # 校准电流，单位为安培
+odrv0.axis0.motor.config.current_lim = 120  # 电机电流限制，单位为安培
+odrv0.axis0.motor.config.current_lim_margin = 8  # 电流限制的裕量，单位为安培
+odrv0.axis0.encoder.config.mode = ENCODER_MODE_INCREMENTAL  # 编码器模式为增量式
+odrv0.axis0.encoder.config.cpr = 8192  # 编码器每转脉冲数
+odrv0.axis0.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL  # 控制模式为速度控制
+odrv0.axis0.controller.config.vel_limit = 50  # 速度限制，单位为转/秒或 rad/秒
+odrv0.axis0.controller.config.vel_limit_tolerance = 2  # 速度限制的容差，单位为比例系数
+odrv0.axis0.controller.config.vel_gain = 0.2  # 速度增益
+odrv0.axis0.controller.config.vel_integrator_gain = 0.2  # 速度积分增益
+odrv0.axis0.controller.config.input_mode = INPUT_MODE_VEL_RAMP  # 输入模式为速度斜坡
+odrv0.axis0.controller.config.vel_ramp_rate = 50  # 速度斜坡率，单位为速度单位/秒
+
+
+
+odrv0.axis1.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT  # 电机类型为高电流电机
+odrv0.axis1.motor.config.pole_pairs = 20  # 电机极对数
+odrv0.axis1.motor.config.calibration_current = 10  # 校准电流，单位为安培
+odrv0.axis1.motor.config.current_lim = 120  # 电机电流限制，单位为安培
+odrv0.axis1.motor.config.current_lim_margin = 8  # 电流限制的裕量，单位为安培
+odrv0.axis1.encoder.config.mode = ENCODER_MODE_INCREMENTAL  # 编码器模式为增量式
+odrv0.axis1.encoder.config.cpr = 8192  # 编码器每转脉冲数
+odrv0.axis1.controller.config.control_mode = CONTROL_MODE_VELOCITY_CONTROL  # 控制模式为速度控制
+odrv0.axis1.controller.config.vel_limit = 50  # 速度限制，单位为转/秒或 rad/秒
+odrv0.axis1.controller.config.vel_limit_tolerance = 2  # 速度限制的容差，单位为比例系数
+odrv0.axis1.controller.config.vel_gain = 0.2  # 速度增益
+odrv0.axis1.controller.config.vel_integrator_gain = 0.2  # 速度积分增益
+odrv0.axis1.controller.config.input_mode = INPUT_MODE_VEL_RAMP  # 输入模式为速度斜坡
+odrv0.axis1.controller.config.vel_ramp_rate = 50  # 速度斜坡率，单位为速度单位/秒
+
+odrv0.axis0.controller.config.vel_limit_tolerance = 1.0  # 轴0的速度限制容差，单位为比例系数
+odrv0.axis1.controller.config.vel_limit_tolerance = 1.0  # 轴1的速度限制容差，单位为比例系数
+odrv0.axis0.controller.config.vel_ramp_rate = 80  # 轴0的速度斜坡率，单位为速度单位/秒
+odrv0.axis1.controller.config.vel_ramp_rate = 80  # 轴1的速度斜坡率，单位为速度单位/秒
+odrv0.axis0.controller.config.vel_gain = 0.27  # 速度增益
+odrv0.axis1.controller.config.vel_gain = 0.27 # 速度增益
+odrv0.axis0.controller.config.vel_integrator_gain = 0.30  # 速度积分增益
+odrv0.axis1.controller.config.vel_integrator_gain = 0.30  # 速度积分增益
+
+
+
+odrv0.axis0.requested_state = AXIS_STATE_IDLE  # 将轴0设置为闲置状态
+odrv0.axis1.requested_state = AXIS_STATE_IDLE  # 将轴1设置为闲置状态
+odrv0.save_configuration()
+odrv0.reboot()
+
+
+# 开始校准序列（每个轴都需要校准）
+odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE  # 校准大概需要十秒钟
+odrv0.axis1.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE  # 校准大概需要十秒钟
+
+# 检查是否有错误
+odrv0.axis0.error  # 检查轴0的错误
+odrv0.axis1.error  # 检查轴1的错误
+dump_errors(odrv0)  # 查看是否有报错（每一步都可以查看）
+dump_errors(odrv0, 1)  # 清除报错
+
+
+#odrv0.axis0.requested_state = AXIS_STATE_IDLE  # 将轴0设置为闲置状态
+#odrv0.axis1.requested_state = AXIS_STATE_IDLE  # 将轴1设置为闲置状态
+#odrv0.save_configuration()
+#odrv0.reboot()
+
+
+# 将两个轴设置为闭环控制模式
+odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL  # 将轴0设置为闭环控制模式
+odrv0.axis0.motor.config.pre_calibrated = True  # 标记电机已校准
+odrv0.axis0.config.startup_encoder_offset_calibration = True  # 启动时进行编码器偏移校准
+odrv0.axis0.config.startup_closed_loop_control = True  # 启动时进入闭环控制模式
+odrv0.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL  # 将轴1设置为闭环控制模式
+odrv0.axis1.motor.config.pre_calibrated = True  # 标记电机已校准
+odrv0.axis1.config.startup_encoder_offset_calibration = True  # 启动时进行编码器偏移校准
+odrv0.axis1.config.startup_closed_loop_control = True  # 启动时进入闭环控制模式
+
+odrv0.config.enable_uart_a = True  # 启用UART A接口
+odrv0.config.uart_a_baudrate = 460800  # 设置UART A接口波特率
+odrv0.axis0.requested_state = AXIS_STATE_IDLE  # 将轴0设置为闲置状态
+odrv0.axis1.requested_state = AXIS_STATE_IDLE  # 将轴1设置为闲置状态
+odrv0.save_configuration()
+odrv0.reboot()
+
+odrv0.axis0.config.can.node_id = 24  # 设置轴0的CAN节点ID
+odrv0.axis1.config.can.node_id = 16  # 设置轴1的CAN节点ID
+odrv0.can.config.baud_rate = 250000  # 设置CAN总线波特率
+
+odrv0.axis0.controller.input_vel = 1  #设置转速
+odrv0.axis1.controller.input_vel = 1
+
+odrivetool restore-config +json文件路径
+odrivetool restore-config D:\Desk000000\室外\odrive\config_8192cpr_20PP.json
+
+
+odrv0.axis0.config.can.node_id = 24  # 设置轴0的CAN节点ID
+odrv0.axis1.config.can.node_id = 16  # 设置轴1的CAN节点ID
+odrv0.can.config.baud_rate = 250000  # 设置CAN总线波特率
+odrv0.axis0.requested_state = AXIS_STATE_IDLE  # 将轴0设置为闲置状态
+odrv0.axis1.requested_state = AXIS_STATE_IDLE  # 将轴1设置为闲置状态
+odrv0.save_configuration()
+odrv0.reboot()
+
+
+
