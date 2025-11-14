@@ -162,18 +162,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>110</LineNumber>
+          <LineNumber>23</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134234018</Address>
+          <Address>134228878</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\USER\Balane\Balane.c</Filename>
+          <Filename>..\USER\A_Remote\A_Remote.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Fly_Dreams\../USER/Balane/Balane.c\110</Expression>
+          <Expression>\\Fly_Dreams\../USER/A_Remote/A_Remote.c\23</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -328,6 +328,26 @@
           <count>14</count>
           <WinNumber>2</WinNumber>
           <ItemText>param.M0_Flag</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>rx_pack.bytes[0],0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>read_ValuePack(&amp;rx_pack)</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>servo_con</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Servo_Ctl,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <Tracepoint>

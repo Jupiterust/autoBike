@@ -168,7 +168,7 @@ unsigned char readValuePack(RxPack *rx_pack_ptr)
             if(vp_rxbuff[(rdi+RXPACK_BYTE_SIZE+2)%VALUEPACK_BUFFER_SIZE]==PACK_TAIL) // 比较包尾 确定包尾后，再计算校验和
             {
 
-                  for(i=0;i<RXPACK_BYTE_SIZE;i++) //  计算校验和
+                 for(i=0;i<RXPACK_BYTE_SIZE;i++) //  计算校验和
                 {
                     rdi++;
                     if(rdi>=VALUEPACK_BUFFER_SIZE) rdi -= VALUEPACK_BUFFER_SIZE;

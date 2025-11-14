@@ -51,13 +51,15 @@ void Sys_All_Init(void)
         }
         
 
-//原串口处理
-//				uart_data_treating();
-				data_treating();
-				
-				//vofa
-//				vofa_apply();
-				
+
+				#ifdef Button_Only
+          //vofa
+          vofa_apply();
+        #else
+          //原串口处理
+          uart_data_treating();
+          data_treating();
+        #endif
 				
 			
 				

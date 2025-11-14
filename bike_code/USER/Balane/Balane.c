@@ -24,42 +24,42 @@ void param_init(void)
 	
 		param.M0_Flag =0;
 		param.M1_Flag =0;
-	
-		param.angular_v_kp = 1.35;//1.2;
-		param.angular_v_ki = 0;
-		param.angular_v_kd = 0.5;//0.5;
-	
-		param.angular_kp = -6.5;//-6.915;
-		param.angular_ki = 0;
-		param.angular_kd = -0.79;//-0.82;
-	
-		param.fly_wheel_speed_kp = -0.17;//-0.179;
-		param.fly_wheel_speed_ki = -0.06;//-0.06;
-		param.fly_wheel_speed_kd = 0;
-	
-		param.angular_zero = -1.55;
+//	
+//		param.angular_v_kp = 1.35;//1.2;
+//		param.angular_v_ki = 0;
+//		param.angular_v_kd = 0.5;//0.5;
+//	
+//		param.angular_kp = -6.5;//-6.915;
+//		param.angular_ki = 0;
+//		param.angular_kd = -0.79;//-0.82;
+//	
+//		param.fly_wheel_speed_kp = -0.17;//-0.179;
+//		param.fly_wheel_speed_ki = -0.06;//-0.06;
+//		param.fly_wheel_speed_kd = 0;
+//	
+//		param.angular_zero = -1.55;
+//		
+//		param.Steer_Kp = 1;
+//		param.Steer_Ki = 0;
+//		param.Steer_Kd = 0;
 		
-		param.Steer_Kp = 1;
-		param.Steer_Ki = 0;
-		param.Steer_Kd = 0;
-		
-//    param.angular_v_kp = 1.4;
-//    param.angular_v_ki = 0; 
-//    param.angular_v_kd = 1.115;
+    param.angular_v_kp = 1.4;
+    param.angular_v_ki = 0; 
+    param.angular_v_kd = 1.115;
 
-//    param.angular_kp = -7.3;
-//    param.angular_ki =  0;
-//    param.angular_kd = -1.2;
+    param.angular_kp = -7.3;
+    param.angular_ki =  0;
+    param.angular_kd = -1.2;
 
-//    param.fly_wheel_speed_kp = -0.16;
-//    param.fly_wheel_speed_ki = -0.061;
-//    param.fly_wheel_speed_kd = 0;
+    param.fly_wheel_speed_kp = -0.16;
+    param.fly_wheel_speed_ki = -0.061;
+    param.fly_wheel_speed_kd = 0;
     
-//    param.angular_zero = -1.55;
+    param.angular_zero = -1.55;
 
-//    param.Steer_Kp = 1;
-//    param.Steer_Ki = 0;
-//    param.Steer_Kd = 0;
+    param.Steer_Kp = 1;
+    param.Steer_Ki = 0;
+    param.Steer_Kd = 0;
 	
 	
 	

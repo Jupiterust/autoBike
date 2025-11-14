@@ -22,6 +22,7 @@ virtualFolder:
         - path: ../USER/upper/upper.c
         - path: ../USER/ch100/CH100.c
         - path: ../USER/Time/Time.c
+        - path: ../USER/vofa/vofa.c
       folders: []
     - name: Application
       files: []

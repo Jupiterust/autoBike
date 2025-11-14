@@ -469,6 +469,11 @@
               <FileType>1</FileType>
               <FilePath>.\Hardware\A_blue.c</FilePath>
             </File>
+            <File>
+              <FileName>easy_tran.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\easy_tran.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

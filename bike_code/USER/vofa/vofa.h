@@ -3,6 +3,8 @@
 
 #include "A_include.h"
 
+#define Button_Only  //只使用按键控制
+
 
 #define VOFA_BUFF_SIZE 		256
 #define VOFA_COUNT	2

@@ -105,17 +105,17 @@ void Upper(uint8_t byte)
 							
 							
 							
-							param.M1_Flag = 1;	
-							if(rxBuffer[2] == 0x00){M1_Ctl = 0;param.M1_Flag = 0;}
-							else if(rxBuffer[2] == 0x01)M1_Ctl = 0.6f;
-							else if(rxBuffer[2] == 0x02)M1_Ctl = 0.9f;
-							else if(rxBuffer[2] == 0x03)M1_Ctl = 1.2f;
-							else if(rxBuffer[2] == 0x04)M1_Ctl = 1.5f;
-							else if(rxBuffer[2] == 0x05)M1_Ctl = 1.8f;	
-							else if(rxBuffer[2] == 0x06)M1_Ctl = 2.1f;
-							else if(rxBuffer[2] == 0x07)M1_Ctl = 2.4f;
-							else if(rxBuffer[2] == 0x08)M1_Ctl = 2.7f;
-							else if(rxBuffer[2] == 0x09)M1_Ctl = 3.0f;
+//							param.M1_Flag = 1;	
+//							if(rxBuffer[2] == 0x00){M1_Ctl = 0;param.M1_Flag = 0;}
+//							else if(rxBuffer[2] == 0x01)M1_Ctl = 0.6f;
+//							else if(rxBuffer[2] == 0x02)M1_Ctl = 0.9f;
+//							else if(rxBuffer[2] == 0x03)M1_Ctl = 1.2f;
+//							else if(rxBuffer[2] == 0x04)M1_Ctl = 1.5f;
+//							else if(rxBuffer[2] == 0x05)M1_Ctl = 1.8f;	
+//							else if(rxBuffer[2] == 0x06)M1_Ctl = 2.1f;
+//							else if(rxBuffer[2] == 0x07)M1_Ctl = 2.4f;
+//							else if(rxBuffer[2] == 0x08)M1_Ctl = 2.7f;
+//							else if(rxBuffer[2] == 0x09)M1_Ctl = 3.0f;
 
 	
 							

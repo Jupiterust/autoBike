@@ -38,6 +38,9 @@
 #include "A_blue.h"
 
 
+#include "easy_tran.h"
+
+
 
 #endif
 
