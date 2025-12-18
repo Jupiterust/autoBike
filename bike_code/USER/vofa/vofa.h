@@ -15,6 +15,8 @@ extern uint8_t vofa_index[VOFA_COUNT];
  
 void vofa_get(uint8_t byte);
 void vofa_apply(void);
+
+void vofa_con(void);
 #endif
 
 

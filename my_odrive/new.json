@@ -1,0 +1,94 @@
+{
+    "axis0": {
+        "motor": {
+            "config": {
+                "requested_current_range": "120  # \u8f740\u7684\u7535\u673a\u8bf7\u6c42\u7535\u6d41\u8303\u56f4\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "motor_type": "MOTOR_TYPE_HIGH_CURRENT  # \u7535\u673a\u7c7b\u578b\u4e3a\u9ad8\u7535\u6d41\u7535\u673a",
+                "pole_pairs": "20  # \u7535\u673a\u6781\u5bf9\u6570",
+                "calibration_current": "10  # \u6821\u51c6\u7535\u6d41\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "current_lim": "120  # \u7535\u673a\u7535\u6d41\u9650\u5236\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "current_lim_margin": "8  # \u7535\u6d41\u9650\u5236\u7684\u88d5\u91cf\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "pre_calibrated": "True  # \u6807\u8bb0\u7535\u673a\u5df2\u6821\u51c6"
+            }
+        },
+        "encoder": {
+            "config": {
+                "mode": "ENCODER_MODE_INCREMENTAL  # \u7f16\u7801\u5668\u6a21\u5f0f\u4e3a\u589e\u91cf\u5f0f",
+                "cpr": "8192  # \u7f16\u7801\u5668\u6bcf\u8f6c\u8109\u51b2\u6570"
+            }
+        },
+        "controller": {
+            "config": {
+                "control_mode": "CONTROL_MODE_VELOCITY_CONTROL  # \u63a7\u5236\u6a21\u5f0f\u4e3a\u901f\u5ea6\u63a7\u5236",
+                "vel_limit": "50  # \u901f\u5ea6\u9650\u5236\uff0c\u5355\u4f4d\u4e3a\u8f6c/\u79d2\u6216 rad/\u79d2",
+                "vel_limit_tolerance": "1.0  # \u8f740\u7684\u901f\u5ea6\u9650\u5236\u5bb9\u5dee\uff0c\u5355\u4f4d\u4e3a\u6bd4\u4f8b\u7cfb\u6570",
+                "vel_gain": "0.27  # \u901f\u5ea6\u589e\u76ca",
+                "vel_integrator_gain": "0.30  # \u901f\u5ea6\u79ef\u5206\u589e\u76ca",
+                "input_mode": "INPUT_MODE_VEL_RAMP  # \u8f93\u5165\u6a21\u5f0f\u4e3a\u901f\u5ea6\u659c\u5761",
+                "vel_ramp_rate": "80  # \u8f740\u7684\u901f\u5ea6\u659c\u5761\u7387\uff0c\u5355\u4f4d\u4e3a\u901f\u5ea6\u5355\u4f4d/\u79d2"
+            },
+            "input_vel": "1  #\u8bbe\u7f6e\u8f6c\u901f"
+        },
+        "requested_state": "AXIS_STATE_IDLE  # \u5c06\u8f740\u8bbe\u7f6e\u4e3a\u95f2\u7f6e\u72b6\u6001",
+        "config": {
+            "startup_encoder_offset_calibration": "True  # \u542f\u52a8\u65f6\u8fdb\u884c\u7f16\u7801\u5668\u504f\u79fb\u6821\u51c6",
+            "startup_closed_loop_control": "True  # \u542f\u52a8\u65f6\u8fdb\u5165\u95ed\u73af\u63a7\u5236\u6a21\u5f0f",
+            "can": {
+                "node_id": "24  # \u8bbe\u7f6e\u8f740\u7684CAN\u8282\u70b9ID"
+            }
+        }
+    },
+    "axis1": {
+        "motor": {
+            "config": {
+                "requested_current_range": "120  # \u8f741\u7684\u7535\u673a\u8bf7\u6c42\u7535\u6d41\u8303\u56f4\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "motor_type": "MOTOR_TYPE_HIGH_CURRENT  # \u7535\u673a\u7c7b\u578b\u4e3a\u9ad8\u7535\u6d41\u7535\u673a",
+                "pole_pairs": "20  # \u7535\u673a\u6781\u5bf9\u6570",
+                "calibration_current": "10  # \u6821\u51c6\u7535\u6d41\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "current_lim": "120  # \u7535\u673a\u7535\u6d41\u9650\u5236\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "current_lim_margin": "8  # \u7535\u6d41\u9650\u5236\u7684\u88d5\u91cf\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+                "pre_calibrated": "True  # \u6807\u8bb0\u7535\u673a\u5df2\u6821\u51c6"
+            }
+        },
+        "encoder": {
+            "config": {
+                "mode": "ENCODER_MODE_INCREMENTAL  # \u7f16\u7801\u5668\u6a21\u5f0f\u4e3a\u589e\u91cf\u5f0f",
+                "cpr": "8192  # \u7f16\u7801\u5668\u6bcf\u8f6c\u8109\u51b2\u6570"
+            }
+        },
+        "controller": {
+            "config": {
+                "control_mode": "CONTROL_MODE_VELOCITY_CONTROL  # \u63a7\u5236\u6a21\u5f0f\u4e3a\u901f\u5ea6\u63a7\u5236",
+                "vel_limit": "50  # \u901f\u5ea6\u9650\u5236\uff0c\u5355\u4f4d\u4e3a\u8f6c/\u79d2\u6216 rad/\u79d2",
+                "vel_limit_tolerance": "1.0  # \u8f741\u7684\u901f\u5ea6\u9650\u5236\u5bb9\u5dee\uff0c\u5355\u4f4d\u4e3a\u6bd4\u4f8b\u7cfb\u6570",
+                "vel_gain": "0.27 # \u901f\u5ea6\u589e\u76ca",
+                "vel_integrator_gain": "0.30  # \u901f\u5ea6\u79ef\u5206\u589e\u76ca",
+                "input_mode": "INPUT_MODE_VEL_RAMP  # \u8f93\u5165\u6a21\u5f0f\u4e3a\u901f\u5ea6\u659c\u5761",
+                "vel_ramp_rate": "80  # \u8f741\u7684\u901f\u5ea6\u659c\u5761\u7387\uff0c\u5355\u4f4d\u4e3a\u901f\u5ea6\u5355\u4f4d/\u79d2"
+            },
+            "input_vel": 1
+        },
+        "requested_state": "AXIS_STATE_IDLE  # \u5c06\u8f741\u8bbe\u7f6e\u4e3a\u95f2\u7f6e\u72b6\u6001",
+        "config": {
+            "startup_encoder_offset_calibration": "True  # \u542f\u52a8\u65f6\u8fdb\u884c\u7f16\u7801\u5668\u504f\u79fb\u6821\u51c6",
+            "startup_closed_loop_control": "True  # \u542f\u52a8\u65f6\u8fdb\u5165\u95ed\u73af\u63a7\u5236\u6a21\u5f0f",
+            "can": {
+                "node_id": "16  # \u8bbe\u7f6e\u8f741\u7684CAN\u8282\u70b9ID"
+            }
+        }
+    },
+    "config": {
+        "max_regen_current": "100  # \u6700\u5927\u518d\u751f\u7535\u6d41\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+        "brake_resistance": "2  # \u5236\u52a8\u7535\u963b\u503c\uff0c\u5355\u4f4d\u4e3a\u6b27\u59c6",
+        "dc_bus_overvoltage_trip_level": "56  # \u76f4\u6d41\u6bcd\u7ebf\u8fc7\u538b\u4fdd\u62a4\u9608\u503c\uff0c\u5355\u4f4d\u4e3a\u4f0f\u7279",
+        "dc_max_positive_current": "120  # \u76f4\u6d41\u6bcd\u7ebf\u6700\u5927\u6b63\u5411\u7535\u6d41\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+        "dc_max_negative_current": "-30  # \u76f4\u6d41\u6bcd\u7ebf\u6700\u5927\u8d1f\u5411\u7535\u6d41\uff0c\u5355\u4f4d\u4e3a\u5b89\u57f9",
+        "enable_uart_a": "True  # \u542f\u7528UART A\u63a5\u53e3",
+        "uart_a_baudrate": "460800  # \u8bbe\u7f6eUART A\u63a5\u53e3\u6ce2\u7279\u7387"
+    },
+    "can": {
+        "config": {
+            "baud_rate": "250000  # \u8bbe\u7f6eCAN\u603b\u7ebf\u6ce2\u7279\u7387"
+        }
+    }
+}

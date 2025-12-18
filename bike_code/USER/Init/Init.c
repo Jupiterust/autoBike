@@ -55,6 +55,7 @@ void Sys_All_Init(void)
 				#ifdef Button_Only
           //vofa
           vofa_apply();
+				vofa_con();
         #else
           //原串口处理
           uart_data_treating();
