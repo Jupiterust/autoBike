@@ -1,0 +1,75 @@
+# ============================================================
+# smartBike / autoBike  —  忽略规则
+# 注意: .gitignore 不支持行尾注释, 注释必须独占一行。
+# ============================================================
+
+# ---------- Keil MDK (AC5) 编译输出 ----------
+bike_code/MDK-ARM/Fly_Dreams/
+bike_code/MDK-ARM/DebugConfig/
+Remote/Objects/
+Remote/Listings/
+Remote/DebugConfig/
+
+# ---------- GCC / Make 编译输出 ----------
+bike_code/build/
+
+# ---------- EIDE 编译输出 ----------
+**/.eide/log/
+**/build/
+**/obj/
+**/out/
+
+# ---------- 通用编译中间产物 ----------
+*.o
+*.obj
+*.crf
+*.d
+*.dep
+*.axf
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.lnp
+*.iex
+*.sct
+*.i
+*.su
+*.lib
+*.a
+
+# ---------- Keil 每用户 UI 状态 ----------
+*.uvguix.*
+*.bak
+*.orig
+*.__i
+JLinkLog.txt
+JLinkSettings.ini
+*.build_log.htm
+
+# ---------- 调参遥测: 只保留 summary, 忽略逐帧原始 CSV ----------
+bike_code/logs/*.csv
+bike_code/logs/*.txt
+
+# ---------- Python (上位机桥接层) ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---------- 工具生成 / 本机专属 ----------
+compile_commands.json
+.cache/
+.idea/
+*.code-workspace
+
+# ---------- 系统 / 编辑器 ----------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ---------- 归档包 ----------
+*.zip
