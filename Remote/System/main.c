@@ -167,9 +167,9 @@ int main(void)
   
 
         #ifdef Button_Only
-            OLED_ShowChar(6*6, 2*8, dir,OLED_6X8); //方向
-            OLED_ShowFloatNum(6*6, 3*8,speed,2,2,OLED_6X8); //显示速度
-						OLED_ShowNum(6*6,4*8,upper_Flag,1,OLED_6X8);//自动与手动切换
+//            OLED_ShowChar(6*6, 2*8, dir,OLED_6X8); //方向
+//            OLED_ShowFloatNum(6*6, 3*8,speed,2,2,OLED_6X8); //显示速度
+//						OLED_ShowNum(6*6,4*8,upper_Flag,1,OLED_6X8);//自动与手动切换
         #else
                if((BAT < 3.9)&&(BAT > 3.8))BEEP(1); 
                 else   BEEP(0);

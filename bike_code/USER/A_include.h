@@ -69,7 +69,9 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <cmath> // 引入数学库，以便使用绝对值等函数
+#ifdef __cplusplus
+#include <cmath>
+#endif // 引入数学库，以便使用绝对值等函数
 
 //用户文件
 #include "main.h"
@@ -77,7 +79,7 @@
 #include "./Init/Init.h"
 #include "./Servo/Servo.h"
 #include "./uart/uart.h"
-#include "./ch100/ch100.h"
+#include "./ch100/CH100.h"
 #include "./Odrive/Odrive.h"
 #include "./Balane/Balane.h"
 #include "./PID/PID.h"
@@ -86,6 +88,7 @@
 #include "./A_blue/A_blue.h"
 #include "./A_Remote/A_Remote.h"
 #include "./vofa/vofa.h"
+#include "./telemetry/telemetry.h"
 
 
 	  

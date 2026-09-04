@@ -30,7 +30,7 @@ USART_RX_BUF2[USART_RX_LEN2];     //Ω” ’ª∫≥Â
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-		if (huart == (&huart8))
+	if (huart == (&huart8))
     {
         CH100_Rec(); 
 				balance();			

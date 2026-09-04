@@ -79,6 +79,7 @@ uint8_t CH100_ProcAll(uint8_t *data)
 	} 
   else 
   {
+		telem_note_imu_crc_err();
 		memset(&CH100_buf, 0, sizeof(CH100_buf));
 		return 0;
 	}

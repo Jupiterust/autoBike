@@ -97,7 +97,7 @@ void Upper(uint8_t byte)
 										
 									}
 									else if(rxBuffer[1] == 0x01)Servo_Ctl = Servo_Ctl-6;
-									else if(rxBuffer[1] == 0x02)Servo_Ctl = Servo_Ctl-2;
+									else if(rxBuffer[1] == 0x02)Servo_Ctl = Servo_Ctl-2   ;
 									else if(rxBuffer[1] == 0x03)Servo_Ctl = 0;
 									else if(rxBuffer[1] == 0x04)Servo_Ctl = Servo_Ctl+2;
 									else if(rxBuffer[1] == 0x05)Servo_Ctl = Servo_Ctl+6;							

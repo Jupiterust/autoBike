@@ -17,6 +17,13 @@ float Angle_Velocity(float Gyro,float Gyro_Target)
 			Angle_Velocity_Integral = -10000;        
 		
     PWM_Out = param.angular_v_kp * Angle_Velocity_Bias + param.angular_v_ki * Angle_Velocity_Integral + param.angular_v_kd * (Angle_Velocity_Bias - Angle_Velocity_Last_Bias);
+    /* telemetry tap: inner-loop P/I/D split, setpoint, pre-clamp output.
+       Recomputed instead of factored out of PWM_Out above, so the control
+       expression stays bit-identical. */
+    telem_tap_inner(param.angular_v_kp * Angle_Velocity_Bias,
+                    param.angular_v_ki * Angle_Velocity_Integral,
+                    param.angular_v_kd * (Angle_Velocity_Bias - Angle_Velocity_Last_Bias),
+                    Gyro_Target, PWM_Out);
     Angle_Velocity_Last_Bias = Angle_Velocity_Bias;                             //保留上次误差
     return PWM_Out;
 }
@@ -30,6 +37,7 @@ float X_balance_Control(float Angle,float Angle_Zero,float gyro)
      if(error>+30) error=+30;                                          //积分限幅
      if(error<-30) error=-30;                                          //积分限幅
      PWM=param.angular_kp*Bias + param.angular_ki*error + (gyro)*param.angular_kd;   //获取最终数值
+     telem_tap_angle_target(Angle_Zero);   /* telemetry tap */
      return PWM;
 }
 //速度环pid
@@ -44,6 +52,7 @@ float Velocity_Control(int encoder,int target_encoder)
     if(encoder_bias_integral < -200) 
 			encoder_bias_integral = -200;                    //积分限幅
     Velocity = encoder_bias * param.fly_wheel_speed_kp/10 + encoder_bias_integral * param.fly_wheel_speed_ki/1000;
+    telem_tap_pwm_accel(Velocity);   /* telemetry tap */
     return Velocity;
 }
 
@@ -145,6 +154,7 @@ float Servo_Gain(void)
     else if (Servo_Ctl > 20) gain_index = 2;
     else if (Servo_Ctl > 10) gain_index = 1;
     else if (Servo_Ctl > 0) gain_index = 0;
+	
 
     else if (Servo_Ctl < -90) gain_index = 19;
     else if (Servo_Ctl < -80) gain_index = 18;

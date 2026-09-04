@@ -3,8 +3,8 @@
 Tx_Pack tx_pack;
 Rx_Pack rx_pack;
 
-const unsigned short  TX_PACK_BYTE_SIZE = ((TX_BOOL+7)>>3)+TX_BYTE+(TX_SHORT<<1)+(TX_INT<<2)+(TX_FLOAT<<2);// 发送数据包的字节长度
-const unsigned short  RX_PACK_BYTE_SIZE = ((RX_BOOL+7)>>3)+RX_BYTE+(RX_SHORT<<1)+(RX_INT<<2)+(RX_FLOAT<<2);// 接收数据包的字节长度
+#define TX_PACK_BYTE_SIZE (((TX_BOOL+7)>>3)+TX_BYTE+(TX_SHORT<<1)+(TX_INT<<2)+(TX_FLOAT<<2))// 发送数据包的字节长度
+#define RX_PACK_BYTE_SIZE (((RX_BOOL+7)>>3)+RX_BYTE+(RX_SHORT<<1)+(RX_INT<<2)+(RX_FLOAT<<2))// 接收数据包的字节长度
 
 long rd_Index=0;//// 读取计数每次在读取数据包后增加 +(数据包长度)  读取计数-记录当前的数据包读取进度，读取计数会一直落后于接收计数，当读取计数与接收计数之间距离超过一个接收数据包的长度时，会启动一次数据包的读取。
 long rx_Index=0;// 接收计数-记录当前的数据接收进度 每次随串口的接收中断后 +1

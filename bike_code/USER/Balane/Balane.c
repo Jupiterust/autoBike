@@ -3,6 +3,8 @@
 
 #define fly_wheel_rate_limit 18  //动量轮速度限幅
 
+extern bool restart_flag;
+
 
 paramTypeDef param;
 int Servoduty = Servo_Center_Mid; // 全局中间量   
@@ -26,44 +28,46 @@ void param_init(void)
 		param.M1_Flag =0;
 
 //有风版	
-		param.angular_v_kp = 1.24;//1.2;
-		param.angular_v_ki = 0;
-		param.angular_v_kd = 1.115;//0.5;
-	
-		param.angular_kp = -7.9;//-6.915;
-		param.angular_ki = 0;
-		param.angular_kd = -1.6;//-0.82;
-	
-		param.fly_wheel_speed_kp = -0.17;//-0.179;
-		param.fly_wheel_speed_ki = -0.086;//-0.06;
-		param.fly_wheel_speed_kd = 0;
-	
-		param.angular_zero = -1.55;
-		
-		param.Steer_Kp = 1;
-		param.Steer_Ki = 0;
-		param.Steer_Kd = 0;
-		
-		
-		
+
+//		param.angular_v_kp = 1.2;//1.2;
+//		param.angular_v_ki = 0;
+//		param.angular_v_kd = 1.16;//0.5;
+//	
+//		param.angular_kp = -7.9;//-6.915;
+//		param.angular_ki = 0;
+//		param.angular_kd = -1.6;//-0.82;
+//	
+//		param.fly_wheel_speed_kp = -0.17;//-0.179;
+//		param.fly_wheel_speed_ki = -0.065;//-0.06;
+//		param.fly_wheel_speed_kd = 0;
+//	
+//param.angular_zero = -1.165;
+//		
+//		param.Steer_Kp = 1;
+//		param.Steer_Ki = 0;
+//		param.Steer_Kd = 0;  
+
+
+
 //无风版
-//    param.angular_v_kp = 1.4;
-//    param.angular_v_ki = 0; 
-//    param.angular_v_kd = 1.115;
+    param.angular_v_kp = 1.4;
+    param.angular_v_ki = 0; 
+    param.angular_v_kd = 1.115;
 
-//    param.angular_kp = -7.3;
-//    param.angular_ki =  0;
-//    param.angular_kd = -1.2;
+    param.angular_kp = -7.3;
+    param.angular_ki =  0;
+    param.angular_kd = -1.2;
 
-//    param.fly_wheel_speed_kp = -0.16;
-//    param.fly_wheel_speed_ki = -0.061;
-//    param.fly_wheel_speed_kd = 0;
-//    
-//    param.angular_zero = -1.55;
-
-//    param.Steer_Kp = 1;
-//    param.Steer_Ki = 0;
-//    param.Steer_Kd = 0;
+    param.fly_wheel_speed_kp = -0.16;
+    param.fly_wheel_speed_ki = -0.061;
+    param.fly_wheel_speed_kd = 0;
+    
+//    param.angular_zero = -1.55 + 0.39;
+//		param.angular_zero = -1.33;
+		param.angular_zero = -1.27;
+    param.Steer_Kp = 1;
+    param.Steer_Ki = 0;
+    param.Steer_Kd = 0;
 	
 	
 	
@@ -91,12 +95,17 @@ void balance(void)
     Servo_Ctl=Servo_Ctl>Servo_Delta?Servo_Delta:(Servo_Ctl<-Servo_Delta?(-Servo_Delta):Servo_Ctl); //舵机限幅
     Servo_Lim = calculateServoLim(fabs(odrive.now_speed0));//平衡优先舵机
     Servo_Ctl = Steer_Speed_Limit(Servo_Ctl,Servo_Lim); // 舵机打角限速  防止突变
-    if(param.M0_Flag==1)
+    if(param.M0_Flag==1 && !restart_flag)
     {
        Servoduty = Servo_Center_Mid + Servo_Ctl;
        ServoCtrl(Servoduty); 
     }
-    else if(param.M0_Flag==0)ServoCtrl(Servo_Center_Mid); 
+    else if(param.M0_Flag==0)
+		{
+			ServoCtrl(Servo_Center_Mid); 
+			Servo_Ctl = 0;
+			upper_Flag = 0;
+		}
 /************平衡控制**************************************************/	
 		Servo_zhongzhi_Gain = Servo_Gain();//舵机零点偏移平衡增益
     if(cnt1>=60){cnt1=0;PWM_accel = Velocity_Control(odrive.now_speed0 , 0);}                              
@@ -117,7 +126,7 @@ void balance(void)
 //		if(fabs(error_zero)>10) { param.M0_Flag=0;param.M1_Flag =0;}   
 //    if(param.M0_Flag==0)odrive.set_speed0= 0;
 		
-    if(fabs(error_zero)>5) { param.M0_Flag=0;param.M1_Flag =0;}   
+   if(fabs(error_zero)>5) { param.M0_Flag=0;param.M1_Flag =0;}   
     if(param.M0_Flag==0)odrive.set_speed0= 0;
 		
     odrive_speed_ctl(0,odrive.set_speed0);    //odrive_speed_ctrl(0,odrive.set_speed0);//can
@@ -154,6 +163,8 @@ void balance(void)
 				odrive_speed_ctl(1,odrive.set_speed1);        //odrive_speed_ctrl(1,odrive.set_speed1);//can
     }
 /************END**************************************************/	
+    /* telemetry: control output is computed, clamped and dispatched by here */
+    telem_task();
     
 }
 

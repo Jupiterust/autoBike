@@ -1,5 +1,7 @@
 #include "Init.h" 
 
+bool restart_flag = 0;
+
 
 float xx = 0;
 int yy = 0;
@@ -7,8 +9,9 @@ int yy = 0;
 void Sys_All_Init(void)
 {
     odrive_init();
-	  param_init();
-    
+	param_init();
+    HAL_UART_Transmit(&huart6, (uint8_t *)"System Init OK\r\n", 16, 1000);
+	
     HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL); //编码器 I5 I6
     HAL_TIM_PWM_Start(&htim12,TIM_CHANNEL_1);       //蜂鸣器	 H6
     Servo_Init();                                   //舵机	 A0
@@ -24,14 +27,14 @@ void Sys_All_Init(void)
 		LED1 = 1;
 	
 		//保持直立三十秒
-//		while(KEY_0==0);
-//		if(param.M0_Flag == 0)param.M0_Flag = 1;
-//		else param.M0_Flag = 0;
-//		for(uint8_t i =0;i<31;i++)
-//		{
-//			if(i%10 == 0)BEEP_ON;
-//			HAL_Delay(1000);BEEP_OFF;
-//		}
+		while(KEY_0==0);
+		if(param.M0_Flag == 0)param.M0_Flag = 1;
+		else param.M0_Flag = 0;
+		for(uint8_t i =0;i<31;i++)
+		{
+			if(i%10 == 0)BEEP_ON;
+			HAL_Delay(1000);BEEP_OFF;
+		}
 		
 		
 		LED0 = 0;
@@ -46,8 +49,22 @@ void Sys_All_Init(void)
             HAL_Delay(20);
             while(KEY_0);
             BEEP_OFF;
+						 
+					
+						//车倒后直立的缓冲时间
+						upper_Flag = 0;//在这似乎没起到作用，故在Blance//else if(param.M0_Flag==0)进行处理
+						restart_flag = 1;
+						ServoCtrl(Servo_Center_Mid); 
+						Servo_Ctl = 0;
             if(param.M0_Flag == 0)param.M0_Flag = 1;
             else param.M0_Flag = 0;
+						for(uint8_t i =0;i<2;i++)
+						{
+							if(i%1 == 0)BEEP_ON;
+							HAL_Delay(1000);BEEP_OFF;
+						}
+						upper_Flag = 1;
+						restart_flag = 0;
         }
         
 
