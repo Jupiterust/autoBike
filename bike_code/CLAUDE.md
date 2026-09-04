@@ -10,7 +10,7 @@ Firmware for a self-balancing, single-track "smart bike": a reaction-flywheel ba
 - `../odrive`, `../my_odrive` — ODrive motor-controller JSON configs/notes for the two motors (flywheel + rear wheel).
 - `../PID_Param_Con` — free-text notes on cascaded-PID tuning experience for this bike.
 
-There is no top-level README; this CLAUDE.md is the primary map of the codebase.
+The repo root has a short `README.md` (project overview, build, telemetry); this CLAUDE.md is the detailed map.
 
 ## Source encoding — read this before editing anything under `USER/` or `Core/`
 
