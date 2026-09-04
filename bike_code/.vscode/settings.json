@@ -1,0 +1,14 @@
+{
+    "[c]": {
+        "files.encoding": "gb18030"
+    },
+    "[c++header]": {
+        "files.encoding": "gb18030"
+    },
+    "[h]": {
+        "files.encoding": "gb18030"
+    },
+    "[markdown]": {
+        "files.encoding": "utf8"
+    }
+}

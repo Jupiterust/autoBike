@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "🐙",
+            "includePath": [
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/USER",
+                "${workspaceFolder}/USER/A_blue",
+                "${workspaceFolder}/USER/A_Remote",
+                "${workspaceFolder}/USER/Balane",
+                "${workspaceFolder}/USER/ch100",
+                "${workspaceFolder}/USER/Init",
+                "${workspaceFolder}/USER/Odrive",
+                "${workspaceFolder}/USER/PID",
+                "${workspaceFolder}/USER/Servo",
+                "${workspaceFolder}/USER/Time",
+                "${workspaceFolder}/USER/uart",
+                "${workspaceFolder}/USER/upper",
+                "${workspaceFolder}/USER/vofa"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F427xx"
+            ],
+            "compilerPath": "/opt/homebrew/bin/arm-none-eabi-gcc",
+            "cStandard": "gnu17"
+        }
+    ],
+    "version": 4
+}

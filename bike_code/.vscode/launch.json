@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Fly_Dreams (OpenOCD)",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Fly_Dreams.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "${workspaceFolder}/openocd-horco.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "openOCDPath": "/opt/homebrew/bin/openocd",
+            "gdbPath": "/opt/homebrew/bin/arm-none-eabi-gdb",
+            "preLaunchTask": "build",
+            "runToEntryPoint": "main"
+        }
+    ]
+}
