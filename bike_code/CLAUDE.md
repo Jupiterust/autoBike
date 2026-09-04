@@ -43,13 +43,14 @@ Three Keil(AC5)→GCC compatibility edits are already applied in `USER/` and mus
 
 No test suite exists (embedded control firmware; validation is on real hardware).
 
-## Git hygiene — the working tree is noisy by construction
+## Git hygiene
 
-- The intended ignore files are misnamed `bike.gitignore` / `remote.gitignore` (not `.gitignore`), so git ignores nothing. Compiled Keil artifacts (`.o .crf .axf .hex .map .dep`), JLink logs and per-user `.uvguix.*` UI state are all tracked.
-- Nearly every tracked file currently shows as modified purely because the working tree is CRLF and HEAD is LF (~210 files, ~2000 lines each of pure churn). To see what actually changed:
-  ```bash
-  git diff --ignore-cr-at-eol --numstat -- bike_code | awk '$1!=0||$2!=0'
-  ```
+Cleaned up 2026-09-04; the workarounds previous sessions needed are gone.
+
+- A real `.gitignore` now exists at the **repo root** (`smartBike/bike/.gitignore`), covering Keil output (`MDK-ARM/Fly_Dreams/`, `Remote/Objects/`, `Remote/Listings/`), `bike_code/build/`, JLink logs, per-user `.uvguix.*`, Python caches, and `logs/telem_*.csv`. The old misnamed `bike.gitignore` / `remote.gitignore` are deleted — besides the wrong filename they used trailing `#` comments, which `.gitignore` does not support, so not one rule ever matched.
+- Build artifacts were purged from the entire history with `git filter-repo`, and line endings were normalized to CRLF (matching the working tree). `git status` is clean after a full `make`; a plain `git diff` is now readable, so the old `--ignore-cr-at-eol` incantation is no longer needed.
+- `logs/summary_*.json` is tracked (small, it's the tuning conclusions); `logs/telem_*.csv` is ignored (1.5 MB/window, regenerated every capture).
+- Two remotes: `origin` = GitHub `Jupiterust/autoBike` (branch `main`, current), `gitee` = the original `traveler-to-the-west/bike` (branch `master`, **pre-rewrite history — pushing there needs `--force` and would rewrite it**).
 - Stage deliberately. Never `git add -A` here.
 
 ## Architecture
