@@ -18,11 +18,13 @@ void Sys_All_Init(void)
     //odrive_canFilter_init();                      //can 未使用
     //HAL_UART_Receive_DMA(&huart3, (uint8_t *)USART_RX_BUF2,USART_RX_BUF2);  //串口控制电机  不需要接受
     HAL_UART_Receive_DMA(&huart6, (uint8_t *)vp_rxbuff,VALUEPACK_BUFFER_SIZE);//蓝牙G9 G14
-	  HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);    //上位机 D5 D6
+	HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);    //上位机 D5 D6
     HAL_UART_Receive_IT(&huart7,(uint8_t *)USART_RX_BUF2, USART_RX_LEN2);     //E7 E8
     CH100_USART_Init();                                                       //串口8 陀螺仪2.5ms
 		//HAL_TIM_Base_Start_IT(&htim3);                                          //使用陀螺仪中断即可    2ms定时中断
 	
+		ui_init();     //OLED bring-up: SPI1 + panel + splash
+
 		LED0 = 1;
 		LED1 = 1;
 	
@@ -42,8 +44,7 @@ void Sys_All_Init(void)
 		upper_Flag = 1;//使能上位机控制
     while(1)
     {
-			
-			  if(KEY_0)
+    	if(KEY_0)
         {
             BEEP_ON;
             HAL_Delay(20);
@@ -66,18 +67,17 @@ void Sys_All_Init(void)
 						upper_Flag = 1;
 						restart_flag = 0;
         }
-        
-
-
-				#ifdef Button_Only
+#ifdef Button_Only
           //vofa
-          vofa_apply();
-				vofa_con();
-        #else
+    	vofa_apply();
+    	vofa_con();
           //原串口处理
+#else
           uart_data_treating();
           data_treating();
-        #endif
+#endif
+
+    	ui_task();      //OLED refresh, main loop only - never from balance()
 				
 			
 				

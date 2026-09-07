@@ -13,6 +13,7 @@ float Velocity_Control(int encoder,int target_encoder);//ËÙ¶È»·
 float low_pass_filter(float value);
 int Steer_Engine_control(float image_bias);
 float Servo_Gain(void);
+extern float Servo_Gain_K;
 int Steer_Speed_Limit(float now,float limit);
 float lowPassFilter(float input) ;
 float Fly_Spped_Zero_Gain(float Encoder, float range, float limit, float gain);

@@ -76,7 +76,10 @@ USER/Time/Time.c \
 USER/uart/uart.c \
 USER/upper/upper.c \
 USER/vofa/vofa.c \
-USER/telemetry/telemetry.c
+USER/telemetry/telemetry.c \
+USER/oled/oled.c \
+USER/oled/oled_port.c \
+USER/ui/ui.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -157,7 +160,9 @@ C_INCLUDES =  \
 -IUSER/uart \
 -IUSER/upper \
 -IUSER/vofa \
--IUSER/telemetry
+-IUSER/telemetry \
+-IUSER/oled \
+-IUSER/ui
 
 
 # compile gcc flags
@@ -185,7 +190,7 @@ LDSCRIPT = STM32F427XX_FLASH.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -specs=nano.specs -u _printf_float -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin

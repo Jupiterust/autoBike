@@ -89,6 +89,8 @@
 #include "./A_Remote/A_Remote.h"
 #include "./vofa/vofa.h"
 #include "./telemetry/telemetry.h"
+#include "./oled/oled.h"
+#include "./ui/ui.h"
 
 
 	  

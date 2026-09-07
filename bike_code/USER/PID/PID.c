@@ -141,9 +141,14 @@ float M1_Speed_Limit(float now,float limit)
 };
 
 
+/* Steering-compensation slope, was hard-coded as 0.0015f inside
+   Servo_Gain().  Lifted to a variable so the OLED menu can scale the
+   whole compensation; the default is the original value. */
+float Servo_Gain_K = 0.0015f;
+
 float Servo_Gain(void)
 {
-    uint8_t gain_index;//Ë÷Òý
+    uint8_t gain_index = 0;//Ë÷Òý
     if (Servo_Ctl > 90) gain_index = 9;
     else if (Servo_Ctl > 80) gain_index = 8;
     else if (Servo_Ctl > 70) gain_index = 7;
@@ -167,7 +172,7 @@ float Servo_Gain(void)
     else if (Servo_Ctl < -10) gain_index = 11;
     else if (Servo_Ctl < 0) gain_index = 10;
 
-		float output = Servo_Ctl * 0.0015f + 
+		float output = Servo_Ctl * Servo_Gain_K + 
 						 Servo_ZERO[gain_index] * Servo_Ctl;
 		return output;
 }

@@ -88,6 +88,7 @@ int main(void)
 
   /* USER CODE END SysInit */
 
+
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
@@ -120,6 +121,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+ 
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
