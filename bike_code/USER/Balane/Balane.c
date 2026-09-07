@@ -129,6 +129,13 @@ void balance(void)
    if(fabs(error_zero)>5) { param.M0_Flag=0;param.M1_Flag =0;}   
     if(param.M0_Flag==0)odrive.set_speed0= 0;
 		
+    /* Skip axis 0 on the tick that sends axis 1.  Both share one USART3 DMA:
+       a 12 byte frame takes 260us to clock out, the axis 1 call below lands a
+       few us later, and HAL_UART_Transmit_DMA() then returns HAL_BUSY and
+       sends nothing - so the rear wheel was never actually commanded.  The
+       flywheel loses one update in 40 (2.5ms) and is re-sent on the next
+       tick, which it cannot notice. */
+    if(M1_cnt1 < 40)
     odrive_speed_ctl(0,odrive.set_speed0);    //odrive_speed_ctrl(0,odrive.set_speed0);//can
 /************ºóÂÖ¿ØÖÆ**************************************************/	
     if(M1_cnt1 >= 40)

@@ -68,6 +68,11 @@ void odrive_speed_ctrl(unsigned char num, float speed);
 
 
 void odrive_speed_ctl(unsigned char num, float speed);
+
+/* Speed commands refused by the USART3 DMA because it was still busy.
+ * Must stay at 0 in normal running; anything else means a motor is being
+ * commanded less often than the code thinks. */
+extern volatile uint32_t odrive_tx_drops;
 void odrive_feedback(void);
 void odrive_init(void);
 void odrive_analyze_speed(char* msg,int len);

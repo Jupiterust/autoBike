@@ -116,43 +116,49 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
 
 // odrive 速度闭环 num 选择电机
+/* Number of speed commands that never reached the wire because the USART3 DMA
+ * was still busy.  This used to be invisible: the HAL_UART_Transmit_DMA()
+ * return value was discarded, so a refused transfer silently did nothing. */
+volatile uint32_t odrive_tx_drops = 0;
+
 void odrive_speed_ctl(unsigned char num, float speed)
 {
-    static uint8_t odeive_buf[12];
-    odeive_buf[0] = 'v';
-    odeive_buf[1] = ' ';
-    if(num==0) odeive_buf[2] = '0';
-    else odeive_buf[2] = '1';
-    
-    odeive_buf[3] = ' ';
+    /* One buffer PER AXIS, not one shared buffer.  A 12 byte frame at 460800
+     * takes 260 us to clock out and DMA reads straight from this memory, so a
+     * single shared buffer let the next call rewrite a frame that was still
+     * in flight. */
+    static uint8_t odeive_buf[2][12];
+    uint8_t *b = odeive_buf[(num == 0) ? 0 : 1];
+
+    b[0] = 'v';
+    b[1] = ' ';
+    if(num==0) b[2] = '0';
+    else b[2] = '1';
+
+    b[3] = ' ';
     if(speed<0)
     {
-        odeive_buf[4] = '-';
-        odeive_buf[5] = (short)(-speed)%100/10+48;
-        odeive_buf[6] = (short)(-speed)%10/1+48;
-        odeive_buf[7] = '.';
-        odeive_buf[8] = (short)(-speed*10)%10/1+48;
-        odeive_buf[9] = (short)(-speed*100)%10/1+48;
-        // odeive_buf[9] = (short)(-speed*1000)%10/1+48;
-        // odeive_buf[10] = (short)(-speed*10000)%10/1+48;
-        // odeive_buf[11] = (short)(-speed*100000)%10/1+48;
+        b[4] = '-';
+        b[5] = (short)(-speed)%100/10+48;
+        b[6] = (short)(-speed)%10/1+48;
+        b[7] = '.';
+        b[8] = (short)(-speed*10)%10/1+48;
+        b[9] = (short)(-speed*100)%10/1+48;
     }
     else
     {
-        odeive_buf[4] = '+';
-        odeive_buf[5] = (short)(speed)%100/10+48;
-        odeive_buf[6] = (short)(speed)%10/1+48;
-        odeive_buf[7] = '.';
-        odeive_buf[8] = (short)(speed*10)%10/1+48;
-        odeive_buf[9] = (short)(speed*100)%10/1+48;
-        // odeive_buf[9] = (short)(speed*1000)%10/1+48;
-        // odeive_buf[10] = (short)(speed*10000)%10/1+48;
-        // odeive_buf[11] = (short)(speed*100000)%10/1+48;
+        b[4] = '+';
+        b[5] = (short)(speed)%100/10+48;
+        b[6] = (short)(speed)%10/1+48;
+        b[7] = '.';
+        b[8] = (short)(speed*10)%10/1+48;
+        b[9] = (short)(speed*100)%10/1+48;
     }
-    odeive_buf[10] = 0x0D;
-    odeive_buf[11] = 0x0A;
-    
-    HAL_UART_Transmit_DMA(&huart3, (uint8_t *)odeive_buf, 12); 
+    b[10] = 0x0D;
+    b[11] = 0x0A;
+
+    if (HAL_UART_Transmit_DMA(&huart3, b, 12) != HAL_OK)
+        odrive_tx_drops++;      /* HAL_BUSY: the previous frame is still going */
 }
 
 
