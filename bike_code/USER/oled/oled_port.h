@@ -85,8 +85,12 @@ void oled_port_init(void);
  * Selected by UI_PIN_TEST in ui.h. */
 void oled_port_pin_test(void);
 
-/* Blocking single-byte write.  Returns only once the byte has fully left the
- * shift register, so the caller may change DC immediately afterwards. */
+/* Block until the shift register is empty.  Required before moving DC, which
+ * must stay stable for the whole byte it applies to. */
+void oled_spi_sync(void);
+
+/* Queue one byte.  Returns as soon as the byte reaches the shift register, so
+ * consecutive calls pipeline; call oled_spi_sync() before touching DC. */
 void oled_spi_write(uint8_t d);
 
 /* Blocking block write.  Same as calling oled_spi_write() n times but without

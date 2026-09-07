@@ -66,6 +66,7 @@ void Sys_All_Init(void)
 						}
 						upper_Flag = 1;
 						restart_flag = 0;
+						ui_request_redraw();   //balance toggled: repaint now, not in 100ms
         }
 #ifdef Button_Only
           //vofa

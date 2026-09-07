@@ -13,6 +13,7 @@
 #include "math.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 /**
  * OLED flash Addr:
@@ -32,6 +33,38 @@ static uint8_t OLED_GRAM[128][8];
  * instead of 128 separate byte writes. See oled_refresh_gram(). */
 static uint8_t OLED_PAGE_BUF[128];
 
+/* What the panel is actually displaying, page-major.  A full 128x64 push is
+ * 1024 bytes = 2.9 ms of pure bit time at 2.81 MHz and no amount of software
+ * beats that, so the only way to spend less is to send fewer pages: each page
+ * is compared against this copy and skipped when it did not change. */
+static uint8_t OLED_SENT[8][128];
+static uint8_t OLED_SENT_VALID = 0;
+
+/* Mirrors the DC line so the BSY guard is paid only when DC actually moves.
+ * DC has to be stable for the whole byte it applies to, but a run of bytes
+ * with the same DC can stream back to back. 0xff = unknown, force a write. */
+static uint8_t OLED_DC_STATE = 0xff;
+
+static void oled_set_dc(uint8_t data)
+{
+    if (OLED_DC_STATE == data)
+        return;
+
+    oled_spi_sync();            /* let the in-flight byte land first */
+
+    if (data)
+        OLED_CMD_Set();
+    else
+        OLED_CMD_Clr();
+
+    OLED_DC_STATE = data;
+}
+
+void oled_invalidate(void)
+{
+    OLED_SENT_VALID = 0;
+}
+
 /* The reference driver's delay_ms() busy-wait was removed: nothing called it,
  * and it was a non-static global waiting to collide with something. */
 
@@ -44,11 +77,7 @@ static uint8_t OLED_PAGE_BUF[128];
  */
 void oled_write_byte(uint8_t dat, uint8_t cmd)
 {
-    if (cmd != 0)
-        OLED_CMD_Set();
-    else
-        OLED_CMD_Clr();
-
+    oled_set_dc((cmd != 0) ? 1u : 0u);
     oled_spi_write(dat);
 }
 
@@ -103,14 +132,13 @@ void oled_display_off(void)
  * @param   None
  * @retval  
  */
-void oled_refresh_gram(void)
+uint8_t oled_refresh_gram(void)
 {
     uint8_t i, n;
+    uint8_t pushed = 0;
 
     for (i = 0; i < 8; i++)
     {
-        oled_set_pos(0, i);
-
         /* GRAM is [column][page], so a page is a strided read; gather it into a
          * contiguous buffer and push the whole page in one burst.  The original
          * did 128 separate oled_write_byte() calls per page, each waiting for
@@ -120,9 +148,21 @@ void oled_refresh_gram(void)
             OLED_PAGE_BUF[n] = OLED_GRAM[n][i];
         }
 
-        OLED_CMD_Set();                 /* DC = 1: data */
+        /* 128 bytes of memcmp is ~0.5 us; 128 bytes of SPI is 364 us.  Even a
+         * page that almost always changes is worth the check. */
+        if (OLED_SENT_VALID && memcmp(OLED_PAGE_BUF, OLED_SENT[i], 128) == 0)
+            continue;
+
+        memcpy(OLED_SENT[i], OLED_PAGE_BUF, 128);
+
+        oled_set_pos(0, i);             /* 3 command bytes, DC = 0 */
+        oled_set_dc(1);                 /* DC = 1: data */
         oled_spi_write_buf(OLED_PAGE_BUF, 128);
+        pushed++;
     }
+
+    OLED_SENT_VALID = 1;
+    return pushed;
 }
 
 /**
@@ -399,6 +439,9 @@ void oled_LOGO(void)
 void oled_init(void)
 {
     oled_port_init();       /* SPI1 + DC/RST GPIO; added, was in MX_SPI1_Init() */
+
+    OLED_DC_STATE = 0xff;   /* the port layer just re-drove DC; forget the cache */
+    oled_invalidate();      /* panel RAM is about to be reset; nothing is "sent" */
 
     OLED_RST_Clr();
     HAL_Delay(500);

@@ -14,7 +14,12 @@
 
 #include <stdint.h>
 
-#define UI_PERIOD_MS    25u     /* OLED refresh cadence, ~40 Hz */
+/* Idle refresh cadence.  These are numbers, not animation: 10 Hz reads fine
+ * and costs a quarter of what 40 Hz did.  At 40 Hz the render + push (~2.1 ms
+ * + ~2.4 ms measured) ate 18% of the main loop for no readability gain.
+ * Anything that needs to feel instant calls ui_request_redraw() instead of
+ * waiting for the next tick. */
+#define UI_PERIOD_MS    100u
 
 /* --- bring-up diagnostics, both 0 for normal operation ------------------- */
 
@@ -51,12 +56,29 @@ void ui_init(void);
 /* Call every main-loop pass; self-throttles to UI_PERIOD_MS. */
 void ui_task(void);
 
+/* Redraw on the next ui_task() pass instead of waiting out UI_PERIOD_MS, so a
+ * key press or a remote command shows its effect immediately rather than up to
+ * 100 ms later.  ISR-safe: it only sets a flag, and the worst a lost race can
+ * cost is one extra frame. */
+void ui_request_redraw(void);
+
 /* Measured duration of the last full oled_refresh_gram(), in microseconds.
  * Readable from the debugger during bring-up. */
 extern volatile uint32_t ui_refresh_us;
 
+/* Cost of building the frame in GRAM (oled_clear + the oled_printf calls), in
+ * microseconds.  Separate from ui_refresh_us because it is pure CPU and does
+ * not shrink when the dirty-page check skips pages - if this ever dominates,
+ * the fix is to re-render only the rows whose text changed. */
+extern volatile uint32_t ui_render_us;
+
+/* How many of the 8 pages the last refresh actually pushed over SPI. */
+extern volatile uint8_t  ui_pages_pushed;
+
 /* Main-loop passes since boot, and passes per second - tells us how much
- * headroom the loop actually has once the OLED is in it. */
+ * headroom the loop actually has once the OLED is in it.  Not on screen any
+ * more (measured at ~1.17 M/s, the question is answered); read it in the
+ * debugger, or put it back on a page when a stalled loop needs detecting. */
 extern volatile uint32_t ui_loop_hz;
 
 #endif /* __UI_H */

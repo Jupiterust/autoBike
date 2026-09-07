@@ -23,7 +23,7 @@ C/H sources there are **GBK-encoded** (Chinese comments), not UTF-8, and most al
 
 ## Build / flash
 
-Two parallel build systems target the same sources. **The GCC/Make one works natively on macOS and is the one to use here.**
+**The GCC/Make build is the single authoritative build.** The developer flashes with `make` on macOS and does not use Keil; the MDK-ARM and EIDE projects are unmaintained and may lag behind. Do not spend effort mirroring source-list changes into them, and do not treat them as a cross-check.
 
 ```bash
 make              # -> build/Fly_Dreams.{elf,hex,bin}, prints size
@@ -33,13 +33,15 @@ make clean
 
 Requires `arm-none-eabi-gcc` (Homebrew cask `gcc-arm-embedded`) and `openocd` on PATH; both are installed at `/opt/homebrew/bin`. `.vscode/tasks.json` wraps these, and `.vscode/launch.json` has a cortex-debug/OpenOCD config against `build/Fly_Dreams.elf`.
 
-The Makefile, `STM32F427XX_FLASH.ld` and `startup_stm32f427xx.s` were generated once by STM32CubeMX from `Fly_Dreams.ioc` and hand-merged: **CubeMX does not know about the hand-added `USER/` tree** (where all the control logic lives), so `USER/**/*.c` and its include paths were added to `C_SOURCES`/`C_INCLUDES` manually. Adding a new source file means editing `C_SOURCES` by hand — and, if the Keil project should stay buildable, adding it there too. Do not regenerate the Makefile from CubeMX without re-merging those lines.
+The Makefile, `STM32F427XX_FLASH.ld` and `startup_stm32f427xx.s` were generated once by STM32CubeMX from `Fly_Dreams.ioc` and hand-merged: **CubeMX does not know about the hand-added `USER/` tree** (where all the control logic lives), so `USER/**/*.c` and its include paths were added to `C_SOURCES`/`C_INCLUDES` manually. Adding a new source file means editing `C_SOURCES` (and, for a new directory, `C_INCLUDES`) by hand. Do not regenerate the Makefile from CubeMX without re-merging those lines.
+
+`LDFLAGS` carries `-u _printf_float`: `-specs=nano.specs` selects newlib-nano, whose `printf`/`vsprintf` silently drop `%f` unless the float formatter is force-linked. `oled_printf("%8.3f", ...)` depends on it. It costs ~13.8 KB of flash, which is why it is not on by default.
 
 Three Keil(AC5)→GCC compatibility edits are already applied in `USER/` and must survive future edits: `<cmath>` in `A_include.h` guarded behind `#ifdef __cplusplus`, and the `const unsigned short {TX,RX}_PACK_BYTE_SIZE` array-size declarations in `A_Remote.c`/`A_blue.c` converted to `#define`s (C forbids VLA-sized file-scope arrays). `uart.c` still contains AC5-only `#pragma import(__use_no_semihosting)`, which GCC ignores harmlessly.
 
 **Flashing quirks** (already handled — don't re-diagnose): the probe is a "Horco CMSIS-DAP" clone (`0xfaed:0x4870`), not a genuine DAPLink. Its CMSIS-DAPv2/bulk channel never responds on any host or OS, so the HID backend must be forced (`cmsis_dap_backend hid`, see `openocd-horco.cfg`), and even the HID connect handshake fails intermittently at random. All failures happen before any write starts, so the `flash` target just retries up to 8 times.
 
-**Keil / EIDE (Windows only):** `MDK-ARM/Fly_Dreams.uvprojx` (AC5, pack `Keil.STM32F4xx_DFP.3.1.1`) and a mirrored EIDE project at `bikecode_eide/.eide/eide.yml`. AC5 is Windows-only, which is why the GCC build exists. `keilkill.bat` deletes Keil build artifacts. Changes to the source list must be mirrored across Makefile / uvprojx / eide.yml or one build silently drifts.
+**Keil / EIDE — unmaintained, may not build.** `MDK-ARM/Fly_Dreams.uvprojx` (AC5, pack `Keil.STM32F4xx_DFP.3.1.1`) and a mirrored EIDE project at `bikecode_eide/.eide/eide.yml` are kept in the repo for history only. Their source lists are already behind the Makefile (they do not know about `USER/telemetry`, `USER/oled` or `USER/ui`) and are not being kept in sync. `keilkill.bat` deletes Keil build artifacts.
 
 No test suite exists (embedded control firmware; validation is on real hardware).
 

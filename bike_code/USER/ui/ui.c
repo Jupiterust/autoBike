@@ -12,11 +12,21 @@
 #include "A_include.h"
 #include "oled.h"
 
-volatile uint32_t ui_refresh_us = 0;
-volatile uint32_t ui_loop_hz    = 0;
+volatile uint32_t ui_refresh_us   = 0;
+volatile uint32_t ui_render_us    = 0;
+volatile uint8_t  ui_pages_pushed = 0;
+volatile uint32_t ui_loop_hz      = 0;
 
 /* Main-loop pass counter, sampled once a second into ui_loop_hz. */
 static volatile uint32_t loop_ticks = 0;
+
+/* Set by ui_request_redraw(), cleared once the frame has been drawn. */
+static volatile uint8_t ui_redraw_req = 0;
+
+void ui_request_redraw(void)
+{
+    ui_redraw_req = 1;
+}
 
 /* SYSCLK is 180 MHz (HSE 12 MHz x 180 / 6 / 2), so cycles / 180 = microseconds. */
 #define CPU_MHZ     180u
@@ -112,25 +122,37 @@ void ui_task(void)
         hz_last    = loop_ticks;
     }
 
-    /* Unsigned wrap-safe comparison; HAL_GetTick() rolls over after 49 days. */
-    if ((uint32_t)(now - next_ms) < UI_PERIOD_MS)
+    /* Unsigned wrap-safe comparison; HAL_GetTick() rolls over after 49 days.
+     * An explicit request jumps the queue so input feels immediate. */
+    if (!ui_redraw_req && (uint32_t)(now - next_ms) < UI_PERIOD_MS)
         return;
+    ui_redraw_req = 0;
     next_ms = now;
+
+    t0 = DWT->CYCCNT;
 
     oled_clear(Pen_Clear);
 
     /* Row 0 is a fixed banner and never carries a value: the top pixel rows of
      * this panel are faulty, so anything that has to stay readable lives on
-     * rows 1-4.  M0 moved onto the roll line, which had room to spare. */
+     * rows 1-4.  M0 moved onto the roll line, which had room to spare.
+     * The banner also keeps pages 0-1 clean, so the dirty-page check skips
+     * them every frame. */
     oled_printf(0, 0, "==== BIKE CTRL ====");
     oled_printf(1, 0, "rol %8.3f M0:%d", imu.rol, (int)param.M0_Flag);
     oled_printf(2, 0, "zero%8.3f", param.angular_zero);
     oled_printf(3, 0, "fly %8.2f", odrive.now_speed0);
-    oled_printf(4, 0, "gram %luus lp%lu",
-                (unsigned long)ui_refresh_us, (unsigned long)ui_loop_hz);
+    /* gram = SPI push, rnd = GRAM render, p = pages pushed of 8. All from the
+     * previous frame, which is why the numbers are one frame stale. */
+    oled_printf(4, 0, "gram%4lu p%u rnd%4lu",
+                (unsigned long)ui_refresh_us,
+                (unsigned)ui_pages_pushed,
+                (unsigned long)ui_render_us);
+
+    ui_render_us = (DWT->CYCCNT - t0) / CPU_MHZ;
 
     t0 = DWT->CYCCNT;
-    oled_refresh_gram();
+    ui_pages_pushed = oled_refresh_gram();
     ui_refresh_us = (DWT->CYCCNT - t0) / CPU_MHZ;
 }
 

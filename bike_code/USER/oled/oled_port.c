@@ -62,11 +62,22 @@ void oled_port_init(void)
     OLED_SPI->CR1 |= SPI_CR1_SPE;
 }
 
+void oled_spi_sync(void)
+{
+    while (OLED_SPI->SR & SPI_SR_BSY) { }
+}
+
 void oled_spi_write(uint8_t d)
 {
     while (!(OLED_SPI->SR & SPI_SR_TXE)) { }
     *(volatile uint8_t *)&OLED_SPI->DR = d;     /* 8-bit access: one byte only */
-    while (OLED_SPI->SR & SPI_SR_BSY) { }
+    /* No BSY wait here on purpose.  TXE means the byte has reached the shift
+     * register, so the next one can be queued immediately and the hardware
+     * pipelines them back to back - which is the whole point of a shift
+     * register.  Waiting for BSY after every byte serialised the transfer and
+     * roughly doubled a full-screen refresh.  The one place the in-flight byte
+     * genuinely has to land first is a DC change, and oled_set_dc() in oled.c
+     * calls oled_spi_sync() for exactly that. */
 }
 
 void oled_spi_write_buf(const uint8_t *p, uint32_t n)

@@ -50,7 +50,11 @@ void oled_init(void);
 void oled_write_byte(uint8_t dat, uint8_t cmd);
 void oled_display_on(void);
 void oled_display_off(void);
-void oled_refresh_gram(void);
+/* Push only the pages whose content changed since the last call; returns how
+ * many of the 8 pages actually went out over SPI.  Call oled_invalidate()
+ * after anything that disturbs the panel's RAM behind the driver's back. */
+uint8_t oled_refresh_gram(void);
+void oled_invalidate(void);
 void oled_clear(Pen_Typedef pen);
 void oled_drawpoint(int8_t x, int8_t y, Pen_Typedef pen);
 void oled_drawline(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, Pen_Typedef pen);
