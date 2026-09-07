@@ -29,12 +29,14 @@ void Sys_All_Init(void)
 		LED1 = 1;
 	
 		//保持直立三十秒
-		while(KEY_0==0);
+		while(KEY_0==0)
+			ui_render_now("Press KEY0 to start", -1);  //was a bare spin: panel froze
 		if(param.M0_Flag == 0)param.M0_Flag = 1;
 		else param.M0_Flag = 0;
 		for(uint8_t i =0;i<31;i++)
 		{
 			if(i%10 == 0)BEEP_ON;
+			ui_render_now("Calib hold upright", 31 - i);
 			HAL_Delay(1000);BEEP_OFF;
 		}
 		
@@ -62,6 +64,7 @@ void Sys_All_Init(void)
 						for(uint8_t i =0;i<2;i++)
 						{
 							if(i%1 == 0)BEEP_ON;
+							ui_render_now("re-stand", 2 - i);
 							HAL_Delay(1000);BEEP_OFF;
 						}
 						upper_Flag = 1;

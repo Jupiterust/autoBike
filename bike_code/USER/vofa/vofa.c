@@ -5,97 +5,114 @@
 #define VOFA_BUFF_SIZE 		256
 #define VOFA_COUNT	2
 uint8_t vofa_buff[VOFA_COUNT][VOFA_BUFF_SIZE];
-uint8_t vofa_flag;
-uint8_t vofa_index[VOFA_COUNT];
+volatile uint8_t vofa_flag;                 /* set in the UART7 RX ISR */
+volatile uint8_t vofa_index[VOFA_COUNT];
 
 char vofa_send_buff[VOFA_BUFF_SIZE];
+/* Frame parser for "(id,value)", called once per byte from the UART7 RX ISR.
+ *
+ * Two defects fixed against the original:
+ *  1. neither index was bounds checked, so a stream without a ')' - noise on
+ *     the line, or a handset resetting mid-frame - ran straight off the end of
+ *     the 256 byte buffers and corrupted whatever globals followed them;
+ *  2. the indices were only reset in vofa_apply(), after the frame had been
+ *     consumed.  A frame arriving while vofa_flag was still set appended to
+ *     the previous one instead of replacing it, and a dropped ')' left the
+ *     state machine stuck forever.  '(' now always starts a clean frame,
+ *     wherever it turns up, and newest-frame-wins.
+ */
 void vofa_get(uint8_t byte)
 {
-	
-	
 	static uint8_t vofa_state;
-	if(vofa_state == 0)
+
+	if (byte == '(')                    /* always restarts, in any state */
 	{
-			if(byte == '(')
-			{
-					vofa_state = 1;
-			}
+		vofa_index[0] = 0;
+		vofa_index[1] = 0;
+		vofa_state = 1;
+		return;
 	}
-	else if(vofa_state == 1)
+
+	if (vofa_state == 1)
 	{
-			if(byte == ',')
-			{
-					vofa_state = 2;
-			}
-			else
-			{
-					vofa_buff[0][vofa_index[0]++] = byte;
-			}
+		if (byte == ',')
+			vofa_state = 2;
+		else if (vofa_index[0] < VOFA_BUFF_SIZE - 1)
+			vofa_buff[0][vofa_index[0]++] = byte;
 	}
-	else if(vofa_state == 2)
+	else if (vofa_state == 2)
 	{
-			if(byte == ')')
-			{
-					vofa_state = 0;
-					vofa_flag = 1;
-			}
-			else
-			{
-					vofa_buff[1][vofa_index[1]++] = byte;
-			}
+		if (byte == ')')
+		{
+			vofa_buff[0][vofa_index[0]] = '\0';
+			vofa_buff[1][vofa_index[1]] = '\0';
+			vofa_state = 0;
+			vofa_flag = 1;
+		}
+		else if (vofa_index[1] < VOFA_BUFF_SIZE - 1)
+			vofa_buff[1][vofa_index[1]++] = byte;
 	}
 }
 
 uint8_t servo_con = 0;
+
+/* Automatic steering ramp: 1 = back to centre, 2 = toward +Servo_Delta,
+ * 3 = toward -Servo_Delta.  Only 1 is reachable from the remote (OK/stop);
+ * 2 and 3 are kept for the legacy VOFA+ keys '4' and '5'.
+ *
+ * The original stepped Servo_Ctl by one unit and then sat in HAL_Delay(10),
+ * so a full sweep to +-80 blocked the main loop for 800 ms - during which the
+ * OLED froze, buttons were ignored and the RC heartbeat went unprocessed.
+ * balance() runs from the UART8 ISR so the bike stayed up, but every bit of
+ * interaction died.  Same 10 ms per step, deadline check instead of a delay.
+ */
+#define SERVO_RAMP_MS   10u
+
 void vofa_con(void)
 {
-	 
-	if(!upper_Flag)//上位机处于失能
+	static uint32_t next_step_ms = 0;
+	uint32_t now = HAL_GetTick();
+
+	if (servo_con == 0)
+		return;
+
+	/* was: if(!upper_Flag).  Steering is a drive-mode action; in the menu the
+	 * ramp is held so an edit cannot move the servo under the rider. */
+	if (ui_get_mode() != UI_MODE_DRIVE)
+		return;
+
+	if ((uint32_t)(now - next_step_ms) < SERVO_RAMP_MS)
+		return;
+	next_step_ms = now;
+
+	if (servo_con == 1)                 /* centre */
 	{
-		if(servo_con == 1)
+		if (Servo_Ctl > 0)
+			Servo_Ctl--;
+		else if (Servo_Ctl < 0)
+			Servo_Ctl++;
+
+		if (Servo_Ctl == 0)
+			servo_con = 0;
+	}
+	else if (servo_con == 2)            /* toward +Servo_Delta */
+	{
+		if (++Servo_Ctl >= Servo_Delta)
 		{
-				if(Servo_Ctl == 0)
-				{
-					Servo_Ctl = 0;
-					servo_con = 0;
-				}
-				else if(Servo_Ctl < 0)
-				{
-					Servo_Ctl++;
-					HAL_Delay(10);
-				}
-				else if(Servo_Ctl >  0)
-				{
-					Servo_Ctl--;
-					
-					HAL_Delay(10);
-				}
+			Servo_Ctl = Servo_Delta;
+			servo_con = 0;
 		}
-		else if(servo_con == 2)
+	}
+	else if (servo_con == 3)            /* toward -Servo_Delta */
+	{
+		if (--Servo_Ctl <= -Servo_Delta)
 		{
-//			Servo_Ctl = -45;
-			Servo_Ctl ++;
-			HAL_Delay(10);
-			if(Servo_Ctl >= 80)
-			{
-				Servo_Ctl = 80;
-		servo_con = 0;
-			}
+			Servo_Ctl = -Servo_Delta;
+			servo_con = 0;
 		}
-		else if(servo_con == 3)
-		{
-//			Servo_Ctl = 45;
-			Servo_Ctl --;
-			HAL_Delay(10);
-			if(Servo_Ctl <= -80)
-			{
-				Servo_Ctl = -80;
-			
-		servo_con = 0;
-			}
-		}
-	} 
+	}
 }
+
 //#define RM
 void vofa_apply(void)
 {
@@ -258,13 +275,17 @@ void vofa_apply(void)
 				case '7':
 						servo_con = 1;
 						break;
+				default:
+						/* Everything that is not a legacy VOFA+ digit key is a
+						 * remote button; ui.h holds the id table. */
+						ui_command((char)vofa_buff[0][0], (const char *)vofa_buff[1]);
+						break;
 		} 
 //		#endif
 		vofa_flag = 0;
-		for(uint8_t i = 0;i<2;i++)
-		{
-			memset(vofa_buff[i],'\0',vofa_index[i]);
-			vofa_index[i] = 0;
-		}
+		/* The buffers are no longer cleared here: vofa_get() resets the
+		 * indices when a frame starts, which also closes the race where a
+		 * frame arriving between this point and the memset lost its first
+		 * bytes. */
 	}
 }
