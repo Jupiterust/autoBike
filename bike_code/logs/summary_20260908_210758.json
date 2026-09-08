@@ -1,0 +1,133 @@
+{
+  "samples": 3129,
+  "timing": {
+    "span_ms": 16332,
+    "real_loop_hz": 399.8,
+    "frame_hz": 191.6,
+    "loop_inc_per_frame_mode": 2,
+    "dropped_loops_est": 274,
+    "dt_ms_stats": {
+      "n": 3128,
+      "min": 4,
+      "max": 85,
+      "mean": 5.221227621483376,
+      "std": 3.2160538045107625
+    }
+  },
+  "angle_loop": {
+    "actual_deg": {
+      "n": 3129,
+      "min": -2.878267765045166,
+      "max": -0.3844251334667206,
+      "mean": -1.4360013612069502,
+      "std": 0.2720087707382716
+    },
+    "error_deg": {
+      "n": 3129,
+      "min": -2.7920709252357483,
+      "max": 1.8078489899635315,
+      "mean": -0.059128339001453506,
+      "std": 0.4777660714513389
+    }
+  },
+  "rate_loop": {
+    "actual_dps": {
+      "n": 3129,
+      "min": -5.088016033172607,
+      "max": 4.173746109008789,
+      "mean": -0.007769495351732264,
+      "std": 1.0149773280230985
+    },
+    "error_dps": {
+      "n": 3129,
+      "min": -16.715317368507385,
+      "max": 10.182928800582886,
+      "mean": -0.41611987618066215,
+      "std": 2.36848785237071
+    }
+  },
+  "speed_loop": {
+    "now_speed0": {
+      "n": 3129,
+      "min": -18.0,
+      "max": 18.0,
+      "mean": 0.5647186570786777,
+      "std": 3.251918155083777
+    },
+    "cmd_raw": {
+      "n": 3129,
+      "min": -24.70267677307129,
+      "max": 32.48224639892578,
+      "mean": 0.5821497169041324,
+      "std": 3.3967768750251195
+    }
+  },
+  "flywheel_saturation": {
+    "duty_fraction": 0.008,
+    "depth_stats": {
+      "n": 3129,
+      "min": 0.0,
+      "max": 14.482246398925781,
+      "mean": 0.023243240595397268,
+      "std": 0.3818581842950097
+    },
+    "note": "duty 长期 >0.2 说明飞轮经常憋在限幅里,先降增益/加大飞轮能力,别急着调其它环"
+  },
+  "inner_pid_terms": {
+    "mean_abs_P": 1.4015,
+    "mean_abs_I": 0.0,
+    "mean_abs_D": 0.1028,
+    "dominant": "P",
+    "share_pct": {
+      "P": 93.2,
+      "I": 0.0,
+      "D": 6.8
+    },
+    "d_frame_to_frame_jitter": 0.1894,
+    "note": "D 抖动远大于 |D| 均值 => D 在放大噪声,考虑降 kd 或加微分低通"
+  },
+  "fly_gain_pinned_fraction": 0.0,
+  "balance_active_fraction": 1.0,
+  "params": {
+    "av_kp": 1.399999976158142,
+    "av_ki": 0.0,
+    "av_kd": 1.1150000095367432,
+    "an_kp": -7.300000190734863,
+    "an_ki": 0.0,
+    "an_kd": -1.2000000476837158,
+    "fw_kp": -0.1599999964237213,
+    "fw_ki": -0.08099997043609619,
+    "fw_kd": 0.0,
+    "angular_zero": -1.3999998569488525
+  },
+  "step_response": {
+    "found": true,
+    "pulses_in_window": 1,
+    "t0_ms": 200788,
+    "window_ms": 2995,
+    "samples": 600,
+    "pulse_ms": 399,
+    "cmd_step_deg": 0.4836,
+    "baseline_rol_deg": -1.3988,
+    "peak_deviation_deg": -1.4795,
+    "peak_at_ms": 1145,
+    "overshoot_vs_step_deg": 0.9959,
+    "recover_ms": 2946,
+    "settle_band_deg": 0.3,
+    "recover_tight_ms": null,
+    "settle_band_tight_deg": 0.1,
+    "fly_peak_abs": 152.6667,
+    "sat_duty_in_window": 0.042,
+    "residual_err_deg": -0.3516,
+    "err_zero_peak_deg": -1.4783,
+    "err_zero_at_release_deg": 0.6157,
+    "notes": [
+      "稳定带 ±0.3deg 已达命令阶跃 0.48deg 的 62%,recover_ms 会偏乐观;请用 recover_tight_ms(±0.1deg)比较"
+    ]
+  },
+  "health": {
+    "imu_crc_err_last": 32,
+    "imu_crc_err_during": 0
+  },
+  "warnings": []
+}

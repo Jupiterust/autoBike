@@ -1,0 +1,135 @@
+{
+  "samples": 3139,
+  "timing": {
+    "span_ms": 16306,
+    "real_loop_hz": 399.9,
+    "frame_hz": 192.5,
+    "loop_inc_per_frame_mode": 2,
+    "dropped_loops_est": 244,
+    "dt_ms_stats": {
+      "n": 3138,
+      "min": 4,
+      "max": 50,
+      "mean": 5.1963033779477374,
+      "std": 2.725904175730658
+    }
+  },
+  "angle_loop": {
+    "actual_deg": {
+      "n": 3139,
+      "min": -1.636940598487854,
+      "max": 6.489920139312744,
+      "mean": 3.0394007731496093,
+      "std": 3.3370923131482764
+    },
+    "error_deg": {
+      "n": 3139,
+      "min": -8.978851556777954,
+      "max": 3.4712029695510864,
+      "mean": -4.352076379958494,
+      "std": 3.4531400568934436
+    }
+  },
+  "rate_loop": {
+    "actual_dps": {
+      "n": 3139,
+      "min": -2.9516918659210205,
+      "max": 16.20892906188965,
+      "mean": 0.44896994907980164,
+      "std": 2.488535289706017
+    },
+    "error_dps": {
+      "n": 3139,
+      "min": -92.15217781066895,
+      "max": 17.942047834396362,
+      "mean": -32.74172079060506,
+      "std": 25.283184020645084
+    }
+  },
+  "speed_loop": {
+    "now_speed0": {
+      "n": 3139,
+      "min": -18.0,
+      "max": 18.0,
+      "mean": 0.08317011856493564,
+      "std": 3.1895234777129122
+    },
+    "cmd_raw": {
+      "n": 3139,
+      "min": -37.83036804199219,
+      "max": 136.8905792236328,
+      "mean": 45.85597778275864,
+      "std": 35.41419359601293
+    }
+  },
+  "flywheel_saturation": {
+    "duty_fraction": 0.074,
+    "depth_stats": {
+      "n": 1165,
+      "min": 0.0,
+      "max": 98.28257751464844,
+      "mean": 1.828411131764686,
+      "std": 9.384889695067523
+    },
+    "note": "duty 长期 >0.2 说明飞轮经常憋在限幅里,先降增益/加大飞轮能力,别急着调其它环"
+  },
+  "inner_pid_terms": {
+    "mean_abs_P": 46.6417,
+    "mean_abs_I": 0.0,
+    "mean_abs_D": 0.1032,
+    "dominant": "P",
+    "share_pct": {
+      "P": 99.8,
+      "I": 0.0,
+      "D": 0.2
+    },
+    "d_frame_to_frame_jitter": 0.1881,
+    "note": "D 抖动远大于 |D| 均值 => D 在放大噪声,考虑降 kd 或加微分低通"
+  },
+  "fly_gain_pinned_fraction": 0.0,
+  "balance_active_fraction": 0.371,
+  "params": {
+    "av_kp": 1.399999976158142,
+    "av_ki": 0.0,
+    "av_kd": 1.1150000095367432,
+    "an_kp": -7.300000190734863,
+    "an_ki": 0.0,
+    "an_kd": -1.2000000476837158,
+    "fw_kp": -0.1599999964237213,
+    "fw_ki": -0.07899997383356094,
+    "fw_kd": 0.0,
+    "angular_zero": -1.3499999046325684
+  },
+  "step_response": {
+    "found": true,
+    "pulses_in_window": 1,
+    "t0_ms": 193900,
+    "window_ms": 1996,
+    "samples": 400,
+    "pulse_ms": 400,
+    "cmd_step_deg": 2.0481,
+    "baseline_rol_deg": -1.3915,
+    "peak_deviation_deg": 7.8815,
+    "peak_at_ms": 790,
+    "overshoot_vs_step_deg": 5.8334,
+    "recover_ms": null,
+    "settle_band_deg": 0.3,
+    "recover_tight_ms": null,
+    "settle_band_tight_deg": 0.1,
+    "fly_peak_abs": 128.3333,
+    "sat_duty_in_window": 0.688,
+    "residual_err_deg": -7.4003,
+    "err_zero_peak_deg": 7.8399,
+    "err_zero_at_release_deg": 1.4936,
+    "notes": [
+      "窗口结束时 |角误差| 仍未稳定在 ±0.3° 内:没恢复,或窗口(2000ms)太短"
+    ]
+  },
+  "health": {
+    "imu_crc_err_last": 0,
+    "imu_crc_err_during": 0
+  },
+  "warnings": [
+    "仅 1165/3139 帧平衡使能,饱和/误差指标只在这些帧上有意义"
+  ]
+}
