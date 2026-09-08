@@ -219,6 +219,172 @@ def _stats(xs):
     return {"n": n, "min": min(xs), "max": max(xs), "mean": mean, "std": var ** 0.5}
 
 
+# ---- 阶跃响应分析的可调常量 ----
+STEP_SETTLE_BAND_DEG = 0.3     # |角误差| 回到这个带内并保持, 才算恢复
+# 实测(2026-09-08)静态 imu_rol std = 0.024deg、1.3s 内峰峰 0.10deg。0.3deg 是噪声底的
+# 12 倍 —— 阶跃 2deg 时(占 15%)合适,阶跃 0.5deg 时占到 60%,"恢复"几乎被阶跃本身满足。
+# 所以额外给一个贴着噪声底的紧带(约 4x std),两个都报,不改动原定义。
+STEP_SETTLE_TIGHT_DEG = 0.10
+STEP_WINDOW_MS       = 3000    # t0 之后分析多久
+# 2000 曾经太短: 2026-09-08 的 0.5deg 基线里 4 窗有 3 窗在窗尾仍未回到 ±0.1deg,
+# recover_tight_ms 被截断成 None, 没法比较。抓窗 15s, 3000ms 有充足余量。
+STEP_TAIL_MIN_MS     = 800     # 上升沿后至少要有这么多数据才认这次脉冲
+STEP_RESIDUAL_MS     = 300     # 窗口末尾这段的平均角误差 = 残余稳态偏差
+STEP_PRE_MS          = 200     # t0 之前这段做基线
+
+
+def _step_response(r, col, ang_err, m0_mask):
+    """以 flags 的 TEST_ACTIVE 上升沿为 t0 的阶跃响应指标。
+
+    固件的 TEST_STEP_DEG 不在这里重复定义:命令阶跃量直接从日志的
+    angle_target 推导(脉冲期间均值 - 脉冲前均值),固件改了常量也不会失配。
+    """
+    # 旧的 v1 CSV 没有这些列(analyze_csv 会跳过缺失字段), 别在这里崩
+    missing = [k for k in ("angular_zero", "flags", "angle_target") if k not in r[-1]]
+    if missing:
+        return {"found": False,
+                "reason": "日志缺少字段 " + ", ".join(missing) +
+                          ":这是遥测 v1 的 CSV,阶跃响应需要 v2(含 TEST_ACTIVE 与 angular_zero)"}
+
+    t = col("t_ms")
+    at = col("angle_target")
+    ns = col("now_speed0")
+    flags = col("flags")
+    n = len(r)
+    active = [bool(f & FLAG_TEST_BIT) for f in flags]
+
+    edges = [i for i in range(1, n) if active[i] and not active[i - 1]]
+    if not edges:
+        why = ("窗口内没有 TEST_ACTIVE 上升沿:没按 OLED 菜单的 TEST step,"
+               "或平衡未使能(M0=0 时固件拒绝触发),或固件不是遥测 v2")
+        if active and active[0]:
+            why = "窗口开始时脉冲已在进行:抓窗晚于按键,重抓一次"
+        return {"found": False, "reason": why}
+
+    # 取最后一个"后面还有足够数据"的上升沿:手抖多按一次时,最后一次才是干净的
+    i0 = None
+    for e in reversed(edges):
+        if t[-1] - t[e] >= STEP_TAIL_MIN_MS:
+            i0 = e
+            break
+    if i0 is None:
+        return {"found": False, "pulses_in_window": len(edges),
+                "reason": f"上升沿之后不足 {STEP_TAIL_MIN_MS}ms 数据:抓窗太短,或按键太靠后"}
+
+    t0 = t[i0]
+
+    # 脉冲实际时长(下降沿)。远小于固件 TEST_STEP_MS 说明安全中止触发了。
+    i_rel = next((i for i in range(i0, n) if not active[i]), None)
+    pulse_ms = (t[i_rel] - t0) if i_rel is not None else None
+
+    win = [i for i in range(i0, n) if t[i] - t0 <= STEP_WINDOW_MS]
+    if len(win) < 5:
+        return {"found": False, "reason": "t0 之后样本太少"}
+
+    pre = [i for i in range(n) if -STEP_PRE_MS <= t[i] - t0 < 0]
+    base_rol = (sum(r[i]["imu_rol"] for i in pre) / len(pre)) if pre else r[i0]["imu_rol"]
+    base_at = (sum(at[i] for i in pre) / len(pre)) if pre else at[i0]
+
+    # 命令阶跃量: 取上升沿处 angle_target 的**不连续量**。
+    # 不能用脉冲期均值 —— angle_target 里还含 pwm_accel/fly_gain/转向补偿,飞轮一
+    # 冲起来 pwm_accel 就持续爬升,实测把 2.00deg 的阶跃读成了 2.74deg(+37%)。
+    # 测试偏置是在某一次角度环更新里原子加上去的,所以它表现为一次跳变;
+    # 慢变项在一个角度环周期(15ms)里只动约 0.03deg。angle_target 是 tap 出来的
+    # 阶梯波形(角度环 6 拍才更新一次),所以往后找 40ms 内第一次变化。
+    step_cmd = None
+    prev_at = at[i0 - 1] if i0 > 0 else at[i0]
+    for j in range(i0, n):
+        if t[j] - t0 > 40:
+            break
+        if at[j] != prev_at:
+            step_cmd = at[j] - prev_at
+            break
+
+    # 峰值角偏离(相对脉冲前基线) —— 手册里的"超调"
+    devs = [r[i]["imu_rol"] - base_rol for i in win]
+    k_peak = max(range(len(win)), key=lambda j: abs(devs[j]))
+    peak_dev = devs[k_peak]
+    peak_ms = t[win[k_peak]] - t0
+
+    # 恢复时间: 最早的 t, 使得从 t 到窗口末尾 |角误差| 始终 <= 带宽。
+    # 这个定义是单调的, 且天然落在脉冲撤销之后 —— 撤销那一下会打破更早的保持。
+    def _settle(band):
+        ok_from = None
+        for j in range(len(win) - 1, -1, -1):
+            if abs(ang_err[win[j]]) <= band:
+                ok_from = j
+            else:
+                break
+        return (t[win[ok_from]] - t0) if ok_from is not None else None
+
+    band = STEP_SETTLE_BAND_DEG
+    settle_ms = _settle(band)
+    settle_tight_ms = _settle(STEP_SETTLE_TIGHT_DEG)
+
+    fly_peak = max(abs(ns[i]) for i in win)
+
+    sat_win = [i for i in win if m0_mask[i]]
+    sat_duty = (sum(1 for i in sat_win if flags[i] & (1 << 4)) / len(sat_win)) if sat_win else 0.0
+
+    tail = [i for i in win if t[i] >= t[win[-1]] - STEP_RESIDUAL_MS]
+    residual = sum(ang_err[i] for i in tail) / len(tail) if tail else 0.0
+
+    # 固件的安全中止判据是 |error_zero| > TEST_ABORT_DEG, 而 error_zero 就是
+    # imu_rol - angular_zero, 两个字段都在日志里 —— 所以这里能精确重算固件当时
+    # 看到的量, 不必把 TEST_ABORT_DEG / TEST_STEP_MS 抄一份到上位机。
+    ez = [r[i]["imu_rol"] - r[i]["angular_zero"] for i in win]
+    ez_peak = max(ez, key=abs)
+    ez_release = (r[i_rel]["imu_rol"] - r[i_rel]["angular_zero"]) if i_rel is not None else None
+
+    out = {
+        "found": True,
+        "pulses_in_window": len(edges),
+        "t0_ms": t0,
+        "window_ms": t[win[-1]] - t0,
+        "samples": len(win),
+        "pulse_ms": pulse_ms,
+        "cmd_step_deg": round(step_cmd, 4) if step_cmd is not None else None,
+        "baseline_rol_deg": round(base_rol, 4),
+        "peak_deviation_deg": round(peak_dev, 4),
+        "peak_at_ms": peak_ms,
+        "overshoot_vs_step_deg": (round(abs(peak_dev) - abs(step_cmd), 4)
+                                  if step_cmd else None),
+        "recover_ms": settle_ms,
+        "settle_band_deg": band,
+        "recover_tight_ms": settle_tight_ms,
+        "settle_band_tight_deg": STEP_SETTLE_TIGHT_DEG,
+        "fly_peak_abs": round(fly_peak, 4),
+        "sat_duty_in_window": round(sat_duty, 3),
+        "residual_err_deg": round(residual, 4),
+        # 固件安全中止看的就是这个量
+        "err_zero_peak_deg": round(ez_peak, 4),
+        "err_zero_at_release_deg": (round(ez_release, 4) if ez_release is not None else None),
+        "notes": [],
+    }
+    if settle_ms is None:
+        out["notes"].append(
+            f"窗口结束时 |角误差| 仍未稳定在 ±{band}° 内:没恢复,或窗口({STEP_WINDOW_MS}ms)太短")
+    if pulse_ms is None:
+        out["notes"].append("窗口内没看到脉冲结束:抓窗覆盖不全")
+    elif step_cmd and ez_release is not None and abs(ez_release) > 1.5 * abs(step_cmd):
+        # 只陈述事实, 不替读者下"中止了"的结论 —— 上位机不知道固件的 TEST_STEP_MS,
+        # 而正常超时结束时的大超调也会让 error_zero 超过 1.5x 阶跃(实测已误报过两次)。
+        out["notes"].append(
+            f"撤销时 error_zero 已达 {ez_release:+.2f}deg(命令阶跃 {step_cmd:+.2f}deg)。"
+            f"若 pulse_ms({pulse_ms}) 小于固件的 TEST_STEP_MS, 是安全中止触发, 该窗不可比;"
+            f"若等于 TEST_STEP_MS, 只是超调大, 数据仍可用。")
+    if len(edges) > 1:
+        out["notes"].append(f"窗口内有 {len(edges)} 次脉冲,只分析了最后一次")
+    if step_cmd and band >= 0.4 * abs(step_cmd):
+        out["notes"].append(
+            f"稳定带 ±{band}deg 已达命令阶跃 {abs(step_cmd):.2f}deg 的 "
+            f"{100*band/abs(step_cmd):.0f}%,recover_ms 会偏乐观;"
+            f"请用 recover_tight_ms(±{STEP_SETTLE_TIGHT_DEG}deg)比较")
+    if step_cmd is None:
+        out["notes"].append("上升沿后 40ms 内 angle_target 没有跳变:确认脉冲真的注入了")
+    return out
+
+
 def _warnings(r, m0_active, col):
     """把常见"数据不可用作基线"的情况显式报出来。"""
     w = []
@@ -233,6 +399,11 @@ def _warnings(r, m0_active, col):
     at = col("angle_target")
     if (max(at) - min(at)) < 1e-6 and m0_active > 0:
         w.append("angle_target 全程恒定:确认 tap 取的是合成后的零点而非基础零点")
+    changed = [k for k in PARAM_FIELDS
+               if k in r[-1] and max(col(k)) != min(col(k))]
+    if changed:
+        w.append("窗口中途改过参数(" + ", ".join(changed) +
+                 "):summary 的 params 取最后一帧,这一窗不能当作单组参数的干净基线")
     return w
 
 
@@ -325,6 +496,10 @@ def analyze(records):
         },
         "fly_gain_pinned_fraction": round(fg_pinned, 3),
         "balance_active_fraction": round(balance_active_frac, 3),
+        # 本窗跑的是哪组参数(取最后一帧;菜单改值会在窗中途生效,见 warnings)
+        "params": ({k: r[-1][k] for k in PARAM_FIELDS}
+                   if all(k in r[-1] for k in PARAM_FIELDS) else None),
+        "step_response": _step_response(r, col, ang_err, m0_mask),
         "health": {"imu_crc_err_last": col("crc_err_cnt")[-1],
                    "imu_crc_err_during": col("crc_err_cnt")[-1] - col("crc_err_cnt")[0]},
         "warnings": _warnings(r, m0_active, col),
@@ -354,6 +529,36 @@ def print_summary(s):
     print(f"  平衡使能占比    : {s.get('balance_active_fraction', 0)*100:.0f}%")
     h = s["health"]
     print(f"  IMU CRC 错      : 累计 {h['imu_crc_err_last']}  本段新增 {h.get('imu_crc_err_during', '?')}")
+    pr = s.get("params")
+    if pr is None:
+        print("  " + "-" * 56)
+        print("  本窗参数        : 无(遥测 v1 的旧日志,不带增益)")
+    if pr:
+        print("  " + "-" * 56)
+        print(f"  本窗参数  内环 av  kp {pr['av_kp']:+.4f}  ki {pr['av_ki']:+.4f}  kd {pr['av_kd']:+.4f}")
+        print(f"            角度 an  kp {pr['an_kp']:+.4f}  ki {pr['an_ki']:+.4f}  kd {pr['an_kd']:+.4f}")
+        print(f"            飞轮 fw  kp {pr['fw_kp']:+.4f}  ki {pr['fw_ki']:+.4f}  kd {pr['fw_kd']:+.4f}")
+        print(f"            angular_zero {pr['angular_zero']:+.4f}")
+    sr = s.get("step_response") or {}
+    print("  " + "-" * 56)
+    if not sr.get("found"):
+        print(f"  阶跃响应        : 未找到  ({sr.get('reason','?')})")
+    else:
+        rec = sr["recover_ms"]
+        print(f"  阶跃响应 t0     : {sr['t0_ms']} ms   脉冲时长 {sr['pulse_ms']} ms"
+              f"   命令阶跃 {sr['cmd_step_deg']:+.3f} deg")
+        print(f"    峰值角偏离    : {sr['peak_deviation_deg']:+.3f} deg  @ {sr['peak_at_ms']} ms"
+              f"   (超出命令 {sr['overshoot_vs_step_deg']:+.3f})")
+        rect = sr["recover_tight_ms"]
+        print(f"    恢复时间      : {rec if rec is not None else '未恢复'} ms"
+              f"  (±{sr['settle_band_deg']}deg)"
+              f"   |  {rect if rect is not None else '未恢复'} ms"
+              f"  (±{sr['settle_band_tight_deg']}deg 紧带)")
+        print(f"    峰值飞轮转速  : {sr['fly_peak_abs']:.3f}"
+              f"   恢复期饱和 {sr['sat_duty_in_window']*100:.1f}%")
+        print(f"    残余稳态偏差  : {sr['residual_err_deg']:+.4f} deg")
+        for nmsg in sr.get("notes", []):
+            print(f"    ! {nmsg}")
     for msg in s.get("warnings", []):
         print(f"  ! {msg}")
     print("=" * 60 + "\n")
