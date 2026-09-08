@@ -55,6 +55,7 @@ static uint8_t  rc_link_ok = 0;
 #define MENU_ACT_NONE       0
 #define MENU_ACT_LOAD_CALM  1
 #define MENU_ACT_LOAD_WIND  2
+#define MENU_ACT_TEST_STEP  3
 
 typedef struct
 {
@@ -84,6 +85,10 @@ static const menu_item_t MENU[] =
     { "sgain", &Servo_Gain_K,                0.0f,  0.01f,  0.0001f, MENU_ACT_NONE },
     { "LOADcalm", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_CALM },
     { "LOADwind", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_WIND },
+    /* Fires the reproducible angle-setpoint step defined in Balane.h.  Put on
+     * the menu rather than on a remote button so the handset firmware, which is
+     * written against a published contract, does not have to change. */
+    { "TEST step", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_TEST_STEP },
 };
 
 #define MENU_N      ((uint8_t)(sizeof(MENU) / sizeof(MENU[0])))
@@ -260,6 +265,15 @@ static void ui_page_menu(void)
     m = &MENU[menu_sel];
     if (m->var)
         ui_row(4, "M0:%d step %.4f", (int)param.M0_Flag, m->step);
+    else if (m->action == MENU_ACT_TEST_STEP)
+        /* The pulse is refused unless the balance loop is closed, so say so
+         * instead of letting OK look broken. */
+        ui_row(4, "M0:%d %s", (int)param.M0_Flag,
+               test_pulse_active() ? "TEST RUNNING"
+                                   : (!param.M0_Flag        ? "need M0=1"
+                                   : (fabs(error_zero) > TEST_ARM_MAX_DEG
+                                                            ? "not settled"
+                                                            : "press OK")));
     else
         ui_row(4, "M0:%d  press OK", (int)param.M0_Flag);
 #endif
@@ -313,6 +327,7 @@ static void ui_menu_action(void)
     {
     case MENU_ACT_LOAD_CALM: menu_load_preset(0); break;
     case MENU_ACT_LOAD_WIND: menu_load_preset(1); break;
+    case MENU_ACT_TEST_STEP: (void)test_pulse_start(); break;
     default:                                      break;
     }
 }

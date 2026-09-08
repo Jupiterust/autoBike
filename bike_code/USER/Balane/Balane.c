@@ -77,6 +77,48 @@ const float slope = 0.00625f; // 斜率，计算为 (1.8 - 0.8) / (80 - (-80))
 const float intercept = 1.8f; // 截距，当Servo_Ctl为0时的M1_wheel_rate_limit
  
 
+/* ---- reproducible test disturbance, see Balane.h ---------------------- */
+static volatile uint8_t  test_active   = 0;
+static volatile uint32_t test_start_ms = 0;
+
+uint8_t test_pulse_start(void)
+{
+    if (param.M0_Flag != 1)
+        return 0;           /* no point perturbing an open loop */
+
+    if (fabs(error_zero) > TEST_ARM_MAX_DEG)
+        return 0;           /* not settled: the run would not be comparable */
+
+    /* Deadline first, then arm: balance() runs from the UART8 ISR and can
+       land between these two writes.  In this order it would see
+       test_active still 0 and do nothing, which is harmless; the other
+       order would let it run one tick off a stale start time. */
+    test_start_ms = HAL_GetTick();
+    test_active   = 1;
+    return 1;
+}
+
+void test_pulse_update(void)
+{
+    if (!test_active)
+        return;
+
+    if (param.M0_Flag != 1
+        || fabs(error_zero) > TEST_ABORT_DEG
+        || (uint32_t)(HAL_GetTick() - test_start_ms) >= TEST_STEP_MS)
+        test_active = 0;
+}
+
+float test_pulse_offset(void)
+{
+    return test_active ? TEST_STEP_DEG : 0.0f;
+}
+
+uint8_t test_pulse_active(void)
+{
+    return test_active;
+}
+
 void balance(void)
 {
     static uint16_t cnt = 0;//角度环计数
@@ -90,6 +132,7 @@ void balance(void)
     Read_Encoder();//滤波读取速度
     //odrive.now_speed0 = Read_Speed();//直接读取速度
 		error_zero = imu.rol-param.angular_zero;
+		test_pulse_update();   //test step: timeout + safety abort, uses error_zero
 	
 /************舵机控制**************************************************/	
     Servo_Ctl=Servo_Ctl>Servo_Delta?Servo_Delta:(Servo_Ctl<-Servo_Delta?(-Servo_Delta):Servo_Ctl); //舵机限幅
@@ -113,7 +156,7 @@ void balance(void)
     {
         cnt=0; 
 				Fly_Gain = Fly_Spped_Zero_Gain(odrive.now_speed0,0.01,0.3,0.0005);//编码器 变化限幅 最大值 增益P   动量轮转速 零点偏移
-				PWM_X = X_balance_Control(imu.rol,param.angular_zero +PWM_accel+Servo_zhongzhi_Gain+Fly_Gain,imu.vx);
+				PWM_X = X_balance_Control(imu.rol,param.angular_zero +PWM_accel+Servo_zhongzhi_Gain+Fly_Gain+test_pulse_offset(),imu.vx);
 				
 				//角度环调参
 //				PWM_X = X_balance_Control(imu.rol,0,imu.vx);

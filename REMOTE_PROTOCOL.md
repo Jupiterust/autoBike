@@ -383,7 +383,7 @@ from a serial terminal, set the switch to 1 and rebuild the bike firmware.
 
 ### 3.5 Menu items (for `I` and for context)
 
-`I` takes a **0-based** index into this table. Valid range **0 to 12**; out of
+`I` takes a **0-based** index into this table. Valid range **0 to 13**; out of
 range values are ignored. Verbatim from `USER/ui/ui.c`:
 
 ```c
@@ -402,6 +402,10 @@ static const menu_item_t MENU[] =
     { "sgain", &Servo_Gain_K,                0.0f,  0.01f,  0.0001f, MENU_ACT_NONE },
     { "LOADcalm", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_CALM },
     { "LOADwind", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_WIND },
+    /* Fires the reproducible angle-setpoint step defined in Balane.h.  Put on
+     * the menu rather than on a remote button so the handset firmware, which is
+     * written against a published contract, does not have to change. */
+    { "TEST step", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_TEST_STEP },
 };
 ```
 
@@ -420,6 +424,7 @@ static const menu_item_t MENU[] =
 | 10 | `sgain` | 0.0 | 0.01 | 0.0001 |
 | 11 | `LOAD calm` | *action item - press OK* | | |
 | 12 | `LOAD wind` | *action item - press OK* | | |
+| 13 | `TEST step` | *action item - press OK; fires the reproducible angle-setpoint step used for PID tuning. Refused unless the balance loop is on.* | | |
 
 Items 3 to 7 have a maximum of exactly `0.0` on purpose: those gains must stay
 negative in the present control law, and letting one cross zero would turn its
@@ -605,7 +610,7 @@ to batch them.
 | id | `value` content | Parsed with | Empty allowed? |
 |:--:|---|---|---|
 | `M` `U` `D` `L` `R` `K` `H` | ignored entirely | - | yes - send empty |
-| `I` | decimal integer, 0-12 | `atoi()` | **no** - an empty value is ignored |
+| `I` | decimal integer, 0-13 | `atoi()` | **no** - an empty value is ignored |
 | `V` | floating point, e.g. `-7.35` | `atof()` | **no** - and not compiled in, see 3.4 |
 
 **Canonical form for a command with no payload: `(id,)`.**
@@ -647,7 +652,7 @@ Minimum viable handset:
 7. **Never send ids `'0'`-`'7'`.**
 8. Do not implement acknowledgements, retries, sequence numbers, or checksums:
    the protocol has none. Repetition is the reliability mechanism.
-9. Optional: `(I,<n>)` to jump directly to menu item `n` (0-12).
+9. Optional: `(I,<n>)` to jump directly to menu item `n` (0-13).
 
 Suggested handset transmit loop, in pseudocode:
 
@@ -747,7 +752,7 @@ Link      UART7, 115200 8N1, no flow control, over Bluetooth SPP
 Direction handset -> bike only; handset needs no RX
 Frame     "(" id "," value ")"      comma MANDATORY, no terminator
 Ids       M=mode U=up D=down L=left R=right K=ok H=heartbeat
-          I=<0..12> jump to menu item      V=<float> (disabled in build)
+          I=<0..13> jump to menu item      V=<float> (disabled in build)
 Never     send ids '0'-'7' (VOFA+ PC tuning uses those)
 Heartbeat "(H,)" every 100-200 ms, always
 Repeat    one frame = one step; ~10 Hz resend while a button is held

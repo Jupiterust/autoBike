@@ -126,6 +126,8 @@ static uint16_t telem_pack(uint8_t *p)
        fly_wheel_rate_limit in Balane.c -- raw != clamped is exact. */
     if (param.M0_Flag && (tap_set0_raw != set0)) flags |= TELEM_FLAG_SAT;
 
+    if (test_pulse_active()) flags |= TELEM_FLAG_TEST;
+
     if (imu_crc_err != imu_crc_err_p) flags |= TELEM_FLAG_IMU_CRC;
     imu_crc_err_p = imu_crc_err;
 
