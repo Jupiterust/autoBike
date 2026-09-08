@@ -142,11 +142,13 @@ static void menu_load_preset(uint8_t wind)
         param.angular_ki         =  0.0f;
         param.angular_kd         = -1.2f;
         param.fly_wheel_speed_kp = -0.16f;
-        param.fly_wheel_speed_ki = -0.061f;
+        param.fly_wheel_speed_ki = -0.081f;   /* iter2 keep, no-wind set only */
         param.fly_wheel_speed_kd =  0.0f;
     }
 
-    param.angular_zero = -1.27f;
+    /* Mechanical zero, not a gain: both presets load the current one so a
+       preset load cannot silently revert it. See param_init() in Balane.c. */
+    param.angular_zero = -1.40f;
     param.Steer_Kp     =  1.0f;
     param.Steer_Ki     =  0.0f;
     param.Steer_Kd     =  0.0f;

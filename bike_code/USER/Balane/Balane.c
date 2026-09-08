@@ -59,12 +59,26 @@ void param_init(void)
     param.angular_kd = -1.2;
 
     param.fly_wheel_speed_kp = -0.16;
-    param.fly_wheel_speed_ki = -0.061;
+    /* -0.081, was -0.061.  iter2 (2026-09-08) kept it: at a given balance-point
+       offset the residual flywheel idle speed dropped ~18% (d(idle)/d(offset)
+       -117.9 -> -96.1) with no cost in roll std, saturation or the slow mode.
+       This is the no-wind set only; the windy set below keeps its own value. */
+    param.fly_wheel_speed_ki = -0.081;
     param.fly_wheel_speed_kd = 0;
     
 //    param.angular_zero = -1.55 + 0.39;
 //		param.angular_zero = -1.33;
-		param.angular_zero = -1.27;
+		/* Mechanical zero, re-measured 2026-09-08.  -1.27 was integrated on the
+		   previous mechanical configuration and is no longer valid: the bike now
+		   balances at about -1.40.  Estimated by regressing d(now_speed0)/dt
+		   against imu_rol (the roll at which the flywheel stops being forced to
+		   accelerate); the settled window telem_20260908_210718 gave -1.4007 with
+		   the best correlation of the session, and idle speed +0.37, roll std
+		   0.028, steady-state angle error -0.003 - the cleanest state recorded so
+		   far.  This matters mainly for the 31s upright countdown, which runs
+		   before the menu can be reached.  Expect it to move again if the mount
+		   changes: mount-to-mount scatter measured about +-0.013. */
+		param.angular_zero = -1.40;
     param.Steer_Kp = 1;
     param.Steer_Ki = 0;
     param.Steer_Kd = 0;
@@ -83,6 +97,14 @@ static volatile uint32_t test_start_ms = 0;
 
 uint8_t test_pulse_start(void)
 {
+    /* A held OK repeats at ~10Hz (see REMOTE_PROTOCOL.md), and re-arming would
+       refresh test_start_ms and stretch the pulse.  Measured 2026-09-08: one
+       run came out 500ms instead of 400ms, exactly one repeat interval longer,
+       which breaks the "every run is the identical excitation" premise the
+       whole comparison rests on.  Ignore requests while one is running. */
+    if (test_active)
+        return 0;
+
     if (param.M0_Flag != 1)
         return 0;           /* no point perturbing an open loop */
 

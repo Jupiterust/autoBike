@@ -219,10 +219,10 @@ void vofa_apply(void)
 								param.angular_kd = -1.2;
 
 								param.fly_wheel_speed_kp = -0.16;
-								param.fly_wheel_speed_ki = -0.061;
+								param.fly_wheel_speed_ki = -0.081;   /* iter2 keep, see param_init() */
 								param.fly_wheel_speed_kd = 0;
 								
-								param.angular_zero = -1.27;
+								param.angular_zero = -1.40;   /* mechanical zero, see param_init() */
 
 								param.Steer_Kp = 1;
 								param.Steer_Ki = 0;
@@ -247,7 +247,7 @@ void vofa_apply(void)
 								param.fly_wheel_speed_ki = -0.065;//-0.06;
 								param.fly_wheel_speed_kd = 0;
 							
-								param.angular_zero = -1.27;
+								param.angular_zero = -1.40;   /* mechanical zero, see param_init() */
 								
 								param.Steer_Kp = 1;
 								param.Steer_Ki = 0;
