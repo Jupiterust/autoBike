@@ -50,7 +50,7 @@ from datetime import datetime
 # 例如控制环 400Hz、每 2 次发一帧 = 200Hz,足够调参且省带宽。
 #
 # 若要增删字段: 改 SCHEMA + 递增 PROTO_VERSION,固件侧同步修改即可。
-PROTO_VERSION = 1
+PROTO_VERSION = 2
 MAGIC = b"\xAA\x55"
 
 # (字段名, struct 格式符)  —— struct 格式符: I=uint32, i=int32, f=float32, H=uint16, h=int16, B=uint8
@@ -77,8 +77,25 @@ SCHEMA = [
     ("inner_i",             "f"),   # -        内环 I 分项 = ki*∫Bias
     ("inner_d",             "f"),   # -        内环 D 分项 = kd*ΔBias
     ("crc_err_cnt",         "H"),   # -        IMU 链路累计 CRC 错误数(健康度)
-    ("flags",               "H"),   # bitfield M0/M1/restart/upper/饱和/CRC错 等
+    ("flags",               "H"),   # bitfield M0/M1/restart/upper/饱和/CRC错/测试脉冲
+    # ---- v2: 本帧生效的增益, 让日志自带参数、脱离固件也能解读 ----
+    ("av_kp",               "f"),   # 角速度内环 kp   (param.angular_v_kp)
+    ("av_ki",               "f"),   # 角速度内环 ki   (param.angular_v_ki)
+    ("av_kd",               "f"),   # 角速度内环 kd   (param.angular_v_kd)
+    ("an_kp",               "f"),   # 角度环 kp       (param.angular_kp)
+    ("an_ki",               "f"),   # 角度环 ki       (param.angular_ki)
+    ("an_kd",               "f"),   # 角度环 kd       (param.angular_kd)
+    ("fw_kp",               "f"),   # 飞轮速度环 kp   (param.fly_wheel_speed_kp)
+    ("fw_ki",               "f"),   # 飞轮速度环 ki   (param.fly_wheel_speed_ki)
+    ("fw_kd",               "f"),   # 飞轮速度环 kd   (param.fly_wheel_speed_kd)
+    ("angular_zero",        "f"),   # deg 角度零点    (param.angular_zero)
 ]
+
+# summary.json 的 "params" 块就是这几个字段, 名字与 OLED 菜单一致。
+PARAM_FIELDS = ["av_kp", "av_ki", "av_kd",
+                "an_kp", "an_ki", "an_kd",
+                "fw_kp", "fw_ki", "fw_kd",
+                "angular_zero"]
 
 # flags 位定义(与固件约定;仅示例,按你的实际含义调整)
 FLAG_BITS = {
@@ -88,7 +105,10 @@ FLAG_BITS = {
     3: "upper_Flag",
     4: "sat_flag",       # 飞轮指令被限幅
     5: "imu_crc_err",    # 本帧 IMU 数据 CRC 异常
+    6: "test_active",    # 固件正在注入测试阶跃脉冲 (step_response 的 t0 由此判定)
 }
+
+FLAG_TEST_BIT = 1 << 6
 
 FIELD_NAMES = [name for name, _ in SCHEMA]
 PAYLOAD_FMT = "<" + "".join(fmt for _, fmt in SCHEMA)

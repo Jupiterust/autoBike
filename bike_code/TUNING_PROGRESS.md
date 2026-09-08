@@ -8,7 +8,7 @@
 调参方式:固件把动态遥测二进制发出来 -> 上位机 pid_tuning_bridge.py 落 CSV+算指标 -> Claude 看数据+源码给改动 -> 烧录 -> 再抓。数据基准一律用车上 t_ms/loop_cnt。
 
 ## 已完成
-1. 遥测已实现并验证。新增 USER/telemetry/{telemetry.c,telemetry.h};二进制帧 0xAA55+LEN+73B payload+CRC16-CCITT,走 USART6 @460800,TELEM_DECIM=2(200Hz),TELEM_ENABLE 开关。tap 全部只读,控制运算逐位不变。SCHEMA/字节对齐已用原生编译+FrameParser 验证 20/20。
+1. 遥测已实现并验证,现为 **v2**。USER/telemetry/{telemetry.c,telemetry.h};二进制帧 0xAA55+LEN+**113B** payload+CRC16-CCITT,走 USART6 @460800,TELEM_DECIM=2(200Hz),TELEM_ENABLE 开关。tap 全部只读,控制运算逐位不变。v2 在 v1 的 73B 之后追加 10 个 float(av_kp/ki/kd, an_kp/ki/kd, fw_kp/ki/kd, angular_zero),让每一窗日志自带参数;flags 新增 bit6 TEST_ACTIVE。SCHEMA/字节对齐已用原生编译+FrameParser 验证 **30/30**,并确认 bridge 会拒收 ver!=2 与长度不符的帧。
 2. 上位机桥接 pid_tuning_bridge.py(v2):帧同步+CRC+按 SCHEMA 解码,持续落 logs/telem_*.csv,--capture N 抓窗+算指标(真实环频/丢帧/饱和(用固件 M0 保护的 SAT 标志)/各环误差/PID分项主导/D抖动/平衡使能占比/告警)。
 3. 转向舵机机械回中(修好了上电车头朝左:原因是 Servo_Center_Mid=180 的物理零点被机械偏了,非控制问题)。
 4. 静态平衡点整定完成:angular_zero -1.24 -> -1.27,已固化进 Balane.c:67、vofa.c:208、vofa.c:233(无风版/有风版默认都改了)。A_Remote(±0.02)/vofa(±0.01)运行时微调、A_blue 蓝牙接收未动。

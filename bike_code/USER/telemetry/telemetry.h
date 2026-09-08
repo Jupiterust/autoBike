@@ -16,32 +16,44 @@
  *   [0xAA][0x55][LEN][payload, LEN bytes][CRC16_L][CRC16_H]
  *   CRC16-CCITT (poly 0x1021, init 0xFFFF) computed over LEN + payload.
  *
- * Payload = 73 bytes, packed, no padding, byte-identical to SCHEMA:
+ * Payload = 113 bytes, packed, no padding, byte-identical to SCHEMA:
  *   off type field                  off type field
- *    0  u8   ver                     37  f32  pwm_accel
- *    1  u32  loop_cnt                41  f32  fly_gain
- *    5  u32  t_ms                    45  f32  servo_zhongzhi_gain
- *    9  f32  imu_rol                 49  f32  servo_ctl
- *   13  f32  angle_target            53  f32  servo_lim
- *   17  f32  imu_vx                  57  f32  inner_p
- *   21  f32  pwm_x                   61  f32  inner_i
- *   25  f32  set_speed0_raw          65  f32  inner_d
- *   29  f32  set_speed0              69  u16  crc_err_cnt
- *   33  f32  now_speed0              71  u16  flags
+ *    0  u8   ver                     57  f32  inner_p
+ *    1  u32  loop_cnt                61  f32  inner_i
+ *    5  u32  t_ms                    65  f32  inner_d
+ *    9  f32  imu_rol                 69  u16  crc_err_cnt
+ *   13  f32  angle_target            71  u16  flags
+ *   17  f32  imu_vx                  ---- v2: the gains in force ----
+ *   21  f32  pwm_x                   73  f32  av_kp
+ *   25  f32  set_speed0_raw          77  f32  av_ki
+ *   29  f32  set_speed0              81  f32  av_kd
+ *   33  f32  now_speed0              85  f32  an_kp
+ *   37  f32  pwm_accel               89  f32  an_ki
+ *   41  f32  fly_gain                93  f32  an_kd
+ *   45  f32  servo_zhongzhi_gain     97  f32  fw_kp
+ *   49  f32  servo_ctl              101  f32  fw_ki
+ *   53  f32  servo_lim              105  f32  fw_kd
+ *                                   109  f32  angular_zero
+ *
+ * v2 rationale: a tuning log has to be self-describing.  Without the gains in
+ * the frame, a CSV is only interpretable next to the exact firmware build that
+ * produced it, and an autonomous tuning loop cannot tell two runs apart.  The
+ * names match the OLED menu (av_* inner rate loop, an_* angle loop, fw_*
+ * flywheel speed loop) so a log field and a menu row are the same thing.
  * ------------------------------------------------------------------------ */
 
 /* ---- compile-time switches ---- */
 #define TELEM_ENABLE          1        /* 0 -> all hooks compile to nothing  */
 #define TELEM_DECIM           2        /* 1 frame per N balance() calls      */
                                        /* 400Hz / 2 = 200Hz                  */
-#define TELEM_PROTO_VERSION   1
+#define TELEM_PROTO_VERSION   2
 #define TELEM_UART            (&huart6)   /* USART6, 460800 8N1 (PG9/PG14)   */
 
 /* ---- wire format ---- */
 #define TELEM_MAGIC0          0xAAu
 #define TELEM_MAGIC1          0x55u
-#define TELEM_PAYLOAD_LEN     73u
-#define TELEM_FRAME_LEN       (3u + TELEM_PAYLOAD_LEN + 2u)   /* 78 bytes */
+#define TELEM_PAYLOAD_LEN     113u
+#define TELEM_FRAME_LEN       (3u + TELEM_PAYLOAD_LEN + 2u)   /* 118 bytes */
 
 /* ---- flags bitfield (payload offset 71) ---- */
 #define TELEM_FLAG_M0         (1u << 0)   /* param.M0_Flag  (balance on)     */
@@ -50,6 +62,7 @@
 #define TELEM_FLAG_UPPER      (1u << 3)   /* upper_Flag                      */
 #define TELEM_FLAG_SAT        (1u << 4)   /* flywheel command was clamped    */
 #define TELEM_FLAG_IMU_CRC    (1u << 5)   /* IMU CRC error since last frame  */
+#define TELEM_FLAG_TEST       (1u << 6)   /* test step pulse is being injected*/
 
 #if TELEM_ENABLE
 

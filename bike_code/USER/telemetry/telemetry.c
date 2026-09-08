@@ -26,9 +26,10 @@ static float tap_pwm_accel    = 0.0f;
 
 static uint8_t frame[TELEM_FRAME_LEN];
 
-/* Fails to compile if the field list below stops summing to 73 bytes. */
+/* Fails to compile if the field list below stops summing to 113 bytes.
+   v1 head (73) + 10 gain floats (40). */
 typedef char telem_payload_size_check[
-    ((1 + 4 + 4 + 15 * 4 + 2 + 2) == (int)TELEM_PAYLOAD_LEN) ? 1 : -1];
+    ((1 + 4 + 4 + 15 * 4 + 2 + 2 + 10 * 4) == (int)TELEM_PAYLOAD_LEN) ? 1 : -1];
 
 
 /* ---- CRC16-CCITT (0x1021, init 0xFFFF), same as the bridge ---- */
@@ -149,6 +150,19 @@ static uint16_t telem_pack(uint8_t *p)
     o = put_u16(p, o, imu_crc_err);                    /* 69 crc_err_cnt     */
     o = put_u16(p, o, flags);                          /* 71 flags           */
 
+    /* v2: the gains actually in force for this frame, so the log stands on
+       its own. Read straight out of param, which is what balance() uses. */
+    o = put_f32(p, o, param.angular_v_kp);             /*  73 av_kp          */
+    o = put_f32(p, o, param.angular_v_ki);             /*  77 av_ki          */
+    o = put_f32(p, o, param.angular_v_kd);             /*  81 av_kd          */
+    o = put_f32(p, o, param.angular_kp);               /*  85 an_kp          */
+    o = put_f32(p, o, param.angular_ki);               /*  89 an_ki          */
+    o = put_f32(p, o, param.angular_kd);               /*  93 an_kd          */
+    o = put_f32(p, o, param.fly_wheel_speed_kp);       /*  97 fw_kp          */
+    o = put_f32(p, o, param.fly_wheel_speed_ki);       /* 101 fw_ki          */
+    o = put_f32(p, o, param.fly_wheel_speed_kd);       /* 105 fw_kd          */
+    o = put_f32(p, o, param.angular_zero);             /* 109 angular_zero   */
+
     return o;
 }
 
@@ -162,9 +176,11 @@ void telem_task(void)
     if ((loop_cnt % TELEM_DECIM) != 0u) return;
 
     /* If the previous frame is still on the wire, skip this one rather than
-       overwrite the buffer DMA is reading. 78 bytes at 460800 take ~1.7ms,
-       the frame period at TELEM_DECIM=2 is 5ms, so this should not trigger.
-       Checking gState (TX) leaves the RX side of huart6 alone. */
+       overwrite the buffer DMA is reading. v2 grew the frame from 78 to 118
+       bytes: 2.56ms at 460800 against a 5ms frame period at TELEM_DECIM=2, so
+       USART6 is now ~51% busy (was 34%). Still clear, but TELEM_DECIM must not
+       go to 1 -- that would need 2.56ms inside a 2.5ms period and every other
+       frame would drop. Checking gState (TX) leaves the RX side alone. */
     if (TELEM_UART->gState != HAL_UART_STATE_READY)
     {
         telem_tx_drop++;

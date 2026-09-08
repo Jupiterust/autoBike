@@ -54,13 +54,13 @@
 [CRC16_L][CRC16_H]  CRC16-CCITT 覆盖 (LEN + payload)，小端
 ```
 
-payload 第 0 字段固定 `ver:uint8 == PROTO_VERSION`（当前 =1）。增删字段就改 `SCHEMA` 并 `PROTO_VERSION+1`，两侧同步。
+payload 第 0 字段固定 `ver:uint8 == PROTO_VERSION`（**当前 =2**）。增删字段就改 `SCHEMA` 并 `PROTO_VERSION+1`，两侧同步。
 
-字段顺序 / 类型（= `pid_tuning_bridge.py` 里的 `SCHEMA`，payload 共 **73 字节**）：
+字段顺序 / 类型（= `pid_tuning_bridge.py` 里的 `SCHEMA`，payload 共 **113 字节**）：
 
 | # | 字段 | 类型 | 单位 | 说明 |
 |---|------|------|------|------|
-| 0 | ver | uint8 | — | 协议版本，必须 =1 |
+| 0 | ver | uint8 | — | 协议版本，必须 =2 |
 | 1 | loop_cnt | uint32 | — | balance() 自增序号，精确丢帧检测 |
 | 2 | t_ms | uint32 | ms | HAL_GetTick()，算真实环频 |
 | 3 | imu_rol | float | deg | 角度环实际值 |
@@ -79,9 +79,23 @@ payload 第 0 字段固定 `ver:uint8 == PROTO_VERSION`（当前 =1）。增删�
 | 16 | inner_i | float | — | ki*∫Bias |
 | 17 | inner_d | float | — | kd*ΔBias |
 | 18 | crc_err_cnt | uint16 | — | IMU 链路累计 CRC 错 |
-| 19 | flags | uint16 | bitfield | M0/M1/restart/upper/饱和/CRC错 |
+| 19 | flags | uint16 | bitfield | M0/M1/restart/upper/饱和/CRC错/**测试脉冲** |
+| **20** | **av_kp** | float | — | 角速度内环 kp（`param.angular_v_kp`） |
+| **21** | **av_ki** | float | — | 角速度内环 ki |
+| **22** | **av_kd** | float | — | 角速度内环 kd |
+| **23** | **an_kp** | float | — | 角度环 kp（`param.angular_kp`） |
+| **24** | **an_ki** | float | — | 角度环 ki |
+| **25** | **an_kd** | float | — | 角度环 kd |
+| **26** | **fw_kp** | float | — | 飞轮速度环 kp（`param.fly_wheel_speed_kp`） |
+| **27** | **fw_ki** | float | — | 飞轮速度环 ki |
+| **28** | **fw_kd** | float | — | 飞轮速度环 kd |
+| **29** | **angular_zero** | float | deg | 角度零点（`param.angular_zero`） |
 
-波特率建议 ≥ 921600（USB-CDC 可无视）。73B payload、200Hz ≈ 125 kbps，余量充足。
+flags 位定义：0=M0 1=M1 2=restart 3=upper 4=饱和 5=IMU CRC错 **6=TEST_ACTIVE（固件正在注入测试阶跃脉冲）**。
+
+**v2 为什么加后面这 10 个**：调参日志必须自带参数。没有它们，一份 CSV 只有配上产生它的那次固件构建才能解读，自主迭代也无法区分两次运行用的是哪组增益。名字与 OLED 菜单一致（`av_*` 内环、`an_*` 角度环、`fw_*` 飞轮速度环），日志字段和菜单行是同一个东西。
+
+波特率建议 ≥ 921600（USB-CDC 可无视）。**113B payload、200Hz ≈ 189 kbps**。注意实测链路是 460800：一帧 118 字节 = 2.56ms，帧周期 5ms（`TELEM_DECIM=2` @400Hz 环），USART6 占用约 **51%**（v1 是 34%）。仍有余量，但 `TELEM_DECIM` 不能再降到 1。
 
 ---
 
