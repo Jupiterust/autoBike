@@ -21,29 +21,30 @@ void Sys_All_Init(void)
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);    //上位机 D5 D6
     HAL_UART_Receive_IT(&huart7,(uint8_t *)USART_RX_BUF2, USART_RX_LEN2);     //E7 E8
     CH100_USART_Init();                                                       //串口8 陀螺仪2.5ms
-		//HAL_TIM_Base_Start_IT(&htim3);                                          //使用陀螺仪中断即可    2ms定时中断
+	//HAL_TIM_Base_Start_IT(&htim3);                                          //使用陀螺仪中断即可    2ms定时中断
 	
-		ui_init();     //OLED bring-up: SPI1 + panel + splash
+	ui_init();     //OLED bring-up: SPI1 + panel + splash
 
-		LED0 = 1;
-		LED1 = 1;
+	LED0 = 1;
+	LED1 = 1;
 	
-		//保持直立三十秒
-		while(KEY_0==0)
-			ui_render_now("Press KEY0 to start", -1);  //was a bare spin: panel froze
-		if(param.M0_Flag == 0)param.M0_Flag = 1;
-		else param.M0_Flag = 0;
-		for(uint8_t i =0;i<31;i++)
-		{
-			if(i%10 == 0)BEEP_ON;
-			ui_render_now("Calib hold upright", 31 - i);
-			HAL_Delay(1000);BEEP_OFF;
-		}
-		
-		
-		LED0 = 0;
-		LED1 = 0;
-		upper_Flag = 1;//使能上位机控制
+	//保持直立三十秒
+	while(KEY_0==0){
+		ui_render_now("Press KEY0 to start", -1);  //was a bare spin: panel froze
+	}
+	if(param.M0_Flag == 0)
+		param.M0_Flag = 1;
+	else 
+		param.M0_Flag = 0;
+	for(uint8_t i =0;i<31;i++)
+	{
+		if(i%10 == 0)BEEP_ON;
+		ui_render_now("Calib hold upright", 31 - i);
+		HAL_Delay(1000);BEEP_OFF;
+	}
+	LED0 = 0;
+	LED1 = 0;
+	upper_Flag = 1;//使能上位机控制
     while(1)
     {
     	if(KEY_0)
@@ -52,24 +53,24 @@ void Sys_All_Init(void)
             HAL_Delay(20);
             while(KEY_0);
             BEEP_OFF;
-						 
-					
-						//车倒后直立的缓冲时间
-						upper_Flag = 0;//在这似乎没起到作用，故在Blance//else if(param.M0_Flag==0)进行处理
-						restart_flag = 1;
-						ServoCtrl(Servo_Center_Mid); 
-						Servo_Ctl = 0;
-            if(param.M0_Flag == 0)param.M0_Flag = 1;
-            else param.M0_Flag = 0;
-						for(uint8_t i =0;i<2;i++)
-						{
-							if(i%1 == 0)BEEP_ON;
-							ui_render_now("re-stand", 2 - i);
-							HAL_Delay(1000);BEEP_OFF;
-						}
-						upper_Flag = 1;
-						restart_flag = 0;
-						ui_request_redraw();   //balance toggled: repaint now, not in 100ms
+			//车倒后直立的缓冲时间
+			upper_Flag = 0;//在这似乎没起到作用，故在Blance//else if(param.M0_Flag==0)进行处理
+			restart_flag = 1;
+			ServoCtrl(Servo_Center_Mid); 
+			Servo_Ctl = 0;
+            if(param.M0_Flag == 0)
+				param.M0_Flag = 1;
+            else 
+				param.M0_Flag = 0;
+			for(uint8_t i =0;i<2;i++)
+			{
+				if(i%1 == 0)BEEP_ON;
+				ui_render_now("re-stand", 2 - i);
+				HAL_Delay(1000);BEEP_OFF;
+			}
+			upper_Flag = 1;
+			restart_flag = 0;
+			ui_request_redraw();   //balance toggled: repaint now, not in 100ms
         }
 #ifdef Button_Only
           //vofa
