@@ -5,7 +5,7 @@
 
 #include "ui.h"
 #include "A_include.h"
-#include "oled.h"
+#include "display.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@ static ui_mode_t ui_mode = UI_MODE_DRIVE;
 #define CPU_MHZ     180u
 
 /* Text columns per row: 128 px / 6 px glyph = 21. */
-#define UI_COLS     21
+#define UI_COLS     DISP_COLS
 
 void ui_request_redraw(void)
 {
@@ -160,38 +160,20 @@ static void menu_load_preset(uint8_t wind)
 /* Row-level dirty tracking                                               */
 /* ====================================================================== */
 
-static char ui_row_cache[5][UI_COLS + 1];
-
-static void ui_rows_invalidate(void)
-{
-    memset(ui_row_cache, 0, sizeof ui_row_cache);
-}
-
-/* Measured on this panel: rendering all five rows costs ~2.1 ms and pushing
- * them ~2.4 ms, so skipping the glyph work for unchanged rows is worth as much
- * as skipping the SPI.  Every row is padded to the full 21 columns, which is
- * what lets the full-screen oled_clear() go away: the new text overwrites the
- * old one cell for cell, because oled_showchar() paints the blank pixels of a
- * glyph as well as the set ones. */
+/* ui_row only formats.  disp.c owns the cache of what is on the glass and
+ * decides what that costs: for the OLED a changed row is redrawn into GRAM and
+ * the per-page compare picks the SPI; for the TFT, which has no frame buffer,
+ * only the character cells that differ are pushed. */
 static void ui_row(uint8_t row, const char *fmt, ...)
 {
     char    buf[UI_COLS + 1];
     va_list ap;
-    uint8_t n;
 
     va_start(ap, fmt);
     vsnprintf(buf, sizeof buf, fmt, ap);
     va_end(ap);
 
-    for (n = (uint8_t)strlen(buf); n < UI_COLS; n++)
-        buf[n] = ' ';
-    buf[UI_COLS] = '\0';
-
-    if (memcmp(buf, ui_row_cache[row], UI_COLS + 1) == 0)
-        return;
-
-    memcpy(ui_row_cache[row], buf, UI_COLS + 1);
-    oled_showstring(row, 0, (uint8_t *)buf);
+    disp_row(row, buf);
 }
 
 /* ====================================================================== */
@@ -353,7 +335,7 @@ void ui_command(char id, const char *value)
 
     case 'M':
         ui_mode = (ui_mode == UI_MODE_DRIVE) ? UI_MODE_MENU : UI_MODE_DRIVE;
-        ui_rows_invalidate();   /* the whole page changed, not just its values */
+        disp_invalidate();      /* the whole page changed, not just its values */
         break;
 
     case 'U':
@@ -437,44 +419,6 @@ static void ui_rc_check(void)
 /* Bring-up diagnostics (see ui.h)                                        */
 /* ====================================================================== */
 
-#if UI_LAMP_TEST
-static void oled_lamp_test(void)
-{
-    oled_write_byte(0x81, OLED_CMD);    /* contrast ...        */
-    oled_write_byte(0xff, OLED_CMD);    /* ... to maximum      */
-    oled_write_byte(0xa5, OLED_CMD);    /* every pixel on      */
-    HAL_Delay(2000);
-    oled_write_byte(0xa4, OLED_CMD);    /* back to GRAM        */
-    oled_write_byte(0x81, OLED_CMD);
-    oled_write_byte(0xcf, OLED_CMD);    /* back to init value  */
-}
-#endif
-
-#if UI_GRID_TEST
-static void oled_grid_test(void)
-{
-    uint8_t r;
-
-    oled_clear(Pen_Clear);
-    oled_drawline(0,   0,   127, 0,   Pen_Write);   /* top,    y = 0   */
-    oled_drawline(0,   63,  127, 63,  Pen_Write);   /* bottom, y = 63  */
-    oled_drawline(0,   0,   0,   63,  Pen_Write);   /* left,   x = 0   */
-    oled_drawline(127, 0,   127, 63,  Pen_Write);   /* right,  x = 127 */
-
-    for (r = 0; r < 6; r++)
-        oled_drawline(3, (uint8_t)(r * 12), 9, (uint8_t)(r * 12), Pen_Write);
-
-    oled_refresh_gram();
-    HAL_Delay(3000);
-
-    oled_clear(Pen_Clear);
-    for (r = 0; r < 5; r++)
-        oled_printf(r, 0, "%u.23456789ABCDEFGHIJ", (unsigned)r);
-    oled_refresh_gram();
-    HAL_Delay(3000);
-}
-#endif
-
 /* ====================================================================== */
 /* Entry points                                                           */
 /* ====================================================================== */
@@ -491,30 +435,29 @@ void ui_init(void)
     dwt_init();
 
 #if UI_PIN_TEST
-    oled_port_pin_test();       /* never returns */
+    disp_port_pin_test();       /* never returns */
 #endif
 
-    oled_init();                /* also does oled_port_init(): SPI + DC/RST */
+    disp_init();                /* transport + panel, whichever is fitted */
 
 #if UI_LAMP_TEST
-    oled_lamp_test();
+    disp_lamp_test();
 #endif
 #if UI_GRID_TEST
-    oled_grid_test();
+    disp_grid_test();
 #endif
 
-    oled_clear(Pen_Clear);
-    ui_rows_invalidate();
+    disp_clear_all();
     ui_row(0, UI_BANNER);
     ui_row(1, "starting up ...");
-    oled_refresh_gram();
+    (void)disp_flush();
 }
 
 static void ui_flush(void)
 {
     uint32_t t0 = DWT->CYCCNT;
 
-    ui_pages_pushed = oled_refresh_gram();
+    ui_pages_pushed = disp_flush();
     ui_refresh_us = (DWT->CYCCNT - t0) / CPU_MHZ;
 }
 

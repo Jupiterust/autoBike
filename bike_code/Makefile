@@ -78,7 +78,9 @@ USER/upper/upper.c \
 USER/vofa/vofa.c \
 USER/telemetry/telemetry.c \
 USER/oled/oled.c \
-USER/oled/oled_port.c \
+USER/disp/disp_port.c \
+USER/disp/disp.c \
+USER/tft/tft.c \
 USER/ui/ui.c
 
 # ASM sources
@@ -162,6 +164,8 @@ C_INCLUDES =  \
 -IUSER/vofa \
 -IUSER/telemetry \
 -IUSER/oled \
+-IUSER/disp \
+-IUSER/tft \
 -IUSER/ui
 
 

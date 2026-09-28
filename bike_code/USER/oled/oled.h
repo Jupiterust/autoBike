@@ -12,7 +12,7 @@
 #define __OLED__H
 
 #include "stm32f4xx.h"
-#include "oled_port.h"      /* was "spi.h": transport is register-level SPI1 now */
+#include "disp_port.h"      /* shared SPI1 transport, see USER/disp/ */
 #include <stdint.h>
 
 #define Max_Column      128
@@ -32,11 +32,13 @@
 #define CHAR_SIZE_WIDTH     6
 #define VHAR_SIZE_HIGHT     12
 
-#define OLED_CMD_Set()      HAL_GPIO_WritePin(OLED_DC_GPIO_Port, OLED_DC_Pin, GPIO_PIN_SET)
-#define OLED_CMD_Clr()      HAL_GPIO_WritePin(OLED_DC_GPIO_Port, OLED_DC_Pin, GPIO_PIN_RESET)
+/* DC is owned by disp_port (one cache, one BSY guard); these stay only so the
+ * reference driver body below reads as it originally did. */
+#define OLED_CMD_Set()      disp_set_dc(1)
+#define OLED_CMD_Clr()      disp_set_dc(0)
 
-#define OLED_RST_Set()      HAL_GPIO_WritePin(OLED_RST_GPIO_Port, OLED_RST_Pin, GPIO_PIN_SET)
-#define OLED_RST_Clr()      HAL_GPIO_WritePin(OLED_RST_GPIO_Port, OLED_RST_Pin, GPIO_PIN_RESET)
+#define OLED_RST_Set()      HAL_GPIO_WritePin(DISP_RST_PORT, DISP_RST_PIN, GPIO_PIN_SET)
+#define OLED_RST_Clr()      HAL_GPIO_WritePin(DISP_RST_PORT, DISP_RST_PIN, GPIO_PIN_RESET)
 
 typedef enum
 {

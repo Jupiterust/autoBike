@@ -40,26 +40,6 @@ static uint8_t OLED_PAGE_BUF[128];
 static uint8_t OLED_SENT[8][128];
 static uint8_t OLED_SENT_VALID = 0;
 
-/* Mirrors the DC line so the BSY guard is paid only when DC actually moves.
- * DC has to be stable for the whole byte it applies to, but a run of bytes
- * with the same DC can stream back to back. 0xff = unknown, force a write. */
-static uint8_t OLED_DC_STATE = 0xff;
-
-static void oled_set_dc(uint8_t data)
-{
-    if (OLED_DC_STATE == data)
-        return;
-
-    oled_spi_sync();            /* let the in-flight byte land first */
-
-    if (data)
-        OLED_CMD_Set();
-    else
-        OLED_CMD_Clr();
-
-    OLED_DC_STATE = data;
-}
-
 void oled_invalidate(void)
 {
     OLED_SENT_VALID = 0;
@@ -77,8 +57,8 @@ void oled_invalidate(void)
  */
 void oled_write_byte(uint8_t dat, uint8_t cmd)
 {
-    oled_set_dc((cmd != 0) ? 1u : 0u);
-    oled_spi_write(dat);
+    disp_set_dc((cmd != 0) ? 1u : 0u);
+    disp_write(dat);
 }
 
 
@@ -156,8 +136,8 @@ uint8_t oled_refresh_gram(void)
         memcpy(OLED_SENT[i], OLED_PAGE_BUF, 128);
 
         oled_set_pos(0, i);             /* 3 command bytes, DC = 0 */
-        oled_set_dc(1);                 /* DC = 1: data */
-        oled_spi_write_buf(OLED_PAGE_BUF, 128);
+        disp_set_dc(1);                 /* DC = 1: data */
+        disp_write_buf(OLED_PAGE_BUF, 128);
         pushed++;
     }
 
@@ -438,9 +418,8 @@ void oled_LOGO(void)
  */
 void oled_init(void)
 {
-    oled_port_init();       /* SPI1 + DC/RST GPIO; added, was in MX_SPI1_Init() */
+    disp_port_init();       /* SPI1 + DC/RST GPIO; added, was in MX_SPI1_Init() */
 
-    OLED_DC_STATE = 0xff;   /* the port layer just re-drove DC; forget the cache */
     oled_invalidate();      /* panel RAM is about to be reset; nothing is "sent" */
 
     OLED_RST_Clr();
