@@ -24,8 +24,8 @@ void Sys_All_Init(void)
 	//HAL_TIM_Base_Start_IT(&htim3);                                          //使用陀螺仪中断即可    2ms定时中断
 	
 	ui_init();     //OLED bring-up: SPI1 + panel + splash
-	led_init();    //PG1..PG8: CubeMX does not configure them
 
+	led_init();    //LED bring-up: GPIOG + pins 1..8
 	LED0 = 1;
 	LED1 = 1;
 	
@@ -37,11 +37,14 @@ void Sys_All_Init(void)
 		param.M0_Flag = 1;
 	else 
 		param.M0_Flag = 0;
+	ui_boot_skip_reset();
 	for(uint8_t i =0;i<31;i++)
 	{
 		if(i%10 == 0)BEEP_ON;
-		ui_render_now("Calib hold upright", 31 - i);
-		led_delay(1000);BEEP_OFF;
+		ui_render_now("Calib  RC=skip", 31 - i);
+		//a handset button ends the calibration early and also takes effect
+		if(ui_boot_wait(1000)){BEEP_OFF;break;}
+		BEEP_OFF;
 	}
 	LED0 = 0;
 	LED1 = 0;
@@ -85,12 +88,6 @@ void Sys_All_Init(void)
 
     	ui_task();      //OLED refresh, main loop only - never from balance()
     	led_task();     //chase light, self-throttled
-				
-			
-				
-				
-				
-				
         //printf("hello\r\n");
         //uart_printf("%.2f,%.2f\n",odrive.now_speed0,odrive.set_speed0);
         //uart_printf("%.2f,%d\n",xx,yy);

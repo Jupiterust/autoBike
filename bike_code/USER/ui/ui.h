@@ -132,6 +132,21 @@ void ui_request_redraw(void);
  * value is the frame's payload and may be an empty string. */
 void ui_command(char id, const char *value);
 
+/* Boot-phase wait, in place of HAL_Delay(), for the blocking stretches in
+ * Sys_All_Init().  Pumps the chase light and dispatches handset commands while
+ * it waits, and returns 1 as soon as a real button has been pressed so the
+ * caller can stop waiting.  The heartbeat does NOT count: the handset sends
+ * (H,) at 10 Hz whenever it is powered, so treating that as "the operator is
+ * using the remote" would skip the calibration every single time the handset
+ * happened to be switched on.
+ *
+ * Because it dispatches, the button that cancels the wait also takes effect -
+ * press MODE and you land in the menu with the countdown already over. */
+uint8_t ui_boot_wait(uint32_t ms);
+
+/* Forget any button seen so far.  Call once before a wait loop. */
+void ui_boot_skip_reset(void);
+
 /* Synchronous build + flush of a boot/status page, bypassing UI_PERIOD_MS.
  *
  * Sys_All_Init() blocks in three places before the main loop ever runs - the

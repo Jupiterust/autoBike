@@ -48,6 +48,10 @@ static uint32_t rc_last_ms = 0;
 static uint8_t  rc_seen    = 0;     /* a frame has arrived at least once */
 static uint8_t  rc_link_ok = 0;
 
+/* Latches on the first recognised button.  Deliberately not set by the
+ * heartbeat or by unknown ids - see ui_boot_wait() in ui.h. */
+static volatile uint8_t rc_btn_seen = 0;
+
 /* ====================================================================== */
 /* Menu model                                                             */
 /* ====================================================================== */
@@ -400,6 +404,10 @@ void ui_command(char id, const char *value)
         return;                 /* unknown id: no state change, no redraw */
     }
 
+    /* Only reached by a recognised button: 'H' returned early above and an
+     * unknown id returned from default. */
+    rc_btn_seen = 1;
+
     ui_request_redraw();
 }
 
@@ -465,6 +473,27 @@ static void ui_flush(void)
 
     ui_pages_pushed = disp_flush();
     ui_refresh_us = (DWT->CYCCNT - t0) / CPU_MHZ;
+}
+
+void ui_boot_skip_reset(void)
+{
+    rc_btn_seen = 0;
+}
+
+uint8_t ui_boot_wait(uint32_t ms)
+{
+    uint32_t t0 = HAL_GetTick();
+
+    while ((uint32_t)(HAL_GetTick() - t0) < ms)
+    {
+        led_task();
+        vofa_apply();       /* so the handset actually works during the wait */
+        vofa_con();
+
+        if (rc_btn_seen)
+            return 1;
+    }
+    return 0;
 }
 
 void ui_render_now(const char *msg, int secs)
