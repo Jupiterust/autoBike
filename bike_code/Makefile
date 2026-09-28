@@ -80,6 +80,7 @@ USER/telemetry/telemetry.c \
 USER/oled/oled.c \
 USER/disp/disp_port.c \
 USER/disp/disp.c \
+USER/led/led.c \
 USER/tft/tft.c \
 USER/ui/ui.c
 
@@ -166,6 +167,7 @@ C_INCLUDES =  \
 -IUSER/oled \
 -IUSER/disp \
 -IUSER/tft \
+-IUSER/led \
 -IUSER/ui
 
 

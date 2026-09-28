@@ -24,6 +24,7 @@ void Sys_All_Init(void)
 	//HAL_TIM_Base_Start_IT(&htim3);                                          //使用陀螺仪中断即可    2ms定时中断
 	
 	ui_init();     //OLED bring-up: SPI1 + panel + splash
+	led_init();    //PG1..PG8: CubeMX does not configure them
 
 	LED0 = 1;
 	LED1 = 1;
@@ -40,7 +41,7 @@ void Sys_All_Init(void)
 	{
 		if(i%10 == 0)BEEP_ON;
 		ui_render_now("Calib hold upright", 31 - i);
-		HAL_Delay(1000);BEEP_OFF;
+		led_delay(1000);BEEP_OFF;
 	}
 	LED0 = 0;
 	LED1 = 0;
@@ -66,7 +67,7 @@ void Sys_All_Init(void)
 			{
 				if(i%1 == 0)BEEP_ON;
 				ui_render_now("re-stand", 2 - i);
-				HAL_Delay(1000);BEEP_OFF;
+				led_delay(1000);BEEP_OFF;
 			}
 			upper_Flag = 1;
 			restart_flag = 0;
@@ -83,6 +84,7 @@ void Sys_All_Init(void)
 #endif
 
     	ui_task();      //OLED refresh, main loop only - never from balance()
+    	led_task();     //chase light, self-throttled
 				
 			
 				

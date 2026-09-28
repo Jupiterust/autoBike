@@ -477,6 +477,8 @@ void ui_render_now(const char *msg, int secs)
         return;
     last_ms = now;
 
+    led_task();                 /* keep the chase alive while the boot blocks */
+
     t0 = DWT->CYCCNT;
 
     ui_row(0, UI_BANNER);
