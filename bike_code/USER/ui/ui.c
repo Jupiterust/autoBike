@@ -193,20 +193,26 @@ static void ui_perf_row(uint8_t row)
     /* d = odrive_tx_drops, speed commands the USART3 DMA refused.  It must stay
      * at 0; a climbing count means a motor is being commanded less often than
      * the code believes, which is exactly how the rear wheel used to be dead. */
-    ui_row(row, "g%lu p%u r%lu d%lu",
+    ui_row(row, "g%lu p%u r%lu d%lu i%lu",
            (unsigned long)ui_refresh_us,
            (unsigned)ui_pages_pushed,
            (unsigned long)ui_render_us,
-           (unsigned long)odrive_tx_drops);
+           (unsigned long)odrive_tx_drops,
+           (unsigned long)uart_err_cnt[UART_ERR_IMU]);
 }
 #endif
 
 static void ui_page_drive(void)
 {
     ui_row(0, UI_BANNER);
-    ui_row(1, "DRIVE M0:%d M1:%d %s",
+    /* The number after the link state is how many times UART7 reception had to
+     * be restarted.  Non-zero means the link really did break and recovered by
+     * itself; still zero while the handset is silent means the trouble is on
+     * the radio side, not here. */
+    ui_row(1, "DRIVE M0:%d M1:%d %s%lu",
            (int)param.M0_Flag, (int)param.M1_Flag,
-           rc_seen ? (rc_link_ok ? "RC" : "??") : "--");
+           rc_seen ? (rc_link_ok ? "RC" : "??") : "--",
+           (unsigned long)uart_err_cnt[UART_ERR_REMOTE]);
     ui_row(2, "spd%6.2f srv%+4d", M1_Ctl, Servo_Ctl);
     ui_row(3, "rol %8.3f", imu.rol);
 #if UI_SHOW_PERF
@@ -494,6 +500,7 @@ void ui_task(void)
     static uint32_t next_ms = 0;
     static uint32_t hz_ms   = 0;
     static uint32_t hz_last = 0;
+    static uint32_t wd_ms   = 0;
     uint32_t now = HAL_GetTick();
     uint32_t t0;
 
@@ -507,6 +514,14 @@ void ui_task(void)
     }
 
     ui_rc_check();
+
+    /* Re-arm any link whose reception died. Cheap, but no point doing it at
+     * main-loop speed. */
+    if ((uint32_t)(now - wd_ms) >= 100u)
+    {
+        wd_ms = now;
+        uart_rx_watchdog();
+    }
 
     /* Unsigned wrap-safe comparison; HAL_GetTick() rolls over after 49 days.
      * An explicit request jumps the queue so input feels immediate. */
