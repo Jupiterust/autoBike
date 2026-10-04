@@ -95,6 +95,7 @@ extern volatile uint32_t odrive_tx_drops;
 /* Flywheel ticks between rear-wheel feedback queries (cycle is 40). */
 #define ODRIVE_FB_EVERY  20u  /* M1_cnt1 runs 1..39, so this is one
                                  "f 1" per 40 frames, i.e. ~10 Hz  */
+#define ODRIVE_CMD_HEARTBEAT_MS  100u  /* resend an unchanged "v"    */
 
 extern volatile float    odrive_pos1_turns;  /* absolute, motor turns */
 extern volatile float    odrive_vel1_turns;  /* motor turns/s         */

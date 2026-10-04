@@ -127,38 +127,69 @@ void odrive_speed_ctl(unsigned char num, float speed)
      * takes 260 us to clock out and DMA reads straight from this memory, so a
      * single shared buffer let the next call rewrite a frame that was still
      * in flight. */
-    static uint8_t odeive_buf[2][12];
-    uint8_t *b = odeive_buf[(num == 0) ? 0 : 1];
+    static uint8_t  odeive_buf[2][12];
+    /* Last value actually sent, and when.  balance() calls this on 39 of
+     * every 40 IMU frames - about 360 commands a second - but set_speed0 is
+     * only recomputed by the angular-rate loop every 6 frames, so four fifths
+     * of that was the same number over and over.  ODrive parses every one of
+     * them in a thread that shares its UART, and its sink drops the rest of a
+     * response when its own TX is still busy: that is what truncated every
+     * reply to 10 bytes.  Skipping unchanged commands changes nothing about
+     * the control - ODrive holds the last velocity it was given. */
+    static uint8_t  last_sent[2][6];
+    static uint32_t last_ms[2] = {0u, 0u};
+    static uint8_t  primed[2]  = {0u, 0u};
 
-    b[0] = 'v';
-    b[1] = ' ';
-    if(num==0) b[2] = '0';
-    else b[2] = '1';
+    uint8_t  ax = (num == 0) ? 0u : 1u;
+    uint8_t *b  = odeive_buf[ax];
+    uint8_t  f[6];
+    uint32_t now = HAL_GetTick();
 
-    b[3] = ' ';
-    if(speed<0)
+    /* Format into a scratch copy first: b may still be in flight, and
+     * rewriting it before deciding to skip would corrupt that frame. */
+    if (speed < 0)
     {
-        b[4] = '-';
-        b[5] = (short)(-speed)%100/10+48;
-        b[6] = (short)(-speed)%10/1+48;
-        b[7] = '.';
-        b[8] = (short)(-speed*10)%10/1+48;
-        b[9] = (short)(-speed*100)%10/1+48;
+        f[0] = '-';
+        f[1] = (short)(-speed)%100/10+48;
+        f[2] = (short)(-speed)%10/1+48;
+        f[3] = '.';
+        f[4] = (short)(-speed*10)%10/1+48;
+        f[5] = (short)(-speed*100)%10/1+48;
     }
     else
     {
-        b[4] = '+';
-        b[5] = (short)(speed)%100/10+48;
-        b[6] = (short)(speed)%10/1+48;
-        b[7] = '.';
-        b[8] = (short)(speed*10)%10/1+48;
-        b[9] = (short)(speed*100)%10/1+48;
+        f[0] = '+';
+        f[1] = (short)(speed)%100/10+48;
+        f[2] = (short)(speed)%10/1+48;
+        f[3] = '.';
+        f[4] = (short)(speed*10)%10/1+48;
+        f[5] = (short)(speed*100)%10/1+48;
     }
+
+    /* Resend an unchanged command every ODRIVE_CMD_HEARTBEAT_MS anyway, so a
+     * single dropped frame cannot leave ODrive on a stale setpoint. */
+    if (primed[ax]
+     && memcmp(last_sent[ax], f, sizeof f) == 0
+     && (uint32_t)(now - last_ms[ax]) < ODRIVE_CMD_HEARTBEAT_MS)
+        return;
+
+    b[0] = 'v';
+    b[1] = ' ';
+    b[2] = (num == 0) ? '0' : '1';
+    b[3] = ' ';
+    memcpy(&b[4], f, sizeof f);
     b[10] = 0x0D;
     b[11] = 0x0A;
 
     if (HAL_UART_Transmit_DMA(&huart3, b, 12) != HAL_OK)
+    {
         odrive_tx_drops++;      /* HAL_BUSY: the previous frame is still going */
+        return;                 /* not sent, so do not record it as sent */
+    }
+
+    memcpy(last_sent[ax], f, sizeof f);
+    last_ms[ax] = now;
+    primed[ax]  = 1u;
 }
 
 /* ====================================================================== *
