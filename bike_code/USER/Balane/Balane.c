@@ -201,7 +201,16 @@ void balance(void)
        flywheel loses one update in 40 (2.5ms) and is re-sent on the next
        tick, which it cannot notice. */
     if(M1_cnt1 < 40)
-    odrive_speed_ctl(0,odrive.set_speed0);    //odrive_speed_ctrl(0,odrive.set_speed0);//can
+    {
+        /* One frame per tick on this bus. The axis-1 feedback query takes
+           tick 20 of the 40 in a cycle, giving ~10Hz of rear-wheel position
+           and speed; odrive_speed_ctl() skips commands whose value has not
+           changed, so this no longer floods ODrive's ASCII parser. */
+        if((M1_cnt1 % ODRIVE_FB_EVERY) == 0)
+            odrive_request_feedback(1);
+        else
+            odrive_speed_ctl(0,odrive.set_speed0);
+    }
 /************ºóÂÖ¿ØÖÆ**************************************************/	
     if(M1_cnt1 >= 40)
     {

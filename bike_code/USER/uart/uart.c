@@ -27,6 +27,9 @@ int fputc(int ch, FILE *f)
 uint8_t USART_RX_BUF1[USART_RX_LEN1],
 USART_RX_BUF2[USART_RX_LEN2];     //Ω” ’ª∫≥Â
 
+/* Its own buffer. The line that used to be commented out in Init.c reused
+   USART_RX_BUF2, which belongs to huart7 - the two would have fought. */
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -62,7 +65,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 /* Per-link error counts. Sticky, never reset; watch them on the display's
    diagnostic row to tell "the radio dropped" from "the radio is fine". */
-volatile uint32_t uart_err_cnt[UART_ERR_LINKS] = {0, 0, 0, 0};
+volatile uint32_t uart_err_cnt[UART_ERR_LINKS] = {0, 0, 0, 0, 0};
 
 /* Without this, one overrun kills a link for good.
  *
@@ -110,6 +113,11 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
         uart_err_cnt[UART_ERR_UPPER]++;
         HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);
     }
+    else if (huart == &huart3)
+    {
+        uart_err_cnt[UART_ERR_ODRIVE]++;
+        odrive_feedback_start();
+    }
     else if (huart == &huart6)
     {
         uart_err_cnt[UART_ERR_BLUE]++;
@@ -128,6 +136,8 @@ void uart_rx_watchdog(void)
         HAL_UART_Receive_IT(&huart7, (uint8_t *)USART_RX_BUF2, USART_RX_LEN2);
     if (huart2.RxState == HAL_UART_STATE_READY)
         HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);
+    if (huart3.RxState == HAL_UART_STATE_READY)
+        odrive_feedback_start();
     if (huart6.RxState == HAL_UART_STATE_READY)
         HAL_UART_Receive_DMA(&huart6, (uint8_t *)vp_rxbuff, VALUEPACK_BUFFER_SIZE);
 }

@@ -21,7 +21,8 @@ void uart_printf(const char *format,...);
 #define UART_ERR_REMOTE   1   /* huart7, handset / VOFA                 */
 #define UART_ERR_UPPER    2   /* huart2                                 */
 #define UART_ERR_BLUE     3   /* huart6, bluetooth ValuePack            */
-#define UART_ERR_LINKS    4
+#define UART_ERR_ODRIVE   4   /* huart3, ODrive replies                 */
+#define UART_ERR_LINKS    5
 
 extern volatile uint32_t uart_err_cnt[UART_ERR_LINKS];
 

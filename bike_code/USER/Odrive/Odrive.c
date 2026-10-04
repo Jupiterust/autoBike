@@ -161,6 +161,290 @@ void odrive_speed_ctl(unsigned char num, float speed)
         odrive_tx_drops++;      /* HAL_BUSY: the previous frame is still going */
 }
 
+/* ====================================================================== *
+ * Axis 1 (rear wheel) feedback over the same UART3 ASCII link.
+ *
+ * Until now the rear wheel was open loop: the firmware knew what speed it had
+ * COMMANDED and nothing else.  The competition needs better than that - the
+ * red light has to be stopped for inside a 0.5 m zone and the finish line
+ * needs the rear wheel to stop on it - so both speed and distance have to be
+ * measured.  ODrive already has a 8192 cpr encoder on that axis; "f <axis>"
+ * returns "<pos_estimate> <vel_estimate>", in turns and turns/s.
+ *
+ * Deliberately separate from the old odrive_feedback()/odrive_analyze_speed()
+ * pair below, which are dead code: they are hard-wired to axis 0 and write
+ * odrive.now_speed0 - but that variable holds the FLYWHEEL speed read from
+ * TIM8 in encoder counts per IMU frame, which every tuned gain depends on.
+ * Letting ODrive turns/s land in it would silently rescale the whole speed
+ * loop.
+ * ====================================================================== */
+
+volatile float    odrive_pos1_turns = 0.0f;   /* absolute, motor turns   */
+volatile float    odrive_vel1_turns = 0.0f;   /* motor turns/s           */
+volatile uint32_t odrive_fb_ok      = 0;
+volatile uint32_t odrive_fb_bad     = 0;      /* unparseable replies     */
+volatile uint32_t odrive_fb_tx      = 0;      /* queries actually sent   */
+volatile uint32_t odrive_fb_rxbytes = 0;      /* raw bytes seen on UART3 */
+volatile uint32_t odrive_fb_ovf     = 0;      /* lines lost to overflow  */
+volatile uint32_t odrive_fb_eol     = 0;      /* CR or LF bytes seen     */
+volatile uint32_t odrive_fb_lead    = 0;      /* too much junk to skip   */
+
+static char    fb_line[48];                   /* filled by the RX ISR    */
+static uint8_t fb_len = 0;
+static char    fb_last[48] = "";              /* last line, for the display */
+/* The first line that would not parse, latched and never overwritten: a
+   30 Hz display cannot be read, and one bad sample settles the format. */
+static char    fb_err[48] = "";
+
+/* Bring-up: one latched window of the raw stream, in hex.  Inferring the
+   reply format from counters has cost two rounds already.  49 bytes spans
+   more than two replies, which is what shows whether the odd byte seen at
+   offset 10 recurs on a period - i.e. whether bytes are being dropped in
+   bursts - rather than leaving it to be guessed at. */
+#define FB_RAW_N  49u    /* 7 display rows x 7 bytes */
+static volatile uint8_t fb_raw[FB_RAW_N];
+static volatile uint8_t fb_raw_n    = 0;
+static volatile uint8_t fb_raw_cap  = 0;
+static volatile uint8_t fb_raw_done = 0;
+
+/* UART3 receives into this ring by circular DMA; the main loop drains it.
+   At 19 bytes a reply and 40 replies a second it holds ~340 ms. */
+static uint8_t  rx_ring[ODRIVE_RX_RING];
+static uint16_t rx_tail = 0;
+static uint8_t  fb_first_drain_done = 0;
+static volatile uint8_t fb_ready = 0;
+
+static float odom_origin_turns = 0.0f;
+
+/* Which value the outstanding query asked for: 0 = position, 1 = speed. */
+static volatile uint8_t fb_expect = 1u;
+
+/* "f <axis>" returns both values in one reply, but that reply is 19
+   characters and only the first 10 survive, so the speed was always cut
+   off.  Two single-value queries fit: "-30.000000" is exactly 10.  They
+   alternate, giving 5 Hz each at the 10 Hz query rate. */
+void odrive_request_feedback(uint8_t axis)
+{
+    static uint8_t q[32];
+    static const char *tail[2] = { "pos_estimate\r\n", "vel_estimate\r\n" };
+
+    uint8_t next = (uint8_t)(fb_expect ^ 1u);
+    uint8_t n;
+
+    memcpy(q, "r axis0.encoder.", 16);
+    q[6] = axis ? '1' : '0';
+    n = (uint8_t)strlen(tail[next]);
+    memcpy(&q[16], tail[next], n);
+    n = (uint8_t)(16u + n);
+
+    if (HAL_UART_Transmit_DMA(&huart3, q, n) == HAL_OK)
+    {
+        fb_expect = next;
+        odrive_fb_tx++;
+    }
+    else
+    {
+        odrive_tx_drops++;
+    }
+}
+
+/* One byte, straight from the UART3 RX interrupt.  Keep it short. */
+
+/* Hand-rolled rather than atof(): that drags in newlib strtod for ~5.6 KB,
+   and this only ever has to read ODrive's own "%f %f" output. */
+static const char *fb_parse_float(const char *s, float *out)
+{
+    float v = 0.0f, frac = 0.1f;
+    uint8_t neg = 0;
+
+    /* Replies arrive with a stray byte in front of the number - a 'c' in
+       every sample captured so far.  ODrive writes the value into a
+       char[10] in cmd_read_property() and then hands that buffer to
+       respond() as a FORMAT string, while fibre_over_uart writes straight
+       to the same uart_tx_stream that the ASCII protocol reaches through a
+       multiplexer; something in there leaks a byte.  Skip it, but only a
+       byte or two, so "invalid motor 1" is still rejected rather than read
+       as the number 1. */
+    {
+        uint8_t skipped = 0;
+        while (*s != '\0' && skipped <= FB_MAX_LEAD_JUNK
+            && !((*s >= '0' && *s <= '9') || *s == '-' || *s == '+'))
+        {
+            s++;
+            skipped++;
+        }
+        if (skipped > FB_MAX_LEAD_JUNK)
+        {
+            odrive_fb_lead++;
+            return 0;
+        }
+    }
+
+    if (*s == '-') { neg = 1; s++; }
+    else if (*s == '+') s++;
+
+    if (*s < '0' || *s > '9') return 0;
+
+    while (*s >= '0' && *s <= '9')
+        v = v * 10.0f + (float)(*s++ - '0');
+
+    if (*s == '.')
+    {
+        s++;
+        while (*s >= '0' && *s <= '9')
+        {
+            v += (float)(*s++ - '0') * frac;
+            frac *= 0.1f;
+        }
+    }
+
+    *out = neg ? -v : v;
+    return s;
+}
+
+/* Called once a terminator arrives.  This runs in main-loop context now, so
+   there is no ISR/main handover left to get wrong. */
+static void fb_line_done(void)
+{
+    float v = 0.0f;
+
+    if (fb_len == 0u)
+        return;
+
+    fb_line[fb_len] = '\0';
+    memcpy(fb_last, fb_line, (size_t)fb_len + 1u);
+
+    if (fb_parse_float(fb_line, &v) == 0)
+    {
+        if (fb_err[0] == '\0')
+            memcpy(fb_err, fb_line, sizeof fb_err);
+        odrive_fb_bad++;
+        return;
+    }
+
+    if (fb_expect == 0u)
+    {
+        odrive_pos1_turns = v;
+    }
+    else
+    {
+        odrive_vel1_turns = v;
+        odrive.now_speed1 = v;
+    }
+    odrive_fb_ok++;
+}
+
+static void fb_feed(uint8_t b)
+{
+    if (fb_raw_cap && fb_raw_n < FB_RAW_N)
+    {
+        fb_raw[fb_raw_n++] = b;
+        if (fb_raw_n >= FB_RAW_N) { fb_raw_cap = 0; fb_raw_done = 1; }
+    }
+    if (b == '\n' || b == '\r')
+        odrive_fb_eol++;
+
+    odrive_fb_rxbytes++;
+
+    /* ODrive truncates each reply at 10 characters, so the CR/LF never
+       arrives - odrive_fb_eol stays 0 and is kept as the probe for that.
+       0x21 does arrive on every reply, and ODrive's own ASCII parser
+       treats '!' as end-of-line, so it is a protocol character here and
+       not noise.  Split on it. */
+    if (b == '\n' || b == '\r' || b == '!')
+    {
+        fb_line_done();
+        fb_len = 0;
+        return;
+    }
+
+    fb_line[fb_len++] = (char)b;
+
+    /* Overflow means this line is lost - the UART came up mid-reply, or the
+       ring was drained late and wrapped.  Throw it away and resynchronise on
+       the next terminator. */
+    if (fb_len >= (uint8_t)(sizeof fb_line - 1u))
+    {
+        fb_len = 0;
+        odrive_fb_ovf++;
+    }
+}
+
+/* Circular DMA: reception is armed once and never needs re-arming, and the
+   DMA controller services RXNE within a few cycles, so the control loop
+   hogging the CPU can no longer cost bytes. */
+void odrive_feedback_start(void)
+{
+    rx_tail = 0;
+    HAL_UART_Receive_DMA(&huart3, rx_ring, ODRIVE_RX_RING);
+}
+
+void odrive_feedback_task(void)
+{
+    uint16_t head;
+
+    if (huart3.hdmarx == 0)
+        return;
+
+    head = (uint16_t)(ODRIVE_RX_RING - __HAL_DMA_GET_COUNTER(huart3.hdmarx));
+    if (head >= ODRIVE_RX_RING)
+        return;                 /* mid-reload; next pass will see it */
+
+    /* The first pass skips whatever piled up while the boot countdown had the
+       main loop blocked: those bytes are stale and the ring has wrapped over
+       them.  It is also the right moment to arm the raw window. */
+    if (!fb_first_drain_done)
+    {
+        fb_first_drain_done = 1;
+        rx_tail = head;
+        fb_raw_n = 0;
+        fb_raw_cap = 1;
+        return;
+    }
+
+    while (rx_tail != head)
+    {
+        fb_feed(rx_ring[rx_tail]);
+        if (++rx_tail >= ODRIVE_RX_RING)
+            rx_tail = 0;
+    }
+}
+
+/* Bring-up only: hand the partially assembled line to the display, so the
+   bytes that ARE arriving can be read directly instead of guessed at. */
+/* One display row of the window, 7 bytes as hex.  Returns how many bytes
+   have been captured in all, so the caller can show the window length. */
+uint8_t odrive_fb_hex(char *dst, uint8_t n, uint8_t row)
+{
+    static const char hex[] = "0123456789ABCDEF";
+    uint8_t i, o = 0, from = (uint8_t)(row * 7u);
+
+    for (i = from; i < (uint8_t)(from + 7u) && i < fb_raw_n
+                && (uint8_t)(o + 3u) < n; i++)
+    {
+        dst[o++] = hex[(fb_raw[i] >> 4) & 0xfu];
+        dst[o++] = hex[fb_raw[i] & 0xfu];
+        dst[o++] = ' ';
+    }
+    dst[o] = '\0';
+    return fb_raw_n;
+}
+
+void odrive_odom_reset(void)
+{
+    odom_origin_turns = odrive_pos1_turns;
+}
+
+float odrive_odom_m(void)
+{
+    return (odrive_pos1_turns - odom_origin_turns) * DRIVE_M_PER_MOTOR_TURN;
+}
+
+float odrive_speed_mps(void)
+{
+    return odrive_vel1_turns * DRIVE_M_PER_MOTOR_TURN;
+}
+
 
 
 //获得odrive电机速度

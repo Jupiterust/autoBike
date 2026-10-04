@@ -217,13 +217,44 @@ static void ui_page_drive(void)
            (int)param.M0_Flag, (int)param.M1_Flag,
            rc_seen ? (rc_link_ok ? "RC" : "??") : "--",
            (unsigned long)uart_err_cnt[UART_ERR_REMOTE]);
-    ui_row(2, "spd%6.2f srv%+4d", M1_Ctl, Servo_Ctl);
+    /* Commanded vs measured rear-wheel speed, both in motor turns/s.  The
+     * second number is what the wheel is actually doing, read back from
+     * ODrive. */
+    ui_row(2, "spd%5.2f>%5.2f s%+4d",
+           (double)M1_Ctl, (double)odrive_vel1_turns, Servo_Ctl);
     ui_row(3, "rol %8.3f", imu.rol);
 #if UI_SHOW_PERF
     ui_perf_row(4);
 #else
     ui_row(4, "fly %8.2f", odrive.now_speed0);
 #endif
+
+    /* The TFT has spare rows, the OLED has none.  DISP_ROWS is a compile-time
+     * constant, so this whole block folds away on the OLED build - no #ifdef
+     * needed in the page code. */
+    if (DISP_ROWS > DISP_UI_ROWS)
+    {
+        /* Distance reads 0.00 until DRIVE_M_PER_MOTOR_TURN is measured; the
+         * raw motor turns next to it are what that calibration is read off. */
+        ui_row(5, "od%+7.2fm rw%5.2f",
+               (double)odrive_odom_m(), (double)odrive_vel1_turns);
+        ui_row(6, "pos%+9.3ft", (double)odrive_pos1_turns);
+        /* Feedback link health, left to right along the path a reply takes:
+         *   t  queries sent     f  replies parsed / rejected
+         *   e  CR or LF bytes seen - stays 0, because ODrive truncates every
+         *      reply inside cmd_read_property()'s char[10] and the terminator
+         *      falls in the part that is cut; 0x21 is what we split on.
+         *   ore UART3 errors    d  frames the UART3 DMA refused */
+        ui_row(7, "t%lu f%lu/%lu e%lu",
+               (unsigned long)odrive_fb_tx,
+               (unsigned long)odrive_fb_ok,
+               (unsigned long)odrive_fb_bad,
+               (unsigned long)odrive_fb_eol);
+        ui_row(8, "ore%lu d%lu o%lu",
+               (unsigned long)uart_err_cnt[UART_ERR_ODRIVE],
+               (unsigned long)odrive_tx_drops,
+               (unsigned long)odrive_fb_ovf);
+    }
 }
 
 static void ui_page_menu(void)

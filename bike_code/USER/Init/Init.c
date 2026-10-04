@@ -16,7 +16,7 @@ void Sys_All_Init(void)
     HAL_TIM_PWM_Start(&htim12,TIM_CHANNEL_1);       //蜂鸣器	 H6
     Servo_Init();                                   //舵机	 A0
     //odrive_canFilter_init();                      //can 未使用
-    //HAL_UART_Receive_DMA(&huart3, (uint8_t *)USART_RX_BUF2,USART_RX_BUF2);  //串口控制电机  不需要接受
+    odrive_feedback_start();                         //ODrive replies: rear wheel pos/vel
     HAL_UART_Receive_DMA(&huart6, (uint8_t *)vp_rxbuff,VALUEPACK_BUFFER_SIZE);//蓝牙G9 G14
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);    //上位机 D5 D6
     HAL_UART_Receive_IT(&huart7,(uint8_t *)USART_RX_BUF2, USART_RX_LEN2);     //E7 E8
@@ -88,6 +88,7 @@ void Sys_All_Init(void)
 
     	ui_task();      //OLED refresh, main loop only - never from balance()
     	led_task();     //chase light, self-throttled
+    	odrive_feedback_task();   //parse rear-wheel pos/vel replies
         //printf("hello\r\n");
         //uart_printf("%.2f,%.2f\n",odrive.now_speed0,odrive.set_speed0);
         //uart_printf("%.2f,%d\n",xx,yy);
