@@ -335,7 +335,7 @@ void send_ValuePack(Tx_Pack *tx_pack_ptr)
     vp_txbuff[TX_PACK_BYTE_SIZE+1] = sum;
     vp_txbuff[TX_PACK_BYTE_SIZE+2] = 0x5a;
 
-		HAL_UART_Transmit_DMA(&huart7,(uint8_t *)vp_txbuff,TX_PACK_BYTE_SIZE+3);	
+		HAL_UART_Transmit_IT(&huart7,(uint8_t *)vp_txbuff,TX_PACK_BYTE_SIZE+3);	
 		HAL_Delay(1);
 }
 

@@ -144,7 +144,7 @@ void uart_printf(const char *format,...)
 	length = vsnprintf((char*)_dbg_TXBuff, sizeof(_dbg_TXBuff)+1, (char*)format, args);
 	va_end(args);
     
-	HAL_UART_Transmit_DMA(&huart7,_dbg_TXBuff,length);
+	HAL_UART_Transmit_IT(&huart7,_dbg_TXBuff,length);
 }
 
 
