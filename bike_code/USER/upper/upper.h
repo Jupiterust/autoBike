@@ -3,8 +3,9 @@
 
 #include <stdint.h>
 
-/* Protocol angles describe the handlebar/front servo, positive RIGHT.
- * Hardware-confirmed calibration: +90 internal units turns LEFT 90 deg.
+/* Protocol angles describe the front steering SERVO shaft relative to centre,
+ * not the handlebar or front-wheel angle after the mechanical linkage.
+ * Positive means right steering; +90 internal units means -90 servo degrees.
  * Wire values are whole degrees: -90..+90 means -90..+90 deg.
  * Servo_Delta (currently 90) remains the independent mechanical limit. */
 #define UPPER_STEER_REFERENCE_UNITS 90
