@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-/* Protocol angles describe the handlebar/front wheel, positive RIGHT.
+/* Protocol angles describe the handlebar/front servo, positive RIGHT.
  * Hardware-confirmed calibration: +90 internal units turns LEFT 90 deg.
  * Wire values are whole degrees: -90..+90 means -90..+90 deg.
  * Servo_Delta (currently 90) remains the independent mechanical limit. */
