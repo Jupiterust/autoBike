@@ -1,133 +1,301 @@
- #include "upper.h"	  
- 
+#include "A_include.h"
+#include "upper.h"
 
-uint8_t upper_Flag = 0;
+extern bool restart_flag; /* Init.c; the legacy Init.h does not declare it */
 
- 
- 
- 
-//通讯协议   
-//帧头 数据帧 数据帧 校验和(低八位) 帧尾
-//a5   01			01     02             5a
+volatile uint8_t upper_Flag = 0;
 
-// 计算数据帧的校验和（低八位）
-uint8_t calculateChecksum(uint8_t data1, uint8_t data2) {
-    return (data1 + data2) & 0xFF; // 计算两个数据字节之和的低八位
-}
+static uint8_t rx[8];
+static uint8_t rx_size;
+static volatile int16_t target_servo, target_rpm;
+static volatile uint32_t command_ms, armed_ms;
+static volatile uint8_t command_seen, timed_out, timeout_seen;
+static volatile uint8_t command_clamped, output_clamped, stop_pending;
+static volatile uint16_t boundary_pending;
 
-// 处理接收到的字节并发送控制帧的函数
-void Upper(uint8_t byte)
+typedef struct {
+    int16_t servo, rpm;
+    uint8_t status;
+} echo_t;
+
+/* USART2 IT reads this buffer until gState returns to READY. */
+static uint8_t tx[12];
+static echo_t last_echo;
+static uint8_t echo_sent;
+static uint32_t echo_ms;
+
+uint8_t upper_crc8(const uint8_t *data, uint16_t size)
 {
-    #define STX 0xA5
-    #define ETX 0x5A
-    // 全局变量（或应该作为类的成员变量，根据上下文决定），用于处理UART接收缓冲区
-    static uint8_t rxBuffer[5]; // 缓存接收到的帧
-    static uint8_t idx = 0;     // 跟踪缓冲区中的位置
-    static uint8_t receivedChecksum = 0; // 接收到的校验和
-
-	
-		static uint8_t Line_Flag = 0;//当前角度 读取标志位
-		static uint8_t Left_Right_Flag = 0;//左右转向标志
-		static int Servo_line = 0;////读取一次当前角度 判断当前位置
-	
-	
-	
-    if(upper_Flag)
-		{
-			// 使用 switch 语句处理不同的状态
-			switch (idx) {
-			case 0:
-					// 如果接收到的字节是帧头
-					if (byte == STX) {
-							// 开始字符检测到，准备接收数据
-							idx = 1;
-					} else {
-							// 如果不是帧头，则重置索引
-							idx = 0;
-					}
-					break;
-			case 1:
-					// 存储第一个数据字节（速度控制信息）
-					rxBuffer[idx] = byte;
-					idx = 2;
-					break;
-			case 2:
-					// 存储第二个数据字节（舵机角度控制信息）
-					rxBuffer[idx] = byte;
-					idx = 3;
-					break;
-			case 3:
-					// 存储接收到的校验和
-					receivedChecksum = byte;
-					idx = 4;
-					// 在这里不立即验证校验和，因为我们还没有接收到帧尾
-					break;
-			case 4:
-					// 如果接收到的字节是帧尾
-					if (byte == ETX) {
-							// 计算期望的校验和
-							uint8_t expectedChecksum = calculateChecksum(rxBuffer[1], rxBuffer[2]);
-							// 验证校验和
-							if (receivedChecksum == expectedChecksum) {
-									// 校验和正确，处理数据
-								
-		
-								
-									if(rxBuffer[1] == 0x00)
-									{
-										
-										if(Line_Flag == 0)
-										{
-											Line_Flag = 1;
-											Servo_line = Servo_Ctl;
-											if(Servo_line>=0)Left_Right_Flag = 0;
-											else Left_Right_Flag = 1;
-										}
-										
-										if(Left_Right_Flag == 1)
-										{
-											Servo_Ctl++;
-											if(Servo_Ctl == Servo_Delta)Left_Right_Flag = 0;
-										}
-										else 
-										{
-											Servo_Ctl--;
-											if(Servo_Ctl == -Servo_Delta)Left_Right_Flag = 1;
-										}
-										
-									}
-									else if(rxBuffer[1] == 0x01)Servo_Ctl = Servo_Ctl-6;
-									else if(rxBuffer[1] == 0x02)Servo_Ctl = Servo_Ctl-2   ;
-									else if(rxBuffer[1] == 0x03)Servo_Ctl = 0;
-									else if(rxBuffer[1] == 0x04)Servo_Ctl = Servo_Ctl+2;
-									else if(rxBuffer[1] == 0x05)Servo_Ctl = Servo_Ctl+6;							
-									if(rxBuffer[1] != 0x00)Line_Flag = 0;
-
-								
-								
-
-									param.M1_Flag = 1;	
-									if(rxBuffer[2] == 0x00){M1_Ctl = 0;param.M1_Flag = 0;}
-									else if(rxBuffer[2] == 0x01)M1_Ctl = 0.6f;
-									else if(rxBuffer[2] == 0x02)M1_Ctl = 0.9f;
-									else if(rxBuffer[2] == 0x03)M1_Ctl = 1.2f;
-									else if(rxBuffer[2] == 0x04)M1_Ctl = 1.5f;
-									else if(rxBuffer[2] == 0x05)M1_Ctl = 1.8f;	
-									else if(rxBuffer[2] == 0x06)M1_Ctl = 2.1f;
-									else if(rxBuffer[2] == 0x07)M1_Ctl = 2.4f;
-									else if(rxBuffer[2] == 0x08)M1_Ctl = 2.7f;
-									else if(rxBuffer[2] == 0x09)M1_Ctl = 3.0f;
-							}
-							// 无论校验和是否正确，都重置索引以准备接收下一个帧
-					} else {
-							// 如果不是帧尾，则重置索引（虽然在这种情况下不太可能，但我们还是加上这个判断）
-							idx = 0;
-					}
-					break;
-			default:
-					idx = 0;
-					break;
-			}
-		}
+    uint8_t crc = 0;
+    uint16_t i;
+    uint8_t bit;
+    for (i = 0; i < size; i++) {
+        crc ^= data[i];
+        for (bit = 0; bit < 8; bit++)
+            crc = (uint8_t)((crc & 0x80u) ? (crc << 1) ^ 0x07u : crc << 1);
+    }
+    return crc;
 }
 
+static int16_t get_i16(const uint8_t *p)
+{
+    uint16_t u = (uint16_t)p[0] | ((uint16_t)p[1] << 8);
+    return (int16_t)((u & 0x8000u) ? (int32_t)u - 65536 : (int32_t)u);
+}
+
+static void put_i16(uint8_t *p, int16_t value)
+{
+    uint16_t u = (uint16_t)value;
+    p[0] = (uint8_t)u;
+    p[1] = (uint8_t)(u >> 8);
+}
+
+static int angle_to_units(int16_t angle)
+{
+    int32_t mag = angle < 0 ? -(int32_t)angle : angle;
+    int units = (int)((mag * UPPER_STEER_REFERENCE_UNITS
+                   + UPPER_STEER_REFERENCE_DDEG / 2)
+                  / UPPER_STEER_REFERENCE_DDEG);
+    if (units > Servo_Delta) units = Servo_Delta;
+    return angle > 0 ? -units : units;
+}
+
+static int16_t units_to_angle(int units)
+{
+    int32_t mag = units < 0 ? -(int32_t)units : units;
+    int16_t angle = (int16_t)((mag * UPPER_STEER_REFERENCE_DDEG
+                            + UPPER_STEER_REFERENCE_UNITS / 2)
+                           / UPPER_STEER_REFERENCE_UNITS);
+    return units > 0 ? (int16_t)-angle : angle;
+}
+
+/* Called with interrupts masked, or from the highest-priority balance ISR.
+ * Reset the existing limiter's history as well as the public variable:
+ * otherwise its previous non-zero value could steer again after a stop. */
+static void clear_drive(void)
+{
+    target_servo = target_rpm = 0;
+    command_clamped = output_clamped = 0;
+    M1_Ctl = 0.0f;
+    param.M1_Flag = 0;
+    odrive.set_speed1 = 0.0f;
+    Servo_Ctl = Steer_Speed_Limit(0, 2 * Servo_Delta);
+    Servoduty = Servo_Center_Mid;
+    servo_con = 0;
+    ServoCtrl(Servo_Center_Mid);
+    stop_pending = 1;
+}
+
+void upper_stop_control(void)
+{
+    uint32_t pri = __get_PRIMASK();
+    __disable_irq();
+    command_seen = timed_out = 0;
+    armed_ms = HAL_GetTick();
+    clear_drive();
+    __set_PRIMASK(pri);
+}
+
+void upper_init(void)
+{
+    upper_Flag = 0;
+    upper_rx_reset();
+    command_ms = timeout_seen = boundary_pending = 0;
+    echo_sent = 0;
+    echo_ms = 0;
+    upper_stop_control();
+}
+
+void upper_toggle_mode(void)
+{
+    uint32_t pri = __get_PRIMASK();
+    __disable_irq();
+    upper_Flag ^= 1u;
+    upper_rx_reset(); /* a frame started before the switch cannot take over */
+    upper_stop_control();
+    __set_PRIMASK(pri);
+}
+
+void upper_rx_reset(void)
+{
+    rx_size = 0;
+}
+
+static void accept_command(int16_t servo, int16_t rpm)
+{
+    uint8_t clamped = 0;
+    uint32_t pri;
+
+    /* Handset mode ignores host driving commands, including their freshness.
+     * Queries are still answered. Switching always requires a NEW command. */
+    if (!upper_Flag) return;
+    if (servo < -UPPER_STEER_LIMIT_DDEG) {
+        servo = -UPPER_STEER_LIMIT_DDEG;
+        clamped = 1;
+    } else if (servo > UPPER_STEER_LIMIT_DDEG) {
+        servo = UPPER_STEER_LIMIT_DDEG;
+        clamped = 1;
+    }
+    if (rpm > UPPER_RPM_MAX) {
+        rpm = UPPER_RPM_MAX;
+        clamped = 1;
+    }
+
+    pri = __get_PRIMASK();
+    __disable_irq();
+    /* Do not retain a moving target through a balance fault/re-stand. */
+    if (!param.M0_Flag || restart_flag) servo = rpm = 0;
+    if (target_rpm != 0 && rpm == 0) stop_pending = 1;
+    target_servo = servo;
+    target_rpm = rpm;
+    command_clamped = clamped;
+    command_ms = HAL_GetTick();
+    command_seen = 1;
+    timed_out = 0;
+    __set_PRIMASK(pri);
+}
+
+static void rx_drop(uint8_t n)
+{
+    rx_size = (uint8_t)(rx_size - n);
+    memmove(rx, rx + n, rx_size);
+}
+
+void  Upper(uint8_t byte)
+{
+    uint8_t size;
+    int16_t rpm;
+    rx[rx_size++] = byte;
+    while (rx_size) {
+        if (rx[0] != 0xAAu) { rx_drop(1); continue; }
+        if (rx_size < 2) return;
+        if (rx[1] == 0x55u) size = 8;
+        else if (rx[1] == 0x57u) size = 4;
+        else { rx_drop(1); continue; }
+        if (rx_size < size) return;
+        if (rx[size - 1] != 0x5Au
+         || upper_crc8(rx, (uint16_t)(size - 2)) != rx[size - 2]) {
+            rx_drop(2); /* preserve all payload bytes for resynchronisation */
+            continue;
+        }
+        if (size == 8) {
+            rpm = get_i16(rx + 4);
+            if (rpm < 0) { rx_drop(2); continue; }
+            accept_command(get_i16(rx + 2), rpm);
+        } else if (boundary_pending != UINT16_MAX) {
+            boundary_pending++;
+        }
+        rx_drop(size);
+    }
+}
+
+uint8_t upper_control_tick(void)
+{
+    uint8_t stop;
+    uint32_t now = HAL_GetTick();
+    if (upper_Flag) {
+        uint32_t since = command_seen ? command_ms : armed_ms;
+        if (!timed_out && (uint32_t)(now - since) > UPPER_TIMEOUT_MS) {
+            timed_out = timeout_seen = 1;
+            clear_drive();
+        }
+        if (!param.M0_Flag || restart_flag) {
+            if (target_servo || target_rpm || M1_Ctl != 0.0f
+             || odrive.set_speed1 != 0.0f || Servo_Ctl || param.M1_Flag)
+                clear_drive();
+        } else if (command_seen && !timed_out) {
+            /* Reapply the absolute target every tick: balance() overwrites
+             * Servo_Ctl with the intermediate slew-limited position. */
+            Servo_Ctl = angle_to_units(target_servo);
+            M1_Ctl = (float)target_rpm / 60.0f;
+            param.M1_Flag = target_rpm > 0;
+        }
+    }
+    stop = stop_pending;
+    stop_pending = 0;
+    return stop;
+}
+
+float upper_limit_drive(float speed)
+{
+    output_clamped = 0;
+    if (!upper_Flag) return speed; /* existing handset behaviour */
+    if (speed > (float)UPPER_RPM_MAX / 60.0f) {
+        output_clamped = 1;
+        return (float)UPPER_RPM_MAX / 60.0f;
+    }
+    if (speed < 0.0f) {
+        output_clamped = 1;
+        return 0.0f;
+    }
+    return speed;
+}
+
+static echo_t current_echo(void)
+{
+    echo_t result;
+    int units;
+    float speed;
+    uint32_t now, last, pri = __get_PRIMASK();
+    uint8_t seen, enabled;
+
+    __disable_irq();
+    now = HAL_GetTick();
+    last = command_ms;
+    seen = command_seen && upper_Flag;
+    enabled = param.M0_Flag && !restart_flag && param.M1_Flag;
+    units = (param.M0_Flag && !restart_flag) ? Servo_Ctl : 0;
+    speed = enabled ? odrive.set_speed1 : 0.0f;
+    result.status = (timeout_seen ? UPPER_TIMEOUT_SEEN : 0)
+                  | (enabled ? UPPER_MOTOR_EN : 0)
+                  | ((command_clamped || output_clamped) ? UPPER_CLAMPED : 0);
+    __set_PRIMASK(pri);
+    if (seen && (uint32_t)(now - last) <= UPPER_TIMEOUT_MS)
+        result.status |= UPPER_LINK_OK;
+    result.servo = (int16_t)units;
+    result.rpm = (int16_t)(speed * 60.0f + (speed < 0.0f ? -0.5f : 0.5f));
+    /* No steering sensor: report the applied software values for BOTH fields,
+     * with MEASURED=0, rather than mixing RPM feedback with a target angle. */
+    return result;
+}
+
+void upper_task(void)
+{
+    echo_t echo;
+    uint32_t now, pri;
+    if (huart2.gState != HAL_UART_STATE_READY) return;
+
+    if (boundary_pending) {
+        tx[0] = 0xAA; tx[1] = 0x56;
+        put_i16(tx + 2, -UPPER_STEER_LIMIT_DDEG);
+        put_i16(tx + 4, UPPER_STEER_LIMIT_DDEG);
+        put_i16(tx + 6, 0); /* minimum stable speed not calibrated */
+        put_i16(tx + 8, UPPER_RPM_MAX);
+        tx[10] = upper_crc8(tx, 10);
+        tx[11] = 0x5A;
+        if (HAL_UART_Transmit_IT(&huart2, tx, 12) == HAL_OK) {
+            pri = __get_PRIMASK();
+            __disable_irq();
+            boundary_pending--;
+            __set_PRIMASK(pri);
+        }
+        return;
+    }
+
+    now = HAL_GetTick();
+    echo = current_echo();
+    if (echo_sent && echo.servo == last_echo.servo
+     && echo.rpm == last_echo.rpm && echo.status == last_echo.status
+     && (uint32_t)(now - echo_ms) < UPPER_ECHO_PERIOD_MS) return;
+    tx[0] = 0xAA; tx[1] = 0x55;
+    put_i16(tx + 2, echo.servo);
+    put_i16(tx + 4, echo.rpm);
+    tx[6] = echo.status;
+    tx[7] = upper_crc8(tx, 7);
+    tx[8] = 0x5A;
+    if (HAL_UART_Transmit_IT(&huart2, tx, 9) == HAL_OK) {
+        last_echo = echo;
+        echo_ms = now;
+        echo_sent = 1;
+    }
+}

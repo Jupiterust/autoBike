@@ -213,7 +213,8 @@ static void ui_page_drive(void)
      * be restarted.  Non-zero means the link really did break and recovered by
      * itself; still zero while the handset is silent means the trouble is on
      * the radio side, not here. */
-    ui_row(1, "DRIVE M0:%d M1:%d %s%lu",
+    ui_row(1, "%s M0:%d M1:%d %s%lu",
+           upper_Flag ? "HOST" : "RC",
            (int)param.M0_Flag, (int)param.M1_Flag,
            rc_seen ? (rc_link_ok ? "RC" : "??") : "--",
            (unsigned long)uart_err_cnt[UART_ERR_REMOTE]);
@@ -369,10 +370,19 @@ void ui_command(char id, const char *value)
     rc_seen    = 1;
     rc_link_ok = 1;
 
+    if (upper_Flag && id != 'S' && id != 'H')
+        return;
+
     switch (id)
     {
     case 'H':                   /* heartbeat: the timestamp above is the point */
         return;                 /* no redraw - it would defeat the 10 Hz cap   */
+
+    case 'S':                   /* control source, independent of DRIVE/MENU */
+        upper_toggle_mode();
+        ui_mode = UI_MODE_DRIVE;
+        disp_invalidate();
+        break;
 
     case 'M':
         ui_mode = (ui_mode == UI_MODE_DRIVE) ? UI_MODE_MENU : UI_MODE_DRIVE;
@@ -395,14 +405,14 @@ void ui_command(char id, const char *value)
 
     case 'L':
         if (ui_mode == UI_MODE_DRIVE)
-            ui_drive_steer(-UI_SERVO_STEP);
+            ui_drive_steer(+UI_SERVO_STEP); /* physical left is positive */
         else
             ui_menu_nudge(-1);
         break;
 
     case 'R':
         if (ui_mode == UI_MODE_DRIVE)
-            ui_drive_steer(+UI_SERVO_STEP);
+            ui_drive_steer(-UI_SERVO_STEP);
         else
             ui_menu_nudge(+1);
         break;
@@ -448,6 +458,7 @@ void ui_command(char id, const char *value)
  * 5 degree cutout. */
 static void ui_rc_check(void)
 {
+    if (upper_Flag) return; /* autonomous driving uses the host watchdog */
     if (!rc_seen || !rc_link_ok)
         return;
     if ((uint32_t)(HAL_GetTick() - rc_last_ms) < UI_RC_TIMEOUT_MS)
@@ -517,6 +528,7 @@ uint8_t ui_boot_wait(uint32_t ms)
 
     while ((uint32_t)(HAL_GetTick() - t0) < ms)
     {
+        upper_task();
         led_task();
         vofa_apply();       /* so the handset actually works during the wait */
         vofa_con();
@@ -533,6 +545,7 @@ void ui_render_now(const char *msg, int secs)
     uint32_t now = HAL_GetTick();
     uint32_t t0;
 
+    upper_task();
     if ((uint32_t)(now - last_ms) < UI_BOOT_MIN_MS)
         return;
     last_ms = now;
@@ -567,6 +580,7 @@ void ui_task(void)
     uint32_t t0;
 
     loop_ticks++;
+    upper_task();
 
     if ((uint32_t)(now - hz_ms) >= 1000u)
     {

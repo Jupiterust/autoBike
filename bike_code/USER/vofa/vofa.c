@@ -7,6 +7,9 @@
 uint8_t vofa_buff[VOFA_COUNT][VOFA_BUFF_SIZE];
 volatile uint8_t vofa_flag;                 /* set in the UART7 RX ISR */
 volatile uint8_t vofa_index[VOFA_COUNT];
+static char ready_id;
+static char ready_value[VOFA_BUFF_SIZE];
+static volatile uint32_t mode_switches;
 
 char vofa_send_buff[VOFA_BUFF_SIZE];
 /* Frame parser for "(id,value)", called once per byte from the UART7 RX ISR.
@@ -39,6 +42,8 @@ void vofa_get(uint8_t byte)
 			vofa_state = 2;
 		else if (vofa_index[0] < VOFA_BUFF_SIZE - 1)
 			vofa_buff[0][vofa_index[0]++] = byte;
+        else
+            vofa_state = 0; /* discard overflowing frames */
 	}
 	else if (vofa_state == 2)
 	{
@@ -47,10 +52,22 @@ void vofa_get(uint8_t byte)
 			vofa_buff[0][vofa_index[0]] = '\0';
 			vofa_buff[1][vofa_index[1]] = '\0';
 			vofa_state = 0;
+            if (vofa_index[0] != 1) return;
+            if (vofa_buff[0][0] == 'S') {
+                if (vofa_index[1] == 0) {
+                    mode_switches++;
+                    vofa_flag = 0; /* discard a button queued BEFORE S */
+                }
+                return; /* a heartbeat must not overwrite a switch */
+            }
+            ready_id = (char)vofa_buff[0][0];
+            memcpy(ready_value, vofa_buff[1], vofa_index[1] + 1u);
 			vofa_flag = 1;
 		}
 		else if (vofa_index[1] < VOFA_BUFF_SIZE - 1)
 			vofa_buff[1][vofa_index[1]++] = byte;
+        else
+            vofa_state = 0;
 	}
 }
 
@@ -75,6 +92,7 @@ void vofa_con(void)
 
 	if (servo_con == 0)
 		return;
+    if (upper_Flag) return; /* host owns the absolute steering target */
 
 	/* was: if(!upper_Flag).  Steering is a drive-mode action; in the menu the
 	 * ramp is held so an edit cannot move the servo under the rider. */
@@ -116,8 +134,26 @@ void vofa_con(void)
 //#define RM
 void vofa_apply(void)
 {
+    char id, value[VOFA_BUFF_SIZE];
+    uint8_t pending;
+    uint32_t switches, pri = __get_PRIMASK();
+    __disable_irq();
+    switches = mode_switches;
+    mode_switches = 0;
+    pending = vofa_flag;
+    id = ready_id;
+    if (pending) memcpy(value, ready_value, sizeof value);
+    vofa_flag = 0;
+    __set_PRIMASK(pri);
+
+    if (switches) {
+        ui_command('S', "");
+        /* Two toggles return to the same mode but still stop/clear targets. */
+        if ((switches & 1u) == 0) ui_command('S', "");
+    }
+    if (upper_Flag) return; /* no driving or tuning from the handset */
  
-	if(vofa_flag)
+	if(pending)
 	{ 
 //		#ifndef RM
 //		switch(vofa_buff[0][0])
@@ -184,7 +220,7 @@ void vofa_apply(void)
 //		}
 
 //		#else
-		switch(vofa_buff[0][0])
+		switch(id)
 		{
 				case '0':
 								param.angular_zero = param.angular_zero-0.01f;
@@ -192,17 +228,7 @@ void vofa_apply(void)
 //						else param.M0_Flag = 0; 
 						break;
 				case '1'://切换自动控制与手动控制
-						if(upper_Flag)
-						{
-							upper_Flag = 0;
-							param.M1_Flag = 1;
-							M1_Ctl = 1.5f;
-						}
-						else
-						{
-							upper_Flag = 1;
-						}					
-						servo_con = 0; 
+                        /* Reserved: control ownership is changed ONLY by S. */
 						break;
 				case '2': //无风版
 //						M1_Ctl+=0.1f;
@@ -278,11 +304,10 @@ void vofa_apply(void)
 				default:
 						/* Everything that is not a legacy VOFA+ digit key is a
 						 * remote button; ui.h holds the id table. */
-						ui_command((char)vofa_buff[0][0], (const char *)vofa_buff[1]);
+						ui_command(id, value);
 						break;
 		} 
 //		#endif
-		vofa_flag = 0;
 		/* The buffers are no longer cleared here: vofa_get() resets the
 		 * indices when a frame starts, which also closes the race where a
 		 * frame arriving between this point and the memset lost its first

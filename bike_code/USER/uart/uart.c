@@ -40,7 +40,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
     else if (huart == (&huart2))
     {
-				if(upper_Flag == 1)Upper(USART_RX_BUF1[0]);
+				Upper(USART_RX_BUF1[0]); /* queries work in both control modes */
         HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);
     }
    else if (huart == (&huart7))
@@ -111,6 +111,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     else if (huart == &huart2)
     {
         uart_err_cnt[UART_ERR_UPPER]++;
+        upper_rx_reset();
         HAL_UART_Receive_IT(&huart2, (uint8_t *)USART_RX_BUF1, USART_RX_LEN1);
     }
     else if (huart == &huart3)
@@ -156,5 +157,4 @@ void uart_printf(const char *format,...)
     
 	HAL_UART_Transmit_IT(&huart7,_dbg_TXBuff,length);
 }
-
 

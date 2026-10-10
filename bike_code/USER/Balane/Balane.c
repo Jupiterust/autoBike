@@ -151,6 +151,7 @@ void balance(void)
     cnt++;	
     cnt1++;
     M1_cnt1++;
+    if (upper_control_tick()) M1_cnt1 = 40; /* stop at the next IMU tick */
     Read_Encoder();//滤波读取速度
     //odrive.now_speed0 = Read_Speed();//直接读取速度
 		error_zero = imu.rol-param.angular_zero;
@@ -169,7 +170,6 @@ void balance(void)
 		{
 			ServoCtrl(Servo_Center_Mid); 
 			Servo_Ctl = 0;
-			upper_Flag = 0;
 		}
 /************平衡控制**************************************************/	
 		Servo_zhongzhi_Gain = Servo_Gain();//舵机零点偏移平衡增益
@@ -232,7 +232,7 @@ void balance(void)
 					
 						//M1_Ctl = M1_Speed_Limit(M1_Ctl,0.2);
 					
-            odrive.set_speed1 = M1_Ctl + M1_gain;//基础控制
+            odrive.set_speed1 = upper_limit_drive(M1_Ctl + M1_gain);//保留转弯补偿，限幅最终输出
 						if(param.M0_Flag==0)
 						{
 					  	odrive.set_speed1 = 0;
@@ -248,7 +248,6 @@ void balance(void)
     telem_task();
     
 }
-
 
 
 

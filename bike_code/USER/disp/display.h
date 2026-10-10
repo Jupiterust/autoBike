@@ -101,6 +101,10 @@ void disp_clear_all(void);
 /* Draw one row of text, padded/truncated to DISP_COLS.  Cheap when unchanged. */
 void disp_row(uint8_t row, const char *text);
 
+/* Row 1: colour-filled 8x16 heading on the fitted TFT, ordinary text on OLED.
+ * Cached until the source changes; normal disp_row(1, ...) restores the row. */
+void disp_control_heading(uint8_t host);
+
 /* Finish the frame.  Returns how many units went to the panel since the last
  * call, and resets the count: GRAM pages for the OLED, character cells for the
  * TFT.  Either way it is "how much glass did this frame cost". */

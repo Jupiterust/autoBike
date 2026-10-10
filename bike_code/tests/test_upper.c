@@ -1,0 +1,292 @@
+/* Host-only integration tests for the actual upper.c and vofa.c.
+ * Build/run commands are in tests/run_upper_tests.sh. No board required. */
+#include "A_include.h"
+#include <assert.h>
+#include <stdio.h>
+
+param_t param;
+odrive_t odrive;
+UART_HandleTypeDef huart2;
+float M1_Ctl;
+int Servo_Ctl, Servoduty;
+bool restart_flag;
+static uint32_t now_ms, mask;
+static int last_steer;
+static unsigned sends, ui_calls;
+static uint8_t sent[12];
+static uint16_t sent_size;
+static const uint8_t *inflight;
+static HAL_StatusTypeDef tx_result;
+
+uint32_t HAL_GetTick(void) { return now_ms; }
+uint32_t __get_PRIMASK(void) { return mask; }
+void __disable_irq(void) { mask = 1; }
+void __set_PRIMASK(uint32_t value) { mask = value; }
+void ServoCtrl(int value) { Servoduty = value; }
+int Steer_Speed_Limit(float value, float limit)
+{
+    if (value - last_steer > limit) value = last_steer + limit;
+    if (value - last_steer < -limit) value = last_steer - limit;
+    last_steer = (int)value;
+    return last_steer;
+}
+int ui_get_mode(void) { return UI_MODE_DRIVE; }
+void ui_request_redraw(void) {}
+void ui_command(char id, const char *value)
+{
+    (void)value;
+    ui_calls++;
+    if (id == 'S') upper_toggle_mode();
+}
+HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *uart,
+                                      const uint8_t *data, uint16_t n)
+{
+    assert(uart == &huart2);
+    assert(n <= sizeof sent);
+    if (tx_result != HAL_OK) return tx_result;
+    assert(uart->gState == HAL_UART_STATE_READY);
+    memcpy(sent, data, n);
+    sent_size = n;
+    inflight = data;
+    uart->gState = 1;
+    sends++;
+    return HAL_OK;
+}
+static void tx_done(void)
+{
+    if (inflight) assert(memcmp(sent, inflight, sent_size) == 0);
+    huart2.gState = HAL_UART_STATE_READY;
+    inflight = NULL;
+}
+static int16_t read_i16(const uint8_t *p)
+{
+    uint16_t u = p[0] | ((uint16_t)p[1] << 8);
+    return (int16_t)((u & 0x8000) ? (int32_t)u - 65536 : u);
+}
+static void feed(const uint8_t *data, unsigned n)
+{
+    while (n--) Upper(*data++);
+}
+static void command(int16_t angle, int16_t rpm)
+{
+    uint8_t f[8] = {0xAA, 0x55, (uint8_t)angle,
+                   (uint8_t)((uint16_t)angle >> 8), (uint8_t)rpm,
+                   (uint8_t)((uint16_t)rpm >> 8), 0, 0x5A};
+    f[6] = upper_crc8(f, 6);
+    feed(f, sizeof f);
+}
+static void remote(const char *frame)
+{
+    while (*frame) vofa_get((uint8_t)*frame++);
+}
+static void reset(void)
+{
+    tx_done();
+    memset(&param, 0, sizeof param);
+    memset(&odrive, 0, sizeof odrive);
+    restart_flag = false;
+    now_ms = 0;
+    sends = ui_calls = 0;
+    tx_result = HAL_OK;
+    upper_init();
+    (void)upper_control_tick();
+    assert(mask == 0);
+}
+static void host(void)
+{
+    upper_toggle_mode();
+    (void)upper_control_tick();
+    param.M0_Flag = 1;
+}
+static void tick(float assist)
+{
+    (void)upper_control_tick();
+    Servo_Ctl = Steer_Speed_Limit(Servo_Ctl, 5);
+    ServoCtrl(Servo_Center_Mid + Servo_Ctl);
+    odrive.set_speed1 = param.M1_Flag ? upper_limit_drive(M1_Ctl + assist) : 0;
+}
+static uint8_t echo(void)
+{
+    tx_done();
+    upper_task();
+    assert(sent_size == 9 && sent[0] == 0xAA && sent[1] == 0x55);
+    assert(sent[8] == 0x5A && sent[7] == upper_crc8(sent, 7));
+    return sent[6];
+}
+
+static void test_crc_boot(void)
+{
+    reset();
+    assert(upper_crc8((const uint8_t *)"123456789", 9) == 0xF4);
+    assert(!upper_Flag && !param.M1_Flag && Servo_Ctl == 0 && M1_Ctl == 0);
+    assert(echo() == 0);
+    now_ms = 1001;
+    tick(0);
+    assert(echo() == 0); /* no host timeout in default handset mode */
+}
+static void test_owner_and_switch_mailbox(void)
+{
+    reset();
+    param.M0_Flag = 1;
+    command(100, 120);
+    tick(0);
+    assert(M1_Ctl == 0 && Servo_Ctl == 0);
+    remote("(S,)"); remote("(H,)");
+    vofa_apply();
+    assert(upper_Flag && !param.M1_Flag);
+    command(0, 120); tick(0);
+    remote("(0,)"); vofa_apply();
+    assert(param.angular_zero == 0); /* legacy tuning blocked in host mode */
+    remote("(S,)"); remote("(S,)"); vofa_apply();
+    assert(upper_Flag && M1_Ctl == 0 && !param.M1_Flag);
+    remote("(S,)"); vofa_apply();
+    assert(!upper_Flag);
+    remote("(SS,)"); vofa_apply();
+    remote("(S,1)"); vofa_apply();
+    assert(!upper_Flag); /* malformed/non-four-byte switch is not accepted */
+    host();
+    remote("(4,)"); remote("(S,)"); vofa_apply();
+    assert(!upper_Flag && servo_con == 0); /* no queued pre-switch steering */
+}
+static void test_absolute_slew_and_direction(void)
+{
+    reset(); host();
+    for (unsigned i = 0; i < 100; i++) { command(-120, 120); tick(0); }
+    assert(Servo_Ctl == 64 && M1_Ctl == 2.0f);
+    assert(param.M1_Flag && (echo() & UPPER_MOTOR_EN));
+    assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
+    command(120, 120);
+    for (unsigned i = 0; i < 30; i++) tick(0);
+    assert(Servo_Ctl == -64); /* target survives the intermediate slew values */
+    assert(!(echo() & UPPER_MEASURED));
+}
+static void test_clamp_assist_and_stop(void)
+{
+    reset(); host();
+    command(INT16_MAX, INT16_MAX);
+    for (unsigned i = 0; i < 30; i++) tick(0.5f);
+    assert(M1_Ctl == 3.0f && odrive.set_speed1 == 3.0f);
+    assert(echo() & UPPER_CLAMPED);
+    command(0, 120); tick(0.5f);
+    assert(odrive.set_speed1 == 2.5f);
+    assert(!(echo() & UPPER_CLAMPED));
+    assert(read_i16(sent + 4) == 150); /* echo includes retained turn assist */
+    command(0, 0);
+    assert(upper_control_tick()); /* zero speed schedules the next rear tick */
+    assert(!param.M1_Flag && M1_Ctl == 0);
+}
+static void test_invalid_and_nested_frames(void)
+{
+    const uint8_t bad_crc[] = {0xAA,0x55,0,0,0,0,0,0x5A};
+    const uint8_t bad_tail[] = {0xAA,0x55,0,0,0,0,0xDD,0};
+    const uint8_t nested[] = {0xAA,0x55,0xAA,0x57,0x38,0x5A,0,0};
+    reset(); host();
+    command(-120, 120); tick(0);
+    feed(bad_crc, sizeof bad_crc);
+    feed(bad_tail, sizeof bad_tail);
+    command(0, -1);
+    tick(0);
+    assert(M1_Ctl == 2.0f && Servo_Ctl > 0);
+    feed(nested, sizeof nested);
+    upper_task();
+    assert(sent_size == 12 && sent[1] == 0x56); /* skip 2, not whole bad frame */
+    tx_done();
+    /* A complete command begins inside the bad outer command's payload. */
+    const uint8_t prefix[] = {0xAA,0x55};
+    feed(prefix, sizeof prefix);
+    command(0, 60); tick(0);
+    assert(M1_Ctl == 1.0f);
+}
+static void test_query_bounds_and_freshness(void)
+{
+    const uint8_t query[] = {0xAA,0x57,0x38,0x5A};
+    reset();
+    feed(query, sizeof query); upper_task();
+    assert(sent_size == 12 && sent[1] == 0x56);
+    assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
+    assert(read_i16(sent + 6) == 0 && read_i16(sent + 8) == 180);
+    assert(sent[10] == upper_crc8(sent, 10) && sent[11] == 0x5A);
+    tx_done(); host();
+    command(0, 120); tick(0);
+    now_ms = 100;
+    feed(query, sizeof query);
+    command(0, -1); /* even a CRC-valid negative RPM must not refresh time */
+    tick(0);
+    assert(param.M1_Flag); /* the specified comparison is strictly >100 ms */
+    now_ms = 101;
+    assert(upper_control_tick());
+    assert(!param.M1_Flag && Servo_Ctl == 0 && odrive.set_speed1 == 0);
+    upper_task(); tx_done(); /* queued query does not refresh the watchdog */
+    assert(echo() == UPPER_TIMEOUT_SEEN);
+    command(0, 60); tick(0);
+    assert(echo() == (UPPER_LINK_OK | UPPER_TIMEOUT_SEEN | UPPER_MOTOR_EN));
+}
+static void test_balance_and_restart_gates(void)
+{
+    reset(); host();
+    param.M0_Flag = 0; command(-120, 120); tick(0);
+    assert(!param.M1_Flag && M1_Ctl == 0 && Servo_Ctl == 0);
+    param.M0_Flag = 1; tick(0);
+    assert(M1_Ctl == 0); /* no resurrection of a command received while off */
+    command(-120, 120); tick(0);
+    param.M0_Flag = 0; tick(0);
+    assert(M1_Ctl == 0 && odrive.set_speed1 == 0);
+    param.M0_Flag = 1; tick(0);
+    assert(!param.M1_Flag);
+    restart_flag = true; command(-120, 120); tick(0);
+    restart_flag = false; tick(0);
+    assert(M1_Ctl == 0 && Servo_Ctl == 0);
+}
+static void test_busy_period_and_wrap(void)
+{
+    const uint8_t query[] = {0xAA,0x57,0x38,0x5A};
+    reset();
+    upper_task();
+    assert(sends == 1);
+    feed(query, sizeof query); upper_task();
+    assert(sends == 1); tx_done(); /* in-flight bytes must remain unchanged */
+    tx_result = HAL_BUSY; upper_task();
+    assert(sends == 1);
+    tx_result = HAL_OK; upper_task();
+    assert(sends == 2 && sent_size == 12); tx_done();
+    now_ms = 99; upper_task(); assert(sends == 2);
+    now_ms = 100; upper_task(); assert(sends == 3); tx_done();
+    now_ms = UINT32_MAX - 20u;
+    host(); command(0, 120); tick(0);
+    now_ms += 100u; tick(0);
+    assert(param.M1_Flag);
+    now_ms++; tick(0);
+    assert(!param.M1_Flag && (echo() & UPPER_TIMEOUT_SEEN));
+}
+static void test_noise_and_partial_reset(void)
+{
+    uint32_t rng = 0xABCDEF01u;
+    const uint8_t flush[] = {0,0,0,0,0,0,0,0};
+    const uint8_t partial[] = {0xAA,0x55,0,0};
+    reset(); host();
+    for (unsigned i = 0; i < 100000; i++) {
+        rng ^= rng << 13; rng ^= rng >> 17; rng ^= rng << 5;
+        Upper((uint8_t)rng);
+    }
+    feed(flush, sizeof flush);
+    command(0, 120); tick(0);
+    assert(M1_Ctl == 2.0f);
+    feed(partial, sizeof partial);
+    upper_rx_reset();
+    command(0, 60); tick(0);
+    assert(M1_Ctl == 1.0f);
+}
+int main(void)
+{
+    test_crc_boot();
+    test_owner_and_switch_mailbox();
+    test_absolute_slew_and_direction();
+    test_clamp_assist_and_stop();
+    test_invalid_and_nested_frames();
+    test_query_bounds_and_freshness();
+    test_balance_and_restart_gates();
+    test_busy_period_and_wrap();
+    test_noise_and_partial_reset();
+    puts("9 upper/remote protocol test groups passed");
+    return 0;
+}

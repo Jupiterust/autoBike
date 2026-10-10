@@ -6,10 +6,22 @@ bool restart_flag = 0;
 float xx = 0;
 int yy = 0;
 
+/* Keep host replies alive during the re-stand pause; unlike ui_boot_wait(),
+ * a remote button cannot shorten this pause. The balance ISR owns timeout. */
+static void communication_wait(uint32_t ms)
+{
+    uint32_t start = HAL_GetTick();
+    while ((uint32_t)(HAL_GetTick() - start) < ms) {
+        upper_task();
+        led_task();
+    }
+}
+
 void Sys_All_Init(void)
 {
     odrive_init();
 	param_init();
+    upper_init(); /* handset owns control at boot; centre and stop */
     HAL_UART_Transmit(&huart6, (uint8_t *)"System Init OK\r\n", 16, 1000);
 	
     HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL); //编码器 I5 I6
@@ -31,6 +43,7 @@ void Sys_All_Init(void)
 	
 	//保持直立三十秒
 	while(KEY_0==0){
+        vofa_apply();
 		ui_render_now("Press KEY0 to start", -1);  //was a bare spin: panel froze
 	}
 	if(param.M0_Flag == 0)
@@ -48,17 +61,16 @@ void Sys_All_Init(void)
 	}
 	LED0 = 0;
 	LED1 = 0;
-	upper_Flag = 1;//使能上位机控制
     while(1)
     {
     	if(KEY_0)
         {
             BEEP_ON;
             HAL_Delay(20);
-            while(KEY_0);
+            while(KEY_0) upper_task();
             BEEP_OFF;
 			//车倒后直立的缓冲时间
-			upper_Flag = 0;//在这似乎没起到作用，故在Blance//else if(param.M0_Flag==0)进行处理
+            upper_stop_control(); /* preserve mode, discard moving targets */
 			restart_flag = 1;
 			ServoCtrl(Servo_Center_Mid); 
 			Servo_Ctl = 0;
@@ -70,9 +82,8 @@ void Sys_All_Init(void)
 			{
 				if(i%1 == 0)BEEP_ON;
 				ui_render_now("re-stand", 2 - i);
-				led_delay(1000);BEEP_OFF;
+				communication_wait(1000);BEEP_OFF;
 			}
-			upper_Flag = 1;
 			restart_flag = 0;
 			ui_request_redraw();   //balance toggled: repaint now, not in 100ms
         }
@@ -96,4 +107,3 @@ void Sys_All_Init(void)
 
     }
 }
-

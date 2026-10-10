@@ -1,9 +1,9 @@
 /*
- * ui.h - OLED pages, the drive/menu mode machine and the remote command map.
+ * ui.h - TFT/OLED pages, drive/menu mode and the remote command map.
  *
  * Everything here runs from the main loop in Init.c only.  Nothing in this
  * module may be called from balance() (UART8 RX ISR, 2.5 ms control loop):
- * a full OLED refresh is milliseconds of SPI and would wreck the balance.
+ * display updates belong to the foreground, not the balance interrupt.
  *
  * Remote protocol: the handset sends "(id,value)" frames on huart7, parsed by
  * the existing vofa_get(); vofa_apply() routes every non-digit id here.  The
@@ -16,13 +16,17 @@
  *   'M'  MODE     -> menu                          -> drive
  *   'U'  up       M1_Ctl += 0.1                    previous item
  *   'D'  down     M1_Ctl -= 0.1                    next item
- *   'L'  left     Servo_Ctl -= UI_SERVO_STEP       value -= step
- *   'R'  right    Servo_Ctl += UI_SERVO_STEP       value += step
+ *   'L'  left     Servo_Ctl += UI_SERVO_STEP       value -= step
+ *   'R'  right    Servo_Ctl -= UI_SERVO_STEP       value += step
  *   'K'  OK       stop: M1_Ctl=0, M1_Flag=0,       run the action item
  *                 steering ramps back to centre    (LOAD calm / LOAD wind)
  *   'H'  (none)   heartbeat, ~10 Hz from the handset, both modes
  *   'V'  (none)   set the selected menu item to value, clamped
  *   'I'  (none)   jump to menu item number value
+ *   'S'  SOURCE   RC <-> HOST, stop/centre first; leave the menu
+ *
+ * HOST has its own status page; ordinary handset drive/tuning keys are
+ * ignored there. The TFT source heading is blue for HOST, green for RC.
  *
  * One frame is one step; press-and-hold is the handset repeating the same id.
  */
@@ -68,7 +72,7 @@
 #define UI_M1_MIN       (-3.0f)
 #define UI_M1_MAX       3.0f
 
-/* Servo_Ctl units per left/right press.  Servo_Ctl spans +-Servo_Delta (80),
+/* Servo_Ctl units per left/right press.  Servo_Ctl spans +-Servo_Delta (90),
  * and at the handset's ~10 Hz repeat 5 units/press means ~1.6 s from centre to
  * full lock.  balance() still slew-limits the result through
  * Steer_Speed_Limit(), so a larger step here cannot step the servo abruptly. */
@@ -77,8 +81,9 @@
 /* No heartbeat for this long cuts the drive (not the balance - see ui.c). */
 #define UI_RC_TIMEOUT_MS 500u
 
-/* 1 = replace the bottom row of whichever page is showing with the render/push
- * instrumentation (gram us / pages pushed / render us).
+/* 1 = show render/push instrumentation (gram us / units / render us).
+ * DRIVE/HOST use TFT spare row 9; MENU uses row 4. HOST's safety status on
+ * row 4 is never replaced by diagnostics.
  *
  * Read the numbers, then turn this OFF: the perf row changes every single
  * frame, so it keeps two pages and one row permanently dirty and destroys the
@@ -86,7 +91,9 @@
  * all - zero rows re-rendered, zero pages pushed, and ui_task() costs only the
  * eight 128-byte memcmps.  The numbers it shows are therefore the worst case,
  * not the steady state. */
+#ifndef UI_SHOW_PERF
 #define UI_SHOW_PERF    1
+#endif
 
 /* 1 = build the 'V' command (set the selected item to an absolute value).  It
  * is the only user of atof(), which drags in newlib's strtod/dtoa and costs
