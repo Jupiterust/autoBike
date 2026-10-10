@@ -25,7 +25,9 @@
 /* 0 = handset, 1 = onboard host. Only the handset S command changes it. */
 extern volatile uint8_t upper_Flag;
 
-/* Read-only foreground snapshot. servo/rpm are the same SOFTWARE values as
+/* Read-only foreground snapshot. servo is whole degrees, positive RIGHT;
+ * rpm is revolutions/minute. Both match the SOFTWARE protocol echo.
+ * servo/rpm are the same SOFTWARE values as
  * the protocol echo. timed_out is the current fault, not TIMEOUT_SEEN's
  * sticky history, so the display can show recovery correctly. */
 typedef struct {
