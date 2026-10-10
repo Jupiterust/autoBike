@@ -252,7 +252,7 @@ static echo_t current_echo(void)
     __set_PRIMASK(pri);
     if (seen && (uint32_t)(now - last) <= UPPER_TIMEOUT_MS)
         result.status |= UPPER_LINK_OK;
-    result.servo = (int16_t)units;
+    result.servo = units_to_angle(units);
     result.rpm = (int16_t)(speed * 60.0f + (speed < 0.0f ? -0.5f : 0.5f));
     /* No steering sensor: report the applied software values for BOTH fields,
      * with MEASURED=0, rather than mixing RPM feedback with a target angle. */

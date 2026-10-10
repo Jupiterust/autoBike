@@ -4,12 +4,12 @@
 #include <stdint.h>
 
 /* Protocol angles describe the handlebar/front wheel, positive RIGHT.
- * Provisional linear calibration: +80 internal units turns LEFT ~12..15 deg.
- * Use the 15 deg estimate and a separate 12 deg host command limit.
+ * Hardware-confirmed calibration: +90 internal units turns LEFT 90 deg.
+ * Wire values are tenths of a degree: -900..+900 means -90..+90 deg.
  * Servo_Delta (currently 90) remains the independent mechanical limit. */
-#define UPPER_STEER_REFERENCE_UNITS 80
-#define UPPER_STEER_REFERENCE_DDEG  150
-#define UPPER_STEER_LIMIT_DDEG      120
+#define UPPER_STEER_REFERENCE_UNITS 90
+#define UPPER_STEER_REFERENCE_DDEG  900
+#define UPPER_STEER_LIMIT_DDEG      900
 #define UPPER_RPM_MAX               180 /* existing 3 motor turns/s */
 #ifndef UPPER_TIMEOUT_MS
 #define UPPER_TIMEOUT_MS            100u
