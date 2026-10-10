@@ -54,8 +54,8 @@ static int angle_to_units(int16_t angle)
 {
     int32_t mag = angle < 0 ? -(int32_t)angle : angle;
     int units = (int)((mag * UPPER_STEER_REFERENCE_UNITS
-                   + UPPER_STEER_REFERENCE_DDEG / 2)
-                  / UPPER_STEER_REFERENCE_DDEG);
+                   + UPPER_STEER_REFERENCE_DEG / 2)
+                  / UPPER_STEER_REFERENCE_DEG);
     if (units > Servo_Delta) units = Servo_Delta;
     return angle > 0 ? -units : units;
 }
@@ -63,7 +63,7 @@ static int angle_to_units(int16_t angle)
 static int16_t units_to_angle(int units)
 {
     int32_t mag = units < 0 ? -(int32_t)units : units;
-    int16_t angle = (int16_t)((mag * UPPER_STEER_REFERENCE_DDEG
+    int16_t angle = (int16_t)((mag * UPPER_STEER_REFERENCE_DEG
                             + UPPER_STEER_REFERENCE_UNITS / 2)
                            / UPPER_STEER_REFERENCE_UNITS);
     return units > 0 ? (int16_t)-angle : angle;
@@ -129,11 +129,11 @@ static void accept_command(int16_t servo, int16_t rpm)
     /* Handset mode ignores host driving commands, including their freshness.
      * Queries are still answered. Switching always requires a NEW command. */
     if (!upper_Flag) return;
-    if (servo < -UPPER_STEER_LIMIT_DDEG) {
-        servo = -UPPER_STEER_LIMIT_DDEG;
+    if (servo < -UPPER_STEER_LIMIT_DEG) {
+        servo = -UPPER_STEER_LIMIT_DEG;
         clamped = 1;
-    } else if (servo > UPPER_STEER_LIMIT_DDEG) {
-        servo = UPPER_STEER_LIMIT_DDEG;
+    } else if (servo > UPPER_STEER_LIMIT_DEG) {
+        servo = UPPER_STEER_LIMIT_DEG;
         clamped = 1;
     }
     if (rpm > UPPER_RPM_MAX) {
@@ -267,8 +267,8 @@ void upper_task(void)
 
     if (boundary_pending) {
         tx[0] = 0xAA; tx[1] = 0x56;
-        put_i16(tx + 2, -UPPER_STEER_LIMIT_DDEG);
-        put_i16(tx + 4, UPPER_STEER_LIMIT_DDEG);
+        put_i16(tx + 2, -UPPER_STEER_LIMIT_DEG);
+        put_i16(tx + 4, UPPER_STEER_LIMIT_DEG);
         put_i16(tx + 6, 0); /* minimum stable speed not calibrated */
         put_i16(tx + 8, UPPER_RPM_MAX);
         tx[10] = upper_crc8(tx, 10);
