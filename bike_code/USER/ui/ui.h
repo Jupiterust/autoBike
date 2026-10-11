@@ -68,9 +68,9 @@
 
 /* --- drive-mode limits --------------------------------------------------- */
 
-#define UI_M1_STEP      0.1f            /* rear-wheel speed per up/down press */
-#define UI_M1_MIN       (-3.0f)
-#define UI_M1_MAX       3.0f
+#define UI_M1_STEP      0.1f            /* motor turns/s per press = 6 rpm */
+#define UI_M1_MIN       (-4.0f)         /* -240 rpm */
+#define UI_M1_MAX       4.0f            /* +240 rpm; matches UPPER_RPM_MAX */
 
 /* Servo_Ctl units per left/right press.  Servo_Ctl spans +-Servo_Delta (120),
  * and at the handset's ~10 Hz repeat 5 units/press means ~2.4 s from centre to

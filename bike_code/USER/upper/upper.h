@@ -11,7 +11,7 @@
 #define UPPER_STEER_REFERENCE_UNITS 120
 #define UPPER_STEER_REFERENCE_DEG   120
 #define UPPER_STEER_LIMIT_DEG       120
-#define UPPER_RPM_MAX               180 /* existing 3 motor turns/s */
+#define UPPER_RPM_MAX               240 /* 4 motor turns/s; final drive limit */
 #ifndef UPPER_TIMEOUT_MS
 #define UPPER_TIMEOUT_MS            100u
 #endif

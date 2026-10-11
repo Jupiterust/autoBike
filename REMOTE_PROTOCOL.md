@@ -322,7 +322,7 @@ and therefore cannot get out of sync with the bike.**
 
 Limits enforced on the bike side (the handset does not need to track them):
 
-- `M1_Ctl` is clamped to **[-3.0, +3.0]**, step 0.1.
+- `M1_Ctl` is clamped to **[-4.0, +4.0] motor turns/s ([-240, +240] rpm)**, step 0.1 turns/s (6 rpm). The final command after turn assistance is also clamped to this range.
 - `Servo_Ctl` is clamped to **[-80, +80]** (`Servo_Delta` = 80), step 5.
 - Menu values are clamped per item, see 3.5.
 - `U` / `D` **refuse to spin the rear wheel while the balance loop is off**
@@ -696,7 +696,7 @@ ASCII : (  U  ,  )
 hex   : 28 55 2C 29
 ```
 
-4 bytes. In drive mode this adds 0.1 to `M1_Ctl` (clamped at +3.0) and enables
+4 bytes. In drive mode this adds 0.1 to `M1_Ctl` (clamped at +4.0 turns/s, or 240 rpm) and enables
 the rear wheel, provided the balance loop is on. In menu mode it moves the
 selection up one item.
 

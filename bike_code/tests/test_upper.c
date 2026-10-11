@@ -171,7 +171,7 @@ static void test_clamp_assist_and_stop(void)
     reset(); host();
     command(INT16_MAX, INT16_MAX);
     for (unsigned i = 0; i < 30; i++) tick(0.5f);
-    assert(M1_Ctl == 3.0f && odrive.set_speed1 == 3.0f);
+    assert(M1_Ctl == 4.0f && odrive.set_speed1 == 4.0f);
     assert(echo() & UPPER_CLAMPED);
     command(0, 120); tick(0.5f);
     assert(odrive.set_speed1 == 2.5f);
@@ -210,7 +210,7 @@ static void test_query_bounds_and_freshness(void)
     feed(query, sizeof query); upper_task();
     assert(sent_size == 12 && sent[1] == 0x56);
     assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
-    assert(read_i16(sent + 6) == 0 && read_i16(sent + 8) == 180);
+    assert(read_i16(sent + 6) == 0 && read_i16(sent + 8) == 240);
     assert(sent[10] == upper_crc8(sent, 10) && sent[11] == 0x5A);
     tx_done(); host();
     command(0, 120); tick(0);
@@ -303,9 +303,9 @@ static void test_measured_rpm_and_fallback(void)
     odrive_vel1_turns = -0.5f;
     assert(echo() & UPPER_MEASURED_RPM);
     assert(read_i16(sent + 4) == -30); /* negative feedback is valid */
-    odrive_vel1_turns = 4.0f;
+    odrive_vel1_turns = 5.0f;
     assert(echo() & UPPER_MEASURED_RPM);
-    assert(read_i16(sent + 4) == 240); /* do not clamp measurement to target limit */
+    assert(read_i16(sent + 4) == 300); /* do not clamp measurement to target limit */
 
     now_ms = UPPER_RPM_FEEDBACK_MAX_AGE_MS;
     assert(echo() & UPPER_MEASURED_RPM); /* inclusive boundary */

@@ -222,15 +222,17 @@ uint8_t upper_control_tick(void)
 
 float upper_limit_drive(float speed)
 {
+    const float limit = (float)UPPER_RPM_MAX / 60.0f;
+    const float minimum = upper_Flag ? 0.0f : -limit;
     output_clamped = 0;
-    if (!upper_Flag) return speed; /* existing handset behaviour */
-    if (speed > (float)UPPER_RPM_MAX / 60.0f) {
+    /* Limit AFTER turn assistance in both modes; handset permits reverse. */
+    if (speed > limit) {
         output_clamped = 1;
-        return (float)UPPER_RPM_MAX / 60.0f;
+        return limit;
     }
-    if (speed < 0.0f) {
+    if (speed < minimum) {
         output_clamped = 1;
-        return 0.0f;
+        return minimum;
     }
     return speed;
 }
