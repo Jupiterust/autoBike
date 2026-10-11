@@ -99,6 +99,8 @@ extern volatile uint32_t odrive_tx_drops;
 
 extern volatile float    odrive_pos1_turns;  /* absolute, motor turns */
 extern volatile float    odrive_vel1_turns;  /* motor turns/s         */
+extern volatile uint32_t odrive_vel1_ms;     /* last speed reply, HAL tick */
+extern volatile uint8_t  odrive_vel1_valid;  /* cleared on RX restart */
 extern volatile uint32_t odrive_fb_ok;       /* replies parsed        */
 extern volatile uint32_t odrive_fb_bad;      /* replies not parsed    */
 extern volatile uint32_t odrive_fb_tx;       /* queries sent          */

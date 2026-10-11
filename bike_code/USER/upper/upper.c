@@ -203,8 +203,10 @@ uint8_t upper_control_tick(void)
         }
         if (!param.M0_Flag || restart_flag) {
             if (target_servo || target_rpm || M1_Ctl != 0.0f
-             || odrive.set_speed1 != 0.0f || Servo_Ctl || param.M1_Flag)
+             || odrive.set_speed1 != 0.0f || Servo_Ctl || param.M1_Flag) {
+                timeout_seen = 1; /* sticky: protection also entered safe state */
                 clear_drive();
+            }
         } else if (command_seen && !timed_out) {
             /* Reapply the absolute target every tick: balance() overwrites
              * Servo_Ctl with the intermediate slew-limited position. */
@@ -237,9 +239,9 @@ static echo_t current_echo(void)
 {
     echo_t result;
     int units;
-    float speed;
-    uint32_t now, last, pri = __get_PRIMASK();
-    uint8_t seen, enabled;
+    float speed, feedback, rpm;
+    uint32_t feedback_ms, now, last, pri = __get_PRIMASK();
+    uint8_t feedback_valid, seen, enabled;
 
     __disable_irq();
     now = HAL_GetTick();
@@ -248,6 +250,9 @@ static echo_t current_echo(void)
     enabled = param.M0_Flag && !restart_flag && param.M1_Flag;
     units = (param.M0_Flag && !restart_flag) ? Servo_Ctl : 0;
     speed = enabled ? odrive.set_speed1 : 0.0f;
+    feedback = odrive_vel1_turns;
+    feedback_ms = odrive_vel1_ms;
+    feedback_valid = odrive_vel1_valid;
     result.status = (timeout_seen ? UPPER_TIMEOUT_SEEN : 0)
                   | (enabled ? UPPER_MOTOR_EN : 0)
                   | ((command_clamped || output_clamped) ? UPPER_CLAMPED : 0);
@@ -255,9 +260,18 @@ static echo_t current_echo(void)
     if (seen && (uint32_t)(now - last) <= UPPER_TIMEOUT_MS)
         result.status |= UPPER_LINK_OK;
     result.servo = units_to_angle(units);
-    result.rpm = (int16_t)(speed * 60.0f + (speed < 0.0f ? -0.5f : 0.5f));
-    /* No steering sensor: report the applied software values for BOTH fields,
-     * with MEASURED=0, rather than mixing RPM feedback with a target angle. */
+    rpm = feedback * 60.0f;
+    if (feedback_valid
+     && (uint32_t)(now - feedback_ms) <= UPPER_RPM_FEEDBACK_MAX_AGE_MS
+     && isfinite(rpm) && rpm >= -32768.0f && rpm <= 32767.0f) {
+        /* Keep measured coasting/reverse/overspeed even with MOTOR_EN=0.
+         * Command limits are NOT limits on what the encoder can measure. */
+        result.status |= UPPER_MEASURED_RPM;
+    } else {
+        rpm = speed * 60.0f; /* absent/stale/invalid feedback: command fallback */
+    }
+    result.rpm = (int16_t)(rpm + (rpm < 0.0f ? -0.5f : 0.5f));
+    /* No steering sensor: MEASURED_ANGLE remains 0 in every frame. */
     return result;
 }
 

@@ -10,6 +10,9 @@ UART_HandleTypeDef huart2;
 float M1_Ctl;
 int Servo_Ctl, Servoduty;
 bool restart_flag;
+volatile float odrive_vel1_turns;
+volatile uint32_t odrive_vel1_ms;
+volatile uint8_t odrive_vel1_valid;
 static uint32_t now_ms, mask;
 static int last_steer;
 static unsigned sends, ui_calls;
@@ -85,6 +88,9 @@ static void reset(void)
     memset(&param, 0, sizeof param);
     memset(&odrive, 0, sizeof odrive);
     restart_flag = false;
+    odrive_vel1_turns = 0;
+    odrive_vel1_ms = 0;
+    odrive_vel1_valid = 0;
     now_ms = 0;
     sends = ui_calls = 0;
     tx_result = HAL_OK;
@@ -152,13 +158,13 @@ static void test_absolute_slew_and_direction(void)
 {
     reset(); host();
     for (unsigned i = 0; i < 100; i++) { command(-120, 120); tick(0); }
-    assert(Servo_Ctl == 64 && M1_Ctl == 2.0f);
+    assert(Servo_Ctl == 120 && M1_Ctl == 2.0f);
     assert(param.M1_Flag && (echo() & UPPER_MOTOR_EN));
     assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
     command(120, 120);
-    for (unsigned i = 0; i < 30; i++) tick(0);
-    assert(Servo_Ctl == -64); /* target survives the intermediate slew values */
-    assert(!(echo() & UPPER_MEASURED));
+    for (unsigned i = 0; i < 60; i++) tick(0);
+    assert(Servo_Ctl == -120); /* target survives the intermediate slew values */
+    assert(!(echo() & (UPPER_MEASURED_RPM | UPPER_MEASURED_ANGLE)));
 }
 static void test_clamp_assist_and_stop(void)
 {
@@ -276,6 +282,76 @@ static void test_noise_and_partial_reset(void)
     command(0, 60); tick(0);
     assert(M1_Ctl == 1.0f);
 }
+static void test_measured_rpm_and_fallback(void)
+{
+    uint8_t status;
+    reset(); host(); command(0, 120); tick(0.5f);
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 150); /* never received: final command */
+
+    odrive_vel1_turns = 1.25f;
+    odrive_vel1_ms = now_ms;
+    odrive_vel1_valid = 1;
+    status = echo();
+    assert(status == (UPPER_LINK_OK | UPPER_MOTOR_EN | UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 75); /* measured, not the 150 rpm command */
+
+    command(0, 0); tick(0);
+    status = echo();
+    assert(!(status & UPPER_MOTOR_EN) && (status & UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 75); /* wheel still coasting after stop */
+    odrive_vel1_turns = -0.5f;
+    assert(echo() & UPPER_MEASURED_RPM);
+    assert(read_i16(sent + 4) == -30); /* negative feedback is valid */
+    odrive_vel1_turns = 4.0f;
+    assert(echo() & UPPER_MEASURED_RPM);
+    assert(read_i16(sent + 4) == 240); /* do not clamp measurement to target limit */
+
+    now_ms = UPPER_RPM_FEEDBACK_MAX_AGE_MS;
+    assert(echo() & UPPER_MEASURED_RPM); /* inclusive boundary */
+    now_ms++;
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 0);
+
+    command(0, 120); tick(0.5f);
+    odrive_vel1_ms = now_ms;
+    odrive_vel1_turns = NAN;
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 150);
+    odrive_vel1_turns = INFINITY;
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    odrive_vel1_turns = 1000.0f;
+    assert(!(echo() & UPPER_MEASURED_RPM)); /* int16 would overflow */
+    odrive_vel1_turns = 0.0f;
+    assert(echo() & UPPER_MEASURED_RPM); /* measured zero is not missing data */
+    assert(read_i16(sent + 4) == 0);
+    odrive_vel1_valid = 0; /* UART RX restarted */
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    assert(read_i16(sent + 4) == 150);
+
+    odrive_vel1_valid = 1;
+    odrive_vel1_ms = UINT32_MAX - 100u;
+    now_ms = 50u;
+    assert(echo() & UPPER_MEASURED_RPM); /* wrap-safe age = 151 ms */
+    now_ms = 500u;
+    assert(!(echo() & UPPER_MEASURED_RPM));
+    assert(!(echo() & UPPER_MEASURED_ANGLE));
+}
+
+static void test_protection_stop_status(void)
+{
+    reset(); host(); command(30, 120); tick(0);
+    odrive_vel1_turns = 1.0f;
+    odrive_vel1_valid = 1;
+    param.M0_Flag = 0; tick(0);
+    assert(echo() & UPPER_TIMEOUT_SEEN);
+    assert(!(echo() & UPPER_MOTOR_EN));
+    assert(echo() & UPPER_MEASURED_RPM);
+    assert(read_i16(sent + 4) == 60);
+    param.M0_Flag = 1; command(0, 120); tick(0);
+    assert(echo() & UPPER_TIMEOUT_SEEN); /* sticky after recovery */
+}
+
 int main(void)
 {
     test_crc_boot();
@@ -287,6 +363,8 @@ int main(void)
     test_balance_and_restart_gates();
     test_busy_period_and_wrap();
     test_noise_and_partial_reset();
-    puts("9 upper/remote protocol test groups passed");
+    test_measured_rpm_and_fallback();
+    test_protection_stop_status();
+    puts("11 upper/remote protocol test groups passed");
     return 0;
 }

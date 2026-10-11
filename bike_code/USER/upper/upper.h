@@ -16,20 +16,25 @@
 #define UPPER_TIMEOUT_MS            100u
 #endif
 #define UPPER_ECHO_PERIOD_MS        100u
+/* Speed replies alternate with position (~5 Hz each). Allow two missed
+ * speed updates before falling back to the command; independent of RC timeout. */
+#define UPPER_RPM_FEEDBACK_MAX_AGE_MS 500u
 
 #define UPPER_LINK_OK      (1u << 0)
 #define UPPER_TIMEOUT_SEEN (1u << 1)
 #define UPPER_MOTOR_EN     (1u << 2)
-#define UPPER_MEASURED     (1u << 3)
+#define UPPER_MEASURED_RPM (1u << 3) /* 0x08: fresh ODrive speed feedback */
 #define UPPER_CLAMPED      (1u << 4)
+#define UPPER_MEASURED_ANGLE (1u << 5) /* 0x20: no steering sensor, always 0 */
+/* Bits 6..7 reserved, always 0. TIMEOUT_SEEN also latches a protection stop. */
 
 /* 0 = handset, 1 = onboard host. Only the handset S command changes it. */
 extern volatile uint8_t upper_Flag;
 
 /* Read-only foreground snapshot. servo is whole degrees, positive RIGHT;
- * rpm is revolutions/minute. Both match the SOFTWARE protocol echo.
- * servo/rpm are the same SOFTWARE values as
- * the protocol echo. timed_out is the current fault, not TIMEOUT_SEEN's
+ * rpm is measured motor revolutions/minute when MEASURED_RPM is set, otherwise
+ * the final speed command. servo remains a software output (no sensor).
+ * Both match the protocol echo. timed_out is the current timeout, not TIMEOUT_SEEN's
  * sticky history, so the display can show recovery correctly. */
 typedef struct {
     int16_t servo, rpm;

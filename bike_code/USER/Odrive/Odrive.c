@@ -212,6 +212,8 @@ void odrive_speed_ctl(unsigned char num, float speed)
 
 volatile float    odrive_pos1_turns = 0.0f;   /* absolute, motor turns   */
 volatile float    odrive_vel1_turns = 0.0f;   /* motor turns/s           */
+volatile uint32_t odrive_vel1_ms    = 0;      /* last parsed speed reply */
+volatile uint8_t  odrive_vel1_valid = 0;      /* false until speed arrives */
 volatile uint32_t odrive_fb_ok      = 0;
 volatile uint32_t odrive_fb_bad     = 0;      /* unparseable replies     */
 volatile uint32_t odrive_fb_tx      = 0;      /* queries actually sent   */
@@ -345,7 +347,7 @@ static void fb_line_done(void)
     fb_line[fb_len] = '\0';
     memcpy(fb_last, fb_line, (size_t)fb_len + 1u);
 
-    if (fb_parse_float(fb_line, &v) == 0)
+    if (fb_parse_float(fb_line, &v) == 0 || !isfinite(v))
     {
         if (fb_err[0] == '\0')
             memcpy(fb_err, fb_line, sizeof fb_err);
@@ -361,6 +363,8 @@ static void fb_line_done(void)
     {
         odrive_vel1_turns = v;
         odrive.now_speed1 = v;
+        odrive_vel1_ms = HAL_GetTick();
+        odrive_vel1_valid = 1; /* position replies never refresh speed age */
     }
     odrive_fb_ok++;
 }
@@ -406,6 +410,8 @@ static void fb_feed(uint8_t b)
    hogging the CPU can no longer cost bytes. */
 void odrive_feedback_start(void)
 {
+    odrive_vel1_valid = 0; /* do not reuse pre-recovery feedback */
+    fb_len = 0;
     rx_tail = 0;
     HAL_UART_Receive_DMA(&huart3, rx_ring, ODRIVE_RX_RING);
 }

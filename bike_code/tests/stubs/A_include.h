@@ -17,7 +17,7 @@ typedef struct { float set_speed1, now_speed0; } odrive_t;
 typedef struct { unsigned gState; } UART_HandleTypeDef;
 typedef enum { HAL_OK, HAL_ERROR, HAL_BUSY } HAL_StatusTypeDef;
 #define HAL_UART_STATE_READY 0u
-#define Servo_Delta 90
+#define Servo_Delta 120
 #define Servo_Center_Mid 180
 #ifdef TEST_REAL_UI
 #include "ui.h"
@@ -30,6 +30,9 @@ extern UART_HandleTypeDef huart2;
 extern float M1_Ctl;
 extern int Servo_Ctl, Servoduty;
 extern bool restart_flag;
+extern volatile float odrive_vel1_turns;
+extern volatile uint32_t odrive_vel1_ms;
+extern volatile uint8_t odrive_vel1_valid;
 uint32_t HAL_GetTick(void);
 uint32_t __get_PRIMASK(void);
 void __disable_irq(void);
@@ -57,7 +60,7 @@ extern test_dwt_t test_dwt;
 typedef struct { float rol; } test_imu_t;
 extern test_imu_t imu;
 extern float Servo_Gain_K, error_zero;
-extern float odrive_vel1_turns, odrive_pos1_turns;
+extern float odrive_pos1_turns;
 extern uint32_t uart_err_cnt[3], odrive_tx_drops;
 extern uint32_t odrive_fb_tx, odrive_fb_ok, odrive_fb_bad, odrive_fb_eol, odrive_fb_ovf;
 float odrive_odom_m(void);
