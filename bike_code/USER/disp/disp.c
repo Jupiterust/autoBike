@@ -40,6 +40,7 @@
 
 /* What the panel is believed to be showing. */
 static char disp_cache[DISP_ROWS][DISP_COLS + 1];
+static uint16_t disp_color[DISP_ROWS];
 static uint8_t disp_valid = 0;
 static uint8_t disp_units = 0;      /* pages or cells pushed this frame */
 
@@ -98,6 +99,11 @@ void disp_clear_all(void)
 
 void disp_row(uint8_t row, const char *text)
 {
+    disp_row_color(row, text, row == 0u ? DISP_CYAN : 0xFFFFu);
+}
+
+void disp_row_color(uint8_t row, const char *text, uint16_t fg)
+{
     char buf[DISP_COLS + 1];
     uint8_t n, i;
 
@@ -121,16 +127,15 @@ void disp_row(uint8_t row, const char *text)
         buf[i] = ' ';
     buf[DISP_COLS] = '\0';
 
-    if (disp_valid && memcmp(buf, disp_cache[row], DISP_COLS) == 0)
+    if (disp_valid && fg == disp_color[row] &&
+        memcmp(buf, disp_cache[row], DISP_COLS) == 0)
         return;
 
 #if DISPLAY_DRIVER == DISPLAY_TFT_ILI9163
     {
-        const uint16_t fg = (row == 0u) ? DISP_BANNER_FG : DISP_FG;
-
         for (i = 0; i < DISP_COLS; i++)
         {
-            if (disp_valid && buf[i] == disp_cache[row][i])
+            if (disp_valid && fg == disp_color[row] && buf[i] == disp_cache[row][i])
                 continue;           /* this cell is already right */
             TFT_CELL(i, (uint8_t)(row * DISP_ROW_PITCH), buf[i], fg, DISP_BG);
             disp_units++;
@@ -143,6 +148,7 @@ void disp_row(uint8_t row, const char *text)
 #endif
 
     memcpy(disp_cache[row], buf, DISP_COLS + 1);
+    disp_color[row] = fg;
 }
 
 void disp_control_heading(uint8_t host)

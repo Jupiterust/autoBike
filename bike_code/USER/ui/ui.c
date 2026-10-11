@@ -189,6 +189,35 @@ static void ui_row(uint8_t row, const char *fmt, ...)
  * the page-level check skips page 0 with it. */
 #define UI_BANNER   "==== BIKE CTRL ===="
 
+/* Raw application IMU fields, NOT the proposed host-frame axis mapping.
+ * Snapshot only the three loads under IRQ masking; formatting/SPI stay in
+ * the foreground with interrupts enabled. No balance-zero subtraction. */
+static void ui_attitude(uint8_t first)
+{
+    float roll, pitch, yaw;
+    char buf[UI_COLS + 1];
+    uint32_t pri = __get_PRIMASK();
+    __disable_irq();
+    roll = imu.rol;
+    pitch = imu.pit;
+    yaw = imu.yaw;
+    __set_PRIMASK(pri);
+
+    snprintf(buf, sizeof buf, "ROLL  %+8.2f deg", (double)roll);
+    disp_row_color(first, buf, DISP_GREEN);
+    snprintf(buf, sizeof buf, "PITCH %+8.2f deg", (double)pitch);
+    disp_row_color((uint8_t)(first + 1u), buf, DISP_YELLOW);
+    snprintf(buf, sizeof buf, "YAW   %+8.2f deg", (double)yaw);
+    disp_row_color((uint8_t)(first + 2u), buf, DISP_CYAN);
+}
+
+static void ui_blank_from(uint8_t first)
+{
+    uint8_t row;
+    for (row = first; row < DISP_ROWS; row++)
+        disp_row(row, "");
+}
+
 #if UI_SHOW_PERF
 /* gram = SPI push us, p = pages pushed of 8, rnd = GRAM render us.  All from
  * the previous frame, so the numbers are one frame stale. */
@@ -209,52 +238,23 @@ static void ui_perf_row(uint8_t row)
 static void ui_page_drive(void)
 {
     ui_row(0, UI_BANNER);
-    /* The number after the link state is how many times UART7 reception had to
-     * be restarted.  Non-zero means the link really did break and recovered by
-     * itself; still zero while the handset is silent means the trouble is on
-     * the radio side, not here. */
-    ui_row(1, "%s M0:%d M1:%d %s%lu",
+    ui_row(1, "%s M0:%d M1:%d %s",
            upper_Flag ? "HOST" : "RC",
            (int)param.M0_Flag, (int)param.M1_Flag,
-           rc_seen ? (rc_link_ok ? "RC" : "??") : "--",
-           (unsigned long)uart_err_cnt[UART_ERR_REMOTE]);
-    /* Commanded vs measured rear-wheel speed, both in motor turns/s.  The
-     * second number is what the wheel is actually doing, read back from
-     * ODrive. */
-    ui_row(2, "spd%5.2f>%5.2f s%+4d",
-           (double)M1_Ctl, (double)odrive_vel1_turns, Servo_Ctl);
-    ui_row(3, "rol %8.3f", imu.rol);
-#if UI_SHOW_PERF
-    ui_perf_row(4);
-#else
-    ui_row(4, "fly %8.2f", odrive.now_speed0);
-#endif
+           rc_seen ? (rc_link_ok ? "RC" : "??") : "--");
+    ui_attitude(2);
 
     /* The TFT has spare rows, the OLED has none.  DISP_ROWS is a compile-time
      * constant, so this whole block folds away on the OLED build - no #ifdef
      * needed in the page code. */
     if (DISP_ROWS > DISP_UI_ROWS)
     {
-        /* Distance reads 0.00 until DRIVE_M_PER_MOTOR_TURN is measured; the
-         * raw motor turns next to it are what that calibration is read off. */
-        ui_row(5, "od%+7.2fm rw%5.2f",
-               (double)odrive_odom_m(), (double)odrive_vel1_turns);
-        ui_row(6, "pos%+9.3ft", (double)odrive_pos1_turns);
-        /* Feedback link health, left to right along the path a reply takes:
-         *   t  queries sent     f  replies parsed / rejected
-         *   e  CR or LF bytes seen - stays 0, because ODrive truncates every
-         *      reply inside cmd_read_property()'s char[10] and the terminator
-         *      falls in the part that is cut; 0x21 is what we split on.
-         *   ore UART3 errors    d  frames the UART3 DMA refused */
-        ui_row(7, "t%lu f%lu/%lu e%lu",
-               (unsigned long)odrive_fb_tx,
-               (unsigned long)odrive_fb_ok,
-               (unsigned long)odrive_fb_bad,
-               (unsigned long)odrive_fb_eol);
-        ui_row(8, "ore%lu d%lu o%lu",
-               (unsigned long)uart_err_cnt[UART_ERR_ODRIVE],
-               (unsigned long)odrive_tx_drops,
-               (unsigned long)odrive_fb_ovf);
+        /* Retain useful drive state; hide transport/performance diagnostics. */
+        ui_row(5, "spd%5.2f>%5.2f s%+4d",
+               (double)M1_Ctl, (double)odrive_vel1_turns, Servo_Ctl);
+        ui_row(6, "zero%7.2f fly%6.1f",
+               (double)param.angular_zero, (double)odrive.now_speed0);
+        ui_blank_from(7);
     }
 }
 
@@ -303,6 +303,13 @@ static void ui_page_menu(void)
     else
         ui_row(4, "M0:%d  press OK", (int)param.M0_Flag);
 #endif
+    if (DISP_ROWS >= 8u)
+    {
+        ui_attitude(5);
+        ui_blank_from(8);
+    }
+    else
+        ui_blank_from(DISP_UI_ROWS);
 }
 
 /* ====================================================================== */
@@ -555,15 +562,12 @@ void ui_render_now(const char *msg, int secs)
     t0 = DWT->CYCCNT;
 
     ui_row(0, UI_BANNER);
-    ui_row(1, "%s", (msg != NULL) ? msg : "");
-
     if (secs >= 0)
-        ui_row(2, "%d s left", secs);
+        ui_row(1, "%.14s %ds", (msg != NULL) ? msg : "", secs);
     else
-        ui_row(2, " ");
-
-    ui_row(3, "rol %8.3f", imu.rol);
-    ui_row(4, " ");
+        ui_row(1, "%s", (msg != NULL) ? msg : "");
+    ui_attitude(2);
+    ui_blank_from(DISP_UI_ROWS);
 
     ui_render_us = (DWT->CYCCNT - t0) / CPU_MHZ;
 

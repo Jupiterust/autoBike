@@ -70,6 +70,19 @@ int main(void)
     assert(glass[31][127] == TFT_BLACK);
     disp_clear_all(); disp_control_heading(1); disp_flush();
     assert(last_bg == TFT_BLUE && large_calls >= 5);
+    disp_row_color(2, "ROLL -2.00", DISP_GREEN); disp_flush();
+    assert(glass[32][0] == TFT_GREEN);
+    before = calls;
+    disp_row_color(2, "ROLL -2.00", DISP_GREEN); disp_flush();
+    assert(calls == before);
+    /* Identical text with a new colour must redraw; shorter rows erase tails. */
+    disp_row_color(2, "ROLL -2.00", DISP_YELLOW); disp_flush();
+    assert(calls > before && glass[32][0] == TFT_YELLOW);
+    disp_row(2, "R"); disp_flush();
+    assert(glass[32][0] == TFT_WHITE && glass[32][6] == TFT_BLACK);
+    disp_row_color(3, "PITCH", DISP_YELLOW);
+    disp_row_color(4, "YAW", DISP_CYAN); disp_flush();
+    assert(glass[48][0] == TFT_YELLOW && glass[64][0] == TFT_CYAN);
     puts("TFT colour, 8x16 geometry, idle cache and transition clearing passed");
     return 0;
 }

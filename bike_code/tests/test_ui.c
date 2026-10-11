@@ -10,6 +10,8 @@ UART_HandleTypeDef huart2;
 test_core_t test_core;
 test_dwt_t test_dwt;
 test_imu_t imu;
+volatile uint32_t ch100_attitude_ms;
+volatile uint8_t ch100_attitude_valid;
 float M1_Ctl, Servo_Gain_K, error_zero, odrive_pos1_turns;
 volatile float odrive_vel1_turns;
 volatile uint32_t odrive_vel1_ms;
@@ -21,6 +23,7 @@ uint32_t odrive_fb_tx, odrive_fb_ok, odrive_fb_bad, odrive_fb_eol, odrive_fb_ovf
 static uint32_t now_ms = 100, mask;
 static int last_steer;
 static char rows[DISP_ROWS][DISP_COLS + 1];
+static uint16_t colors[DISP_ROWS];
 
 uint32_t HAL_GetTick(void) { return now_ms; }
 uint32_t __get_PRIMASK(void) { return mask; }
@@ -36,7 +39,7 @@ int Steer_Speed_Limit(float value, float limit)
 HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *uart,
                                       const uint8_t *data, uint16_t n)
 {
-    assert(uart == &huart2 && (n == 9 || n == 12));
+    assert(uart == &huart2 && (n == 9 || n == 11 || n == 12));
     assert(data[n - 1] == 0x5A);
     return HAL_OK;
 }
@@ -55,6 +58,11 @@ void disp_row(uint8_t row, const char *text)
 }
 void disp_control_heading(uint8_t host)
 { disp_row(1, host ? "HOST CONTROL" : "REMOTE CTRL"); }
+void disp_row_color(uint8_t row, const char *text, uint16_t color)
+{
+    disp_row(row, text);
+    if (row < DISP_ROWS) colors[row] = color;
+}
 uint8_t disp_flush(void) { return 0; }
 void disp_lamp_test(void) {}
 void disp_grid_test(void) {}
@@ -95,65 +103,46 @@ static void details_cleared(unsigned first)
 int main(void)
 {
     upper_init(); ui_init();
-    contains(4, "CTRL:REMOTE");
-    render(); contains(1, "REMOTE CTRL"); contains(2, "RC:WAIT");
-    remote("(S,)");
-    contains(1, "HOST CONTROL"); contains(2, "LINK:WAIT");
-    contains(4, "BALANCE OFF - STOP");
-    param.M0_Flag = 1;
-    render(); contains(4, "WAIT HOST COMMAND");
-
-    now_ms = 201; tick(0); render();
-    contains(2, "LINK:LOST"); contains(4, "TIMEOUT - SAFE STOP");
-    command(0, 0); tick(0); render();
-    contains(2, "LINK:OK"); contains(4, "STOPPED");
-    if (DISP_ROWS > 6) contains(6, "TMO:SEEN");
-
-    command(60, 60);
-    for (unsigned i = 0; i < 15; i++) tick(0.5f);
-    render(); contains(3, "RPM: 90 ANG:R 6.0"); contains(4, "RUNNING");
-    remote("(M,)"); remote("(L,)"); remote("(0,)");
-    assert(upper_Flag && ui_get_mode() == UI_MODE_DRIVE);
-    assert(Servo_Ctl == -32 && M1_Ctl == 1.0f);
-
-    now_ms = 301; render(); contains(2, "LINK:OK");
-    now_ms = 302;
-    /* Drawing neither refreshes freshness nor mutates control. */
-    for (unsigned i = 0; i < 20; i++) render();
-    contains(4, "COMMAND STALE"); assert(M1_Ctl == 1.0f);
-    tick(0); render();
-    contains(4, "TIMEOUT - SAFE STOP");
-    contains(3, "RPM:  0 ANG:C 0.0"); contains(2, "RUN:0");
-
-    command(-60, 60);
-    for (unsigned i = 0; i < 15; i++) tick(0);
-    render(); contains(3, "RPM: 60 ANG:L 6.0");
-    contains(4, "RUNNING"); /* Sticky timeout history is not an active fault. */
-    if (DISP_ROWS > 6) contains(6, "TMO:SEEN");
-    command(INT16_MAX, INT16_MAX);
-    for (unsigned i = 0; i < 30; i++) tick(0.5f);
-    render(); contains(3, "RPM:180 ANG:R12.0");
-    contains(4, "RUNNING - LIMITED");
-    if (DISP_ROWS > 6) contains(6, "LIMIT:ON");
-
-    param.M0_Flag = 0; tick(0); render();
-    contains(4, "BALANCE OFF - STOP"); contains(2, "RUN:0");
-    param.M0_Flag = 1; upper_stop_control(); restart_flag = true;
-    render(); contains(4, "RE-STAND - STOP");
-    restart_flag = false; render(); contains(4, "WAIT HOST COMMAND");
+    contains(1, "starting up");
+    imu.rol = -2.0f; imu.pit = 3.0f; imu.yaw = 91.0f;
+    param.angular_zero = -1.4f;
+    ui_render_now("Press KEY0 to start", -1);
+    contains(1, "Press KEY0 to start");
+    contains(2, "ROLL     -2.00 deg");
+    contains(3, "PITCH    +3.00 deg");
+    contains(4, "YAW     +91.00 deg");
+    assert(colors[2] == DISP_GREEN && colors[3] == DISP_YELLOW &&
+           colors[4] == DISP_CYAN && mask == 0);
+    assert(!param.M0_Flag && !param.M1_Flag);
     now_ms += 60;
     ui_render_now("re-stand", 2);
-    contains(1, "re-stand"); contains(4, "CTRL:HOST");
+    contains(1, "re-stand 2s"); contains(4, "YAW");
     details_cleared(DISP_UI_ROWS);
-
-    remote("(S,)"); contains(1, "REMOTE CTRL");
-    assert(!upper_Flag && M1_Ctl == 0 && !param.M1_Flag);
+    render(); contains(1, "RC M0:0"); contains(2, "ROLL");
+    if (DISP_ROWS > 7) details_cleared(7);
+    remote("(U,)"); assert(M1_Ctl == 0 && !param.M1_Flag);
+    param.M0_Flag = 1;
+    remote("(U,)"); assert(fabsf(M1_Ctl - 0.1f) < 0.001f);
     remote("(M,)");
     assert(ui_get_mode() == UI_MODE_MENU);
-    contains(1, ">av_kp"); details_cleared(7);
-    remote("(S,)"); contains(1, "HOST CONTROL");
+    contains(1, ">av_kp");
+    if (DISP_ROWS >= 8) {
+        contains(5, "ROLL"); contains(6, "PITCH"); contains(7, "YAW");
+        assert(colors[5] == DISP_GREEN && colors[6] == DISP_YELLOW &&
+               colors[7] == DISP_CYAN);
+        details_cleared(8);
+    }
+    remote("(S,)"); contains(1, "HOST M0:1");
     assert(ui_get_mode() == UI_MODE_DRIVE);
-    remote("(S,)"); contains(1, "REMOTE CTRL");
+    command(60, 240);
+    for (unsigned i = 0; i < 30; i++) tick(0);
+    render(); assert(M1_Ctl == 4.0f && odrive.set_speed1 == 4.0f);
+    contains(2, "ROLL"); contains(3, "PITCH"); contains(4, "YAW");
+    if (DISP_ROWS > 7) details_cleared(7);
+    remote("(S,)"); contains(1, "RC M0:1");
+    assert(!upper_Flag && M1_Ctl == 0 && !param.M1_Flag);
+    imu.rol = 12.5f; imu.pit = -8.25f; imu.yaw = -179.5f;
+    render(); contains(2, "+12.50"); contains(3, "-8.25"); contains(4, "-179.50");
     printf("UI integration passed: %u rows, PERF=%u\n",
            (unsigned)DISP_ROWS, (unsigned)UI_SHOW_PERF);
     return 0;

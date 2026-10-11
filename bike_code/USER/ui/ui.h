@@ -82,8 +82,7 @@
 #define UI_RC_TIMEOUT_MS 500u
 
 /* 1 = show render/push instrumentation (gram us / units / render us).
- * DRIVE/HOST use TFT spare row 9; MENU uses row 4. HOST's safety status on
- * row 4 is never replaced by diagnostics.
+ * Optional MENU row 4 only. DRIVE/boot reserve rows 2-4 for raw IMU angles.
  *
  * Read the numbers, then turn this OFF: the perf row changes every single
  * frame, so it keeps two pages and one row permanently dirty and destroys the
@@ -92,7 +91,7 @@
  * eight 128-byte memcmps.  The numbers it shows are therefore the worst case,
  * not the steady state. */
 #ifndef UI_SHOW_PERF
-#define UI_SHOW_PERF    1
+#define UI_SHOW_PERF    0
 #endif
 
 /* 1 = build the 'V' command (set the selected item to an absolute value).  It
@@ -163,10 +162,10 @@ void ui_boot_skip_reset(void);
  * inside those loops instead.
  *
  *   msg   status line (row 1), e.g. "Press KEY0 to start"
- *   secs  countdown shown on row 2; negative hides the row
+ *   secs  countdown appended to row 1; negative hides the countdown
  *
- * Row 3 always shows imu.rol, so the IMU is visibly alive while the loop is
- * blocked.  Self-limits to UI_BOOT_MIN_MS so a spin-wait cannot repaint at
+ * Rows 2-4 show raw imu.rol/pit/yaw (green/yellow/cyan on TFT), including
+ * before balance is enabled. Self-limits to UI_BOOT_MIN_MS so a spin-wait cannot repaint at
  * main-loop speed; that floor is far below the 1 Hz the countdowns need, and
  * it keeps the call sites to a single line each. */
 void ui_render_now(const char *msg, int secs);

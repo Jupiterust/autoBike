@@ -101,6 +101,12 @@ void disp_clear_all(void);
 /* Draw one row of text, padded/truncated to DISP_COLS.  Cheap when unchanged. */
 void disp_row(uint8_t row, const char *text);
 
+/* RGB565 foreground; monochrome OLED ignores colour. Cached with the text. */
+#define DISP_GREEN  0x07E0u
+#define DISP_YELLOW 0xFFE0u
+#define DISP_CYAN   0x07FFu
+void disp_row_color(uint8_t row, const char *text, uint16_t fg);
+
 /* Row 1: colour-filled 8x16 heading on the fitted TFT, ordinary text on OLED.
  * Cached until the source changes; normal disp_row(1, ...) restores the row. */
 void disp_control_heading(uint8_t host);
