@@ -94,6 +94,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     /* Reading SR then DR clears PE/FE/NE/ORE together on F4. */
     __HAL_UART_CLEAR_PEFLAG(huart);
     huart->ErrorCode = HAL_UART_ERROR_NONE;
+    if (huart == &huart8) ch100_attitude_valid = 0;
 
     if (huart->RxState != HAL_UART_STATE_READY)
         return;                 /* transfer survived; nothing to restart */
@@ -132,7 +133,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 void uart_rx_watchdog(void)
 {
     if (huart8.RxState == HAL_UART_STATE_READY)
+    {
+        ch100_attitude_valid = 0;
         HAL_UART_Receive_DMA(&huart8, (uint8_t *)CH100_buf, CH100_DATA_LEN);
+    }
     if (huart7.RxState == HAL_UART_STATE_READY)
         HAL_UART_Receive_IT(&huart7, (uint8_t *)USART_RX_BUF2, USART_RX_LEN2);
     if (huart2.RxState == HAL_UART_STATE_READY)

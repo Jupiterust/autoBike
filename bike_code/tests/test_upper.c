@@ -1,12 +1,14 @@
 /* Host-only integration tests for the actual upper.c and vofa.c.
  * Build/run commands are in tests/run_upper_tests.sh. No board required. */
 #include "A_include.h"
+#include "ch100.h"
 #include <assert.h>
 #include <stdio.h>
 
 param_t param;
 odrive_t odrive;
 UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart8;
 float M1_Ctl;
 int Servo_Ctl, Servoduty;
 bool restart_flag;
@@ -20,6 +22,13 @@ static uint8_t sent[12];
 static uint16_t sent_size;
 static const uint8_t *inflight;
 static HAL_StatusTypeDef tx_result;
+
+HAL_StatusTypeDef HAL_UART_Receive_DMA(UART_HandleTypeDef *u, uint8_t *p, uint16_t n)
+{ assert(u == &huart8 && p == CH100_buf && n == CH100_DATA_LEN); return HAL_OK; }
+HAL_StatusTypeDef HAL_UART_DMAStop(UART_HandleTypeDef *u)
+{ assert(u == &huart8); return HAL_OK; }
+void telem_note_imu_crc_err(void) {}
+float low_pass_filter(float value) { return value; }
 
 uint32_t HAL_GetTick(void) { return now_ms; }
 uint32_t __get_PRIMASK(void) { return mask; }
@@ -91,6 +100,9 @@ static void reset(void)
     odrive_vel1_turns = 0;
     odrive_vel1_ms = 0;
     odrive_vel1_valid = 0;
+    memset(&imu, 0, sizeof imu);
+    ch100_attitude_ms = 0;
+    CH100_USART_Init();
     now_ms = 0;
     sends = ui_calls = 0;
     tx_result = HAL_OK;
@@ -352,6 +364,123 @@ static void test_protection_stop_status(void)
     assert(echo() & UPPER_TIMEOUT_SEEN); /* sticky after recovery */
 }
 
+static void test_240rpm_limits(void)
+{
+    reset(); host();
+    command(0, 240); tick(0);
+    assert(M1_Ctl == 4.0f && odrive.set_speed1 == 4.0f);
+    assert(!(echo() & UPPER_CLAMPED));
+    assert(read_i16(sent + 4) == 240);
+    tick(0.5f);
+    assert(odrive.set_speed1 == 4.0f && (echo() & UPPER_CLAMPED));
+    command(0, 241); tick(0);
+    assert(M1_Ctl == 4.0f && (echo() & UPPER_CLAMPED));
+    assert(upper_limit_drive(-0.1f) == 0.0f); /* host cannot reverse */
+    upper_toggle_mode();
+    param.M0_Flag = param.M1_Flag = 1;
+    assert(upper_limit_drive(4.5f) == 4.0f);
+    assert(echo() & UPPER_CLAMPED);
+    assert(upper_limit_drive(-4.5f) == -4.0f);
+    assert(echo() & UPPER_CLAMPED);
+    assert(upper_limit_drive(-4.0f) == -4.0f);
+    assert(!(echo() & UPPER_CLAMPED));
+}
+
+/* Exercise the production CH100 CRC/parser, not just synthetic metadata. */
+static void imu_sample(float pitch, float roll, float yaw)
+{
+    uint16_t crc = 0;
+    memset(CH100_buf, 0, CH100_DATA_LEN);
+    CH100_buf[0] = 0x5A; CH100_buf[1] = 0xA5;
+    CH100_buf[2] = 76; CH100_buf[6] = 0x91;
+    memcpy(CH100_buf + 54, &pitch, 4);
+    memcpy(CH100_buf + 58, &roll, 4);
+    memcpy(CH100_buf + 62, &yaw, 4);
+    for (unsigned i = 0; i < CH100_DATA_LEN; i++) {
+        if (i == 4 || i == 5) continue;
+        crc ^= (uint16_t)CH100_buf[i] << 8;
+        for (unsigned k = 0; k < 8; k++)
+            crc = (uint16_t)((crc & 0x8000u) ? (crc << 1) ^ 0x1021u : crc << 1);
+    }
+    CH100_buf[4] = (uint8_t)crc; CH100_buf[5] = (uint8_t)(crc >> 8);
+    assert(CH100_ProcAll(CH100_buf) == 1);
+}
+static const uint8_t imu_query[] = {0xAA, 0x57, 0x49, 0x5A};
+static void attitude_reply(void)
+{
+    tx_done(); feed(imu_query, sizeof imu_query); upper_task();
+    assert(sent_size == 11 && sent[0] == 0xAA && sent[1] == 0x58);
+    assert(sent[9] == upper_crc8(sent, 9) && sent[10] == 0x5A);
+    assert(!(sent[8] & ~UPPER_IMU_VALID));
+    assert(mask == 0);
+}
+static void assert_invalid_attitude(void)
+{
+    attitude_reply();
+    assert(sent[8] == 0);
+    for (unsigned i = 2; i < 8; i++) assert(sent[i] == 0);
+}
+static void test_attitude_mapping_and_validity(void)
+{
+    const uint8_t example[] = {0xAA,0x58,0x2C,0x01,0x38,0xFF,0x8C,0x23,1,0x97,0x5A};
+    reset(); assert_invalid_attitude(); /* boot: no IMU sample */
+    imu_sample(3.0f, 2.0f, -91.0f); /* raw fields -> pitch +3, roll -2, yaw +91 */
+    attitude_reply(); assert(!memcmp(sent, example, sizeof example));
+    assert(imu.pit == 3 && imu.rol == 2 && imu.yaw == -91); /* no control mutation */
+    now_ms = 100; attitude_reply(); assert(sent[8] == UPPER_IMU_VALID);
+    now_ms = 101; assert_invalid_attitude();
+    imu_sample(-1.125f, -1.125f, 179.5f); attitude_reply();
+    assert(read_i16(sent + 2) == -113 && read_i16(sent + 4) == 113);
+    assert(read_i16(sent + 6) == -17950);
+    CH100_buf[54] ^= 1;
+    assert(CH100_ProcAll(CH100_buf) == 0);
+    assert_invalid_attitude(); /* a bad CRC invalidates even before timeout */
+    imu_sample(NAN, 0, 0); assert_invalid_attitude();
+    imu_sample(0, INFINITY, 0); assert_invalid_attitude();
+    imu_sample(0, 0, -INFINITY); assert_invalid_attitude();
+    imu_sample(400, 0, 0); assert_invalid_attitude(); /* no int16 wrap */
+    imu_sample(0, 0, 0); attitude_reply(); assert(sent[8] == UPPER_IMU_VALID);
+    CH100_USART_Init(); assert_invalid_attitude(); /* receive restart */
+    now_ms = UINT32_MAX - 50u; imu_sample(1, 2, 3);
+    now_ms = 49; attitude_reply(); assert(sent[8] == UPPER_IMU_VALID);
+    now_ms = 50; assert_invalid_attitude(); /* wrap-safe 101 ms */
+}
+static void test_attitude_queue_and_parser(void)
+{
+    const uint8_t boundary[] = {0xAA,0x57,0x38,0x5A};
+    const uint8_t bad[] = {0xAA,0x57,0x48,0x5A,0xAA,0x57,0x49,0};
+    const uint8_t nested[] = {0xAA,0x55,0xAA,0x57,0x49,0x5A,0,0};
+    unsigned before;
+    reset(); imu_sample(3, 2, -91);
+    upper_task(); /* ordinary echo in flight */
+    feed(imu_query, 4); feed(imu_query, 4); feed(boundary, 4);
+    before = sends; upper_task(); assert(sends == before); tx_done();
+    tx_result = HAL_BUSY; upper_task(); assert(sends == before);
+    tx_result = HAL_OK; upper_task(); assert(sent_size == 12); tx_done();
+    tx_result = HAL_ERROR; upper_task(); assert(sends == before + 1);
+    tx_result = HAL_OK; upper_task(); assert(sent_size == 11); tx_done();
+    upper_task(); assert(sent_size == 11); tx_done();
+    before = sends; upper_task(); assert(sends == before); /* no periodic IMU */
+    feed(bad, sizeof bad); upper_task(); assert(sends == before);
+    feed(nested, sizeof nested); upper_task();
+    assert(sends == before + 1 && sent_size == 11); tx_done();
+    feed(imu_query, 2); upper_rx_reset(); feed(imu_query + 2, 2);
+    before = sends; upper_task(); assert(sends == before);
+    host(); command(0, 120); tick(0);
+    now_ms = 101; feed(imu_query, 4); tick(0);
+    assert(!param.M1_Flag && M1_Ctl == 0); /* queries cannot keep drive alive */
+    upper_task(); assert(sent_size == 11); tx_done();
+    assert(echo() & UPPER_TIMEOUT_SEEN);
+    /* Counter saturation must not wrap to zero. */
+    reset();
+    for (unsigned i = 0; i < 65536u; i++) feed(imu_query, 4);
+    for (unsigned i = 0; i < 65535u; i++) {
+        upper_task(); assert(sent_size == 11); tx_done();
+    }
+    assert(sends == 65535u);
+    upper_task(); assert(sent_size == 9); /* exactly UINT16_MAX queued replies */
+}
+
 int main(void)
 {
     test_crc_boot();
@@ -365,6 +494,9 @@ int main(void)
     test_noise_and_partial_reset();
     test_measured_rpm_and_fallback();
     test_protection_stop_status();
-    puts("11 upper/remote protocol test groups passed");
+    test_240rpm_limits();
+    test_attitude_mapping_and_validity();
+    test_attitude_queue_and_parser();
+    puts("14 upper/remote/CH100 protocol test groups passed");
     return 0;
 }

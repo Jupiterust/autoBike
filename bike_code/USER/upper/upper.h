@@ -20,6 +20,13 @@
  * speed updates before falling back to the command; independent of RC timeout. */
 #define UPPER_RPM_FEEDBACK_MAX_AGE_MS 500u
 
+/* AA 57 49 5A query -> AA 58 pitch/roll/yaw status CRC 5A (11 bytes).
+ * Angles are signed LE int16 in 0.01 deg, NOT the servo's whole degrees.
+ * Positive: nose up / lean right / clockwise viewed from above. */
+#define UPPER_IMU_MAX_AGE_MS 100u
+#define UPPER_IMU_VALID      0x01u
+#define UPPER_IMU_CALIBRATED 0x02u /* reserved until calibration is confirmed */
+
 #define UPPER_LINK_OK      (1u << 0)
 #define UPPER_TIMEOUT_SEEN (1u << 1)
 #define UPPER_MOTOR_EN     (1u << 2)

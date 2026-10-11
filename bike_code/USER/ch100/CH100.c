@@ -1,4 +1,8 @@
 #include "ch100.h"
+#include <math.h>
+
+volatile uint32_t ch100_attitude_ms;
+volatile uint8_t ch100_attitude_valid;
 
 uint8_t CH100_buf[CH100_DATA_LEN] = {0};	// 帧缓存
 //static int16_t	CU2(uint8_t *p) {int16_t	u; memcpy(&u, p, 2); return u;}
@@ -8,6 +12,7 @@ imu_t	imu;
 
 void CH100_USART_Init(void)
 {
+    ch100_attitude_valid = 0;
 //	__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);				// 使能串口接收中断
 //	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);				// 使能串口空闲中断
 //	__HAL_UART_ENABLE_IT(&huart1, UART_IT_ERR);					// 使能串口错误中断
@@ -45,6 +50,7 @@ static void crc16_update(uint16_t *currectCrc, const uint8_t *src, uint32_t leng
   */
 uint8_t CH100_ProcAll(uint8_t *data)
 {
+    (void)data; /* legacy fixed DMA buffer parser */
 
 	uint16_t ch100_crc0 = 0;		// 数据帧中CRC
 	uint16_t ch100_crc = 0;			// 收到数据计算CRC
@@ -75,11 +81,18 @@ uint8_t CH100_ProcAll(uint8_t *data)
         
         
         
+        /* Publish metadata only; keep all legacy control values unchanged. */
+        ch100_attitude_valid = CH100_buf[0] == CH100_DATA_PRE
+                            && CH100_buf[1] == CH100_DATA_TYPE
+                            && isfinite(imu.pit) && isfinite(imu.rol)
+                            && isfinite(imu.yaw);
+        if (ch100_attitude_valid) ch100_attitude_ms = HAL_GetTick();
 		return 1;
 	} 
   else 
   {
 		telem_note_imu_crc_err();
+        ch100_attitude_valid = 0;
 		memset(&CH100_buf, 0, sizeof(CH100_buf));
 		return 0;
 	}

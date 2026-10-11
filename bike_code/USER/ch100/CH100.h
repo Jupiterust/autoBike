@@ -29,6 +29,11 @@ typedef struct
 extern imu_t	imu;
 extern imu_t imu;
 
+/* Telemetry validity only; does not gate or alter the balance controller.
+ * Published after a CRC-valid finite attitude; cleared on receive failure. */
+extern volatile uint32_t ch100_attitude_ms;
+extern volatile uint8_t ch100_attitude_valid;
+
 extern uint8_t CH100_buf[CH100_DATA_LEN];	// Ö¡»º´æ
 
 uint8_t CH100_ProcAll(uint8_t *data);

@@ -12,6 +12,7 @@ static volatile uint32_t command_ms, armed_ms;
 static volatile uint8_t command_seen, timed_out, timeout_seen;
 static volatile uint8_t command_clamped, output_clamped, stop_pending;
 static volatile uint16_t boundary_pending;
+static volatile uint16_t attitude_pending;
 
 typedef struct {
     int16_t servo, rpm;
@@ -103,6 +104,7 @@ void upper_init(void)
     upper_Flag = 0;
     upper_rx_reset();
     command_ms = timeout_seen = boundary_pending = 0;
+    attitude_pending = 0;
     echo_sent = 0;
     echo_ms = 0;
     upper_stop_control();
@@ -175,8 +177,11 @@ void  Upper(uint8_t byte)
         else if (rx[1] == 0x57u) size = 4;
         else { rx_drop(1); continue; }
         if (rx_size < size) return;
+        /* Legacy boundary query uses CRC=0x38; the new query uses item=0x49
+         * instead of CRC. Never relax CRC validation for driving commands. */
         if (rx[size - 1] != 0x5Au
-         || upper_crc8(rx, (uint16_t)(size - 2)) != rx[size - 2]) {
+         || (size == 8 ? upper_crc8(rx, 6) != rx[6]
+                       : (rx[2] != 0x38u && rx[2] != 0x49u))) {
             rx_drop(2); /* preserve all payload bytes for resynchronisation */
             continue;
         }
@@ -184,8 +189,10 @@ void  Upper(uint8_t byte)
             rpm = get_i16(rx + 4);
             if (rpm < 0) { rx_drop(2); continue; }
             accept_command(get_i16(rx + 2), rpm);
-        } else if (boundary_pending != UINT16_MAX) {
-            boundary_pending++;
+        } else if (rx[2] == 0x49u) {
+            if (attitude_pending != UINT16_MAX) attitude_pending++;
+        } else {
+            if (boundary_pending != UINT16_MAX) boundary_pending++;
         }
         rx_drop(size);
     }
@@ -277,6 +284,41 @@ static echo_t current_echo(void)
     return result;
 }
 
+/* Foreground only. Copy a coherent ISR-published sample under a short mask;
+ * float conversion and UART transmission run with the prior IRQ state restored.
+ * Invalid samples reply with all angles zero and VALID=0 (not a zero pose). */
+static void pack_attitude(void)
+{
+    float pitch, roll, yaw;
+    uint32_t sample_ms, now, pri = __get_PRIMASK();
+    uint8_t valid;
+    __disable_irq();
+    pitch = imu.pit;
+    roll = -imu.rol;
+    yaw = -imu.yaw;
+    sample_ms = ch100_attitude_ms;
+    valid = ch100_attitude_valid;
+    now = HAL_GetTick();
+    __set_PRIMASK(pri);
+
+    /* roundf handles negative halves symmetrically. Check the rounded floats
+     * BEFORE casting: NaN, infinity and int16 overflow must never reach a cast. */
+    pitch = roundf(pitch * 100.0f);
+    roll = roundf(roll * 100.0f);
+    yaw = roundf(yaw * 100.0f);
+    valid = valid && (uint32_t)(now - sample_ms) <= UPPER_IMU_MAX_AGE_MS
+          && isfinite(pitch) && pitch >= -32768.0f && pitch <= 32767.0f
+          && isfinite(roll) && roll >= -32768.0f && roll <= 32767.0f
+          && isfinite(yaw) && yaw >= -32768.0f && yaw <= 32767.0f;
+    tx[0] = 0xAA; tx[1] = 0x58;
+    put_i16(tx + 2, valid ? (int16_t)pitch : 0);
+    put_i16(tx + 4, valid ? (int16_t)roll : 0);
+    put_i16(tx + 6, valid ? (int16_t)yaw : 0);
+    tx[8] = valid ? UPPER_IMU_VALID : 0; /* CALIBRATED stays 0 */
+    tx[9] = upper_crc8(tx, 9);
+    tx[10] = 0x5A;
+}
+
 void upper_task(void)
 {
     echo_t echo;
@@ -295,6 +337,19 @@ void upper_task(void)
             pri = __get_PRIMASK();
             __disable_irq();
             boundary_pending--;
+            __set_PRIMASK(pri);
+        }
+        return;
+    }
+
+    /* Boundary replies have priority. Retain pending requests on HAL_BUSY or
+     * HAL_ERROR; never overwrite the shared buffer while USART2 is in flight. */
+    if (attitude_pending) {
+        pack_attitude();
+        if (HAL_UART_Transmit_IT(&huart2, tx, 11) == HAL_OK) {
+            pri = __get_PRIMASK();
+            __disable_irq();
+            attitude_pending--;
             __set_PRIMASK(pri);
         }
         return;
