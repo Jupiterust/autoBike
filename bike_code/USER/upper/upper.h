@@ -5,12 +5,12 @@
 
 /* Protocol angles describe the front steering SERVO shaft relative to centre,
  * not the handlebar or front-wheel angle after the mechanical linkage.
- * Positive means right steering; +90 internal units means -90 servo degrees.
- * Wire values are whole degrees: -90..+90 means -90..+90 deg.
- * Servo_Delta (currently 90) remains the independent mechanical limit. */
-#define UPPER_STEER_REFERENCE_UNITS 90
-#define UPPER_STEER_REFERENCE_DEG   90
-#define UPPER_STEER_LIMIT_DEG       90
+ * Positive means right steering; +120 internal units means -120 servo degrees.
+ * Wire values are whole degrees: -120..+120 means -120..+120 deg.
+ * Servo_Delta (currently 120) remains the independent mechanical limit. */
+#define UPPER_STEER_REFERENCE_UNITS 120
+#define UPPER_STEER_REFERENCE_DEG   120
+#define UPPER_STEER_LIMIT_DEG       120
 #define UPPER_RPM_MAX               180 /* existing 3 motor turns/s */
 #ifndef UPPER_TIMEOUT_MS
 #define UPPER_TIMEOUT_MS            100u

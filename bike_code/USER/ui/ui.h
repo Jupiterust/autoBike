@@ -72,8 +72,8 @@
 #define UI_M1_MIN       (-3.0f)
 #define UI_M1_MAX       3.0f
 
-/* Servo_Ctl units per left/right press.  Servo_Ctl spans +-Servo_Delta (90),
- * and at the handset's ~10 Hz repeat 5 units/press means ~1.6 s from centre to
+/* Servo_Ctl units per left/right press.  Servo_Ctl spans +-Servo_Delta (120),
+ * and at the handset's ~10 Hz repeat 5 units/press means ~2.4 s from centre to
  * full lock.  balance() still slew-limits the result through
  * Steer_Speed_Limit(), so a larger step here cannot step the servo abruptly. */
 #define UI_SERVO_STEP   5
