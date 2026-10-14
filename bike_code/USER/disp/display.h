@@ -105,6 +105,8 @@ void disp_row(uint8_t row, const char *text);
 #define DISP_GREEN  0x07E0u
 #define DISP_YELLOW 0xFFE0u
 #define DISP_CYAN   0x07FFu
+#define DISP_ORANGE 0xFC08u
+#define DISP_MAGENTA 0xF81Fu
 void disp_row_color(uint8_t row, const char *text, uint16_t fg);
 
 /* Row 1: colour-filled 8x16 heading on the fitted TFT, ordinary text on OLED.

@@ -13,6 +13,7 @@ test_imu_t imu;
 volatile uint32_t ch100_attitude_ms;
 volatile uint8_t ch100_attitude_valid;
 float M1_Ctl, Servo_Gain_K, error_zero, odrive_pos1_turns;
+float Servo_zhongzhi_Gain;
 volatile float odrive_vel1_turns;
 volatile uint32_t odrive_vel1_ms;
 volatile uint8_t odrive_vel1_valid;
@@ -100,6 +101,18 @@ static void details_cleared(unsigned first)
     for (unsigned row = first; row < DISP_ROWS; row++)
         assert(rows[row][0] == ' ' || rows[row][0] == '\0');
 }
+static void drive_zero(const char *value)
+{
+    if (DISP_ROWS >= 10) {
+        contains(8, "zero");
+        contains(9, value);
+        details_cleared(10);
+    } else if (DISP_ROWS > 7) {
+        contains(7, value);
+        details_cleared(8);
+    }
+}
+
 int main(void)
 {
     upper_init(); ui_init();
@@ -119,7 +132,11 @@ int main(void)
     contains(1, "re-stand 2s"); contains(4, "YAW");
     details_cleared(DISP_UI_ROWS);
     render(); contains(1, "RC M0:0"); contains(2, "ROLL");
-    if (DISP_ROWS > 7) details_cleared(7);
+    drive_zero("Zservo   -1.400 deg");
+    Servo_zhongzhi_Gain = 0.25f;
+    render();
+    drive_zero("Zservo   -1.150 deg");
+    assert(param.angular_zero == -1.4f && Servo_zhongzhi_Gain == 0.25f);
     remote("(U,)"); assert(M1_Ctl == 0 && !param.M1_Flag);
     param.M0_Flag = 1;
     remote("(U,)"); assert(fabsf(M1_Ctl - 0.1f) < 0.001f);
@@ -130,7 +147,8 @@ int main(void)
         contains(5, "ROLL"); contains(6, "PITCH"); contains(7, "YAW");
         assert(colors[5] == DISP_GREEN && colors[6] == DISP_YELLOW &&
                colors[7] == DISP_CYAN);
-        details_cleared(8);
+        if (DISP_ROWS > 8) contains(8, "Zservo   -1.150 deg");
+        details_cleared(9);
     }
     remote("(S,)"); contains(1, "HOST M0:1");
     assert(ui_get_mode() == UI_MODE_DRIVE);
@@ -138,11 +156,54 @@ int main(void)
     for (unsigned i = 0; i < 30; i++) tick(0);
     render(); assert(M1_Ctl == 4.0f && odrive.set_speed1 == 4.0f);
     contains(2, "ROLL"); contains(3, "PITCH"); contains(4, "YAW");
-    if (DISP_ROWS > 7) details_cleared(7);
+    drive_zero("Zservo   -1.150 deg");
+    if (DISP_ROWS >= 10) {
+        contains(5, "SPDset  +4.00 t/s");
+        contains(6, "SPDact"); contains(7, "FLY");
+        assert(colors[5] == DISP_ORANGE && colors[6] == DISP_CYAN &&
+               colors[7] == DISP_MAGENTA);
+    }
     remote("(S,)"); contains(1, "RC M0:1");
     assert(!upper_Flag && M1_Ctl == 0 && !param.M1_Flag);
     imu.rol = 12.5f; imu.pit = -8.25f; imu.yaw = -179.5f;
     render(); contains(2, "+12.50"); contains(3, "-8.25"); contains(4, "-179.50");
+    Servo_zhongzhi_Gain = -0.25f;
+    render();
+    drive_zero("Zservo   -1.650 deg");
+    param.angular_zero = -1.0f;
+    render();
+    drive_zero("Zservo   -1.250 deg");
+    assert(Servo_zhongzhi_Gain == -0.25f);
+    M1_Ctl = 2.5f; odrive_vel1_turns = -1.25f; odrive.now_speed0 = -123.5f;
+    render();
+    if (DISP_ROWS >= 10) {
+        contains(5, "SPDset  +2.50 t/s");
+        contains(6, "SPDact  -1.25 t/s");
+        contains(7, "FLY  -123.5 enc/T");
+        assert(colors[5] == DISP_ORANGE && colors[6] == DISP_CYAN &&
+               colors[7] == DISP_MAGENTA);
+    }
+    assert(M1_Ctl == 2.5f && odrive_vel1_turns == -1.25f && odrive.now_speed0 == -123.5f);
+    remote("(M,)"); /* clear drive's last row when entering the menu */
+    if (DISP_ROWS >= 10) details_cleared(9);
+    /* Six-key handset: each left/right frame changes zero by 0.005 degrees. */
+    for (unsigned i = 0; i < 9; i++) remote("(D,)");
+    contains(2, ">zero");
+#if !UI_SHOW_PERF
+    contains(4, "step 0.0050");
+#endif
+    param.angular_zero = -1.4f;
+    remote("(R,)");
+    assert(fabsf(param.angular_zero - (-1.395f)) < 0.000001f);
+    contains(2, "-1.3950");
+    remote("(L,)");
+    assert(fabsf(param.angular_zero - (-1.4f)) < 0.000001f);
+    for (unsigned i = 0; i < 10; i++) remote("(R,)");
+    assert(fabsf(param.angular_zero - (-1.35f)) < 0.000002f);
+    param.angular_zero = 4.998f;
+    remote("(R,)"); assert(param.angular_zero == 5.0f);
+    param.angular_zero = -4.998f;
+    remote("(L,)"); assert(param.angular_zero == -5.0f);
     printf("UI integration passed: %u rows, PERF=%u\n",
            (unsigned)DISP_ROWS, (unsigned)UI_SHOW_PERF);
     return 0;

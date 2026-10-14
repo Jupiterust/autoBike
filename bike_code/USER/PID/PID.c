@@ -149,18 +149,35 @@ float Servo_Gain_K = 0.0015f;
 float Servo_Gain(void)
 {
     uint8_t gain_index = 0;//Ë÷Òý
-    if (Servo_Ctl > 90) gain_index = 9;
-    else if (Servo_Ctl > 80) gain_index = 8;
-    else if (Servo_Ctl > 70) gain_index = 7;
-    else if (Servo_Ctl > 60) gain_index = 6;
-    else if (Servo_Ctl > 50) gain_index = 5;
-    else if (Servo_Ctl > 40) gain_index = 4;
-    else if (Servo_Ctl > 30) gain_index = 3;
-    else if (Servo_Ctl > 20) gain_index = 2;
-    else if (Servo_Ctl > 10) gain_index = 1;
-    else if (Servo_Ctl > 0) gain_index = 0;
-	
+    if (Servo_Ctl > 0)
+    {
+        /* Interpolate compensation values, not the table's coefficients.
+           Preserve the measured 12-unit anchors through +60; above +60,
+           retain the old 70/80/90/100 endpoints and the >100 linear tail.
+           Knots use Servo_ZERO[1..9]; the origin has zero compensation.
+           The adjustable sgain term stays linear and is added unchanged. */
+        static const uint8_t positive_knots[] = {
+            12, 24, 36, 48, 60, 70, 80, 90, 100
+        };
+        const float steer = (float)Servo_Ctl;
+        float lower_steer = 0.0f;
+        float lower_bias = 0.0f;
 
+        for (uint8_t i = 0; i < sizeof(positive_knots) / sizeof(positive_knots[0]); ++i)
+        {
+            const float upper_steer = (float)positive_knots[i];
+            const float upper_bias = upper_steer * Servo_ZERO[i + 1];
+            if (steer <= upper_steer)
+            {
+                const float fraction = (steer - lower_steer) / (upper_steer - lower_steer);
+                const float bias = lower_bias + fraction * (upper_bias - lower_bias);
+                return steer * Servo_Gain_K + bias;
+            }
+            lower_steer = upper_steer;
+            lower_bias = upper_bias;
+        }
+        return steer * Servo_Gain_K + Servo_ZERO[9] * steer;
+    }
     else if (Servo_Ctl < -90) gain_index = 19;
     else if (Servo_Ctl < -80) gain_index = 18;
     else if (Servo_Ctl < -70) gain_index = 17;

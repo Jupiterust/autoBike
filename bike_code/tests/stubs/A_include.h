@@ -62,6 +62,7 @@ extern test_dwt_t test_dwt;
 #define UART_ERR_IMU 2u
 #define TEST_ARM_MAX_DEG 1.0f
 extern float Servo_Gain_K, error_zero;
+extern float Servo_zhongzhi_Gain;
 extern float odrive_pos1_turns;
 extern uint32_t uart_err_cnt[3], odrive_tx_drops;
 extern uint32_t odrive_fb_tx, odrive_fb_ok, odrive_fb_bad, odrive_fb_eol, odrive_fb_ovf;

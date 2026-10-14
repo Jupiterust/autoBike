@@ -1,0 +1,135 @@
+{
+  "samples": 6134,
+  "timing": {
+    "span_ms": 31318,
+    "real_loop_hz": 399.8,
+    "frame_hz": 195.9,
+    "loop_inc_per_frame_mode": 2,
+    "dropped_loops_est": 256,
+    "dt_ms_stats": {
+      "n": 6133,
+      "min": 4,
+      "max": 60,
+      "mean": 5.106473177890103,
+      "std": 1.98984348469059
+    }
+  },
+  "angle_loop": {
+    "actual_deg": {
+      "n": 6134,
+      "min": -1.9150744676589966,
+      "max": -0.8242489695549011,
+      "mean": -1.4569131331254108,
+      "std": 0.10633127423905137
+    },
+    "error_deg": {
+      "n": 6134,
+      "min": -1.0679832100868225,
+      "max": 0.552848219871521,
+      "mean": -0.08143908624972433,
+      "std": 0.14446672004878364
+    }
+  },
+  "rate_loop": {
+    "actual_dps": {
+      "n": 6134,
+      "min": -2.945280075073242,
+      "max": 2.2609918117523193,
+      "mean": -0.002377449304118912,
+      "std": 0.46685382783732904
+    },
+    "error_dps": {
+      "n": 6134,
+      "min": -7.679203320294619,
+      "max": 4.055721640586853,
+      "mean": -0.589901423710871,
+      "std": 1.0255911425539261
+    }
+  },
+  "speed_loop": {
+    "now_speed0": {
+      "n": 6134,
+      "min": -8.104982376098633,
+      "max": 13.710418701171875,
+      "mean": 0.8263921422911501,
+      "std": 1.4854997975004853
+    },
+    "cmd_raw": {
+      "n": 6134,
+      "min": -8.104982376098633,
+      "max": 13.710418701171875,
+      "mean": 0.8263921422911501,
+      "std": 1.4854997975004853
+    }
+  },
+  "flywheel_saturation": {
+    "duty_fraction": 0.0,
+    "depth_stats": {
+      "n": 6134,
+      "min": 0.0,
+      "max": 0.0,
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "note": "duty 长期 >0.2 说明飞轮经常憋在限幅里,先降增益/加大飞轮能力,别急着调其它环"
+  },
+  "inner_pid_terms": {
+    "mean_abs_P": 1.1705,
+    "mean_abs_I": 0.0,
+    "mean_abs_D": 0.1124,
+    "dominant": "P",
+    "share_pct": {
+      "P": 91.2,
+      "I": 0.0,
+      "D": 8.8
+    },
+    "d_frame_to_frame_jitter": 0.2024,
+    "note": "D 抖动远大于 |D| 均值 => D 在放大噪声,考虑降 kd 或加微分低通"
+  },
+  "fly_gain_pinned_fraction": 0.0,
+  "balance_active_fraction": 1.0,
+  "params": {
+    "av_kp": 1.399999976158142,
+    "av_ki": 0.0,
+    "av_kd": 1.1150000095367432,
+    "an_kp": -7.300000190734863,
+    "an_ki": 0.0,
+    "an_kd": -1.2000000476837158,
+    "fw_kp": -0.1599999964237213,
+    "fw_ki": -0.08100000023841858,
+    "fw_kd": 0.0,
+    "angular_zero": -1.399999976158142
+  },
+  "step_response": {
+    "found": true,
+    "pulses_in_window": 1,
+    "t0_ms": 6945126,
+    "window_ms": 2996,
+    "samples": 600,
+    "pulse_ms": 400,
+    "cmd_step_deg": 0.3642,
+    "baseline_rol_deg": -1.4616,
+    "peak_deviation_deg": 0.6373,
+    "peak_at_ms": 410,
+    "overshoot_vs_step_deg": 0.2732,
+    "recover_ms": null,
+    "settle_band_deg": 0.3,
+    "recover_tight_ms": null,
+    "settle_band_tight_deg": 0.1,
+    "fly_peak_abs": 51.0,
+    "sat_duty_in_window": 0.0,
+    "residual_err_deg": -0.1104,
+    "err_zero_peak_deg": 0.5758,
+    "err_zero_at_release_deg": 0.5505,
+    "notes": [
+      "窗口结束时 |角误差| 仍未稳定在 ±0.3° 内:没恢复,或窗口(3000ms)太短",
+      "撤销时 error_zero 已达 +0.55deg(命令阶跃 +0.36deg)。若 pulse_ms(400) 小于固件的 TEST_STEP_MS, 是安全中止触发, 该窗不可比;若等于 TEST_STEP_MS, 只是超调大, 数据仍可用。",
+      "稳定带 ±0.3deg 已达命令阶跃 0.36deg 的 82%,recover_ms 会偏乐观;请用 recover_tight_ms(±0.1deg)比较"
+    ]
+  },
+  "health": {
+    "imu_crc_err_last": 0,
+    "imu_crc_err_during": 0
+  },
+  "warnings": []
+}

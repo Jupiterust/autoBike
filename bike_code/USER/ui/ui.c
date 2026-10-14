@@ -85,7 +85,7 @@ static const menu_item_t MENU[] =
     { "fw_kp", &param.fly_wheel_speed_kp,   -1.0f,  0.0f,   0.005f,  MENU_ACT_NONE },
     { "fw_ki", &param.fly_wheel_speed_ki,   -0.5f,  0.0f,   0.002f,  MENU_ACT_NONE },
     { "fw_kd", &param.fly_wheel_speed_kd,   -0.5f,  0.5f,   0.002f,  MENU_ACT_NONE },
-    { "zero",  &param.angular_zero,         -5.0f,  5.0f,   0.01f,   MENU_ACT_NONE },
+    { "zero",  &param.angular_zero,         -5.0f,  5.0f,   0.005f,  MENU_ACT_NONE },
     { "sgain", &Servo_Gain_K,                0.0f,  0.01f,  0.0001f, MENU_ACT_NONE },
     { "LOADcalm", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_CALM },
     { "LOADwind", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_WIND },
@@ -180,6 +180,16 @@ static void ui_row(uint8_t row, const char *fmt, ...)
     disp_row(row, buf);
 }
 
+static void ui_row_color(uint8_t row, uint16_t color, const char *fmt, ...)
+{
+    char buf[UI_COLS + 1];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, sizeof buf, fmt, ap);
+    va_end(ap);
+    disp_row_color(row, buf, color);
+}
+
 /* ====================================================================== */
 /* Pages                                                                  */
 /* ====================================================================== */
@@ -218,6 +228,20 @@ static void ui_blank_from(uint8_t first)
         disp_row(row, "");
 }
 
+/* Steering-corrected zero only, not the full angle-loop target (which also
+ * includes speed-loop/Fly_Gain/test offsets). Read the controller's published
+ * steering correction; do NOT call Servo_Gain() again from the display. */
+static void ui_servo_zero(uint8_t row)
+{
+    float base, correction;
+    uint32_t pri = __get_PRIMASK();
+    __disable_irq();
+    base = param.angular_zero;
+    correction = Servo_zhongzhi_Gain;
+    __set_PRIMASK(pri);
+    ui_row(row, "Zservo %+8.3f deg", (double)(base + correction));
+}
+
 #if UI_SHOW_PERF
 /* gram = SPI push us, p = pages pushed of 8, rnd = GRAM render us.  All from
  * the previous frame, so the numbers are one frame stale. */
@@ -247,14 +271,26 @@ static void ui_page_drive(void)
     /* The TFT has spare rows, the OLED has none.  DISP_ROWS is a compile-time
      * constant, so this whole block folds away on the OLED build - no #ifdef
      * needed in the page code. */
-    if (DISP_ROWS > DISP_UI_ROWS)
+    if (DISP_ROWS >= 10u)
     {
-        /* Retain useful drive state; hide transport/performance diagnostics. */
-        ui_row(5, "spd%5.2f>%5.2f s%+4d",
+        /* Motor turns/s, not m/s or rpm. FLY keeps the existing encoder
+         * counts/control-period unit (enc/T), not ODrive velocity feedback. */
+        ui_row_color(5, DISP_ORANGE, "SPDset %+6.2f t/s", (double)M1_Ctl);
+        ui_row_color(6, DISP_CYAN, "SPDact %+6.2f t/s", (double)odrive_vel1_turns);
+        ui_row_color(7, DISP_MAGENTA, "FLY %+7.1f enc/T", (double)odrive.now_speed0);
+        ui_row(8, "zero%+7.3f s%+4d", (double)param.angular_zero, Servo_Ctl);
+        ui_servo_zero(9);
+        ui_blank_from(10);
+    }
+    else if (DISP_ROWS > DISP_UI_ROWS)
+    {
+        /* Compact fallback for other panel geometries. */
+        ui_row_color(5, DISP_ORANGE, "spd%5.2f>%5.2f s%+4d",
                (double)M1_Ctl, (double)odrive_vel1_turns, Servo_Ctl);
-        ui_row(6, "zero%7.2f fly%6.1f",
+        ui_row_color(6, DISP_MAGENTA, "zero%7.2f fly%6.1f",
                (double)param.angular_zero, (double)odrive.now_speed0);
-        ui_blank_from(7);
+        ui_servo_zero(7);
+        ui_blank_from(8);
     }
 }
 
@@ -306,7 +342,8 @@ static void ui_page_menu(void)
     if (DISP_ROWS >= 8u)
     {
         ui_attitude(5);
-        ui_blank_from(8);
+        ui_servo_zero(8);
+        ui_blank_from(9);
     }
     else
         ui_blank_from(DISP_UI_ROWS);
