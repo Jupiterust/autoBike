@@ -140,15 +140,15 @@ int main(void)
     remote("(U,)"); assert(M1_Ctl == 0 && !param.M1_Flag);
     param.M0_Flag = 1;
     remote("(U,)"); assert(fabsf(M1_Ctl - 0.1f) < 0.001f);
-    /* RC actual-angle estimate stays within 15 deg; shared host cap is 120. */
-    assert(Servo_Delta == 120 && SERVO_RC_LIMIT_UNITS == 85);
-    assert(SERVO_RC_LIMIT_UNITS * SERVO_DEG_PER_UNIT <= 15.0f);
+    /* RC actual-angle estimate stays within 20 deg; shared host cap is 120. */
+    assert(Servo_Delta == 120 && SERVO_RC_LIMIT_UNITS == 114);
+    assert(SERVO_RC_LIMIT_UNITS * SERVO_DEG_PER_UNIT <= 20.0f);
     for (unsigned i = 0; i < 40; i++) remote("(L,)");
-    assert(Servo_Ctl == 85);
-    if (DISP_ROWS >= 10) contains(6, "SERVO~ -14.9deg");
+    assert(Servo_Ctl == 114);
+    if (DISP_ROWS >= 10) contains(6, "SERVO~ -19.9deg");
     for (unsigned i = 0; i < 80; i++) remote("(R,)");
-    assert(Servo_Ctl == -85);
-    if (DISP_ROWS >= 10) contains(6, "SERVO~ +14.9deg");
+    assert(Servo_Ctl == -114);
+    if (DISP_ROWS >= 10) contains(6, "SERVO~ +19.9deg");
     remote("(K,)");
     assert(servo_con == 1 && !param.M1_Flag && M1_Ctl == 0);
     for (unsigned i = 0; i < 180; i++) {

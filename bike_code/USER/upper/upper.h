@@ -9,7 +9,7 @@
  * unit with opposite sign; it is NOT one physical servo-shaft degree.
  * Measured 120 PWM units ~=21 physical deg about the existing straight pose.
  * Thus wire +120 -> Servo_Ctl -120 -> estimated +21 deg, NOT +120 deg.
- * RC L/R uses its own 85-unit (~14.875 deg) cap and calibrated TFT display.
+ * RC L/R uses its own 114-unit (~19.95 deg) cap and calibrated TFT display.
  * Shared Servo_Delta stays 120 to keep host commands/echo behavior unchanged.
  * No steering position sensor: MEASURED_ANGLE remains zero. */
 #define UPPER_STEER_REFERENCE_UNITS 120

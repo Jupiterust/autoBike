@@ -177,7 +177,7 @@ static void test_absolute_slew_and_direction(void)
     for (unsigned i = 0; i < 60; i++) tick(0);
     assert(Servo_Ctl == -120); /* target survives the intermediate slew values */
     assert(!(echo() & (UPPER_MEASURED_RPM | UPPER_MEASURED_ANGLE)));
-    /* RC is now limited to 85 units; host range/mapping MUST stay +/-120. */
+    /* RC is now limited to 114 units; host range/mapping MUST stay +/-120. */
     command(171, 120);
     for (unsigned i = 0; i < 80; i++) tick(0);
     assert(Servo_Ctl == -120);

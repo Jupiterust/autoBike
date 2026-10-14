@@ -73,8 +73,8 @@
 #define UI_M1_MAX       4.0f            /* +240 rpm; matches UPPER_RPM_MAX */
 
 /* Servo_Ctl units per left/right press, NOT degrees. Measured 120 units ~=21
- * shaft deg, so 5 units ~=0.875 deg. The RC limit is 85 units (~14.875 deg);
- * at the handset's ~10 Hz repeat this means ~1.7 s from centre to
+ * shaft deg, so 5 units ~=0.875 deg. The RC limit is 114 units (~19.95 deg);
+ * at the handset's ~10 Hz repeat this means ~2.3 s from centre to
  * full lock.  balance() still slew-limits the result through
  * Steer_Speed_Limit(), so a larger step here cannot step the servo abruptly. */
 #define UI_SERVO_STEP   5
