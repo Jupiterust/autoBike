@@ -3,11 +3,15 @@
 
 #include <stdint.h>
 
-/* Protocol angles describe the front steering SERVO shaft relative to centre,
- * not the handlebar or front-wheel angle after the mechanical linkage.
- * Positive means right steering; +120 internal units means -120 servo degrees.
- * Wire values are whole degrees: -120..+120 means -120..+120 deg.
- * Servo_Delta (currently 120) remains the independent mechanical limit. */
+/* LEGACY HOST SCALE, intentionally unchanged by the RC actual-angle update.
+ * Command/echo/bounds: signed little-endian int16, NO x10 scaling, right +.
+ * Despite the historical *_DEG names, one wire unit maps to one PWM control
+ * unit with opposite sign; it is NOT one physical servo-shaft degree.
+ * Measured 120 PWM units ~=21 physical deg about the existing straight pose.
+ * Thus wire +120 -> Servo_Ctl -120 -> estimated +21 deg, NOT +120 deg.
+ * RC L/R uses its own 85-unit (~14.875 deg) cap and calibrated TFT display.
+ * Shared Servo_Delta stays 120 to keep host commands/echo behavior unchanged.
+ * No steering position sensor: MEASURED_ANGLE remains zero. */
 #define UPPER_STEER_REFERENCE_UNITS 120
 #define UPPER_STEER_REFERENCE_DEG   120
 #define UPPER_STEER_LIMIT_DEG       120
@@ -21,7 +25,7 @@
 #define UPPER_RPM_FEEDBACK_MAX_AGE_MS 500u
 
 /* AA 57 49 5A query -> AA 58 pitch/roll/yaw status CRC 5A (11 bytes).
- * Angles are signed LE int16 in 0.01 deg, NOT the servo's whole degrees.
+ * Angles are signed LE int16 in 0.01 deg, NOT the legacy servo wire units.
  * Positive: nose up / lean right / clockwise viewed from above. */
 #define UPPER_IMU_MAX_AGE_MS 100u
 #define UPPER_IMU_VALID      0x01u
@@ -38,7 +42,7 @@
 /* 0 = handset, 1 = onboard host. Only the handset S command changes it. */
 extern volatile uint8_t upper_Flag;
 
-/* Read-only foreground snapshot. servo is whole degrees, positive RIGHT;
+/* Read-only foreground snapshot. servo is legacy wire units, positive RIGHT;
  * rpm is measured motor revolutions/minute when MEASURED_RPM is set, otherwise
  * the final speed command. servo remains a software output (no sensor).
  * Both match the protocol echo. timed_out is the current timeout, not TIMEOUT_SEEN's

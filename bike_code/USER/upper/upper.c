@@ -51,7 +51,8 @@ static void put_i16(uint8_t *p, int16_t value)
     p[1] = (uint8_t)(u >> 8);
 }
 
-/* Whole degrees on the wire, positive RIGHT; internal units positive LEFT. */
+/* Legacy integer wire scale, NOT physical degrees. Right-positive wire
+ * maps 1:1 to left-positive PWM units with inverted sign (see upper.h). */
 static int angle_to_units(int16_t angle)
 {
     int32_t mag = angle < 0 ? -(int32_t)angle : angle;
@@ -62,7 +63,7 @@ static int angle_to_units(int16_t angle)
     return angle > 0 ? -units : units;
 }
 
-/* Echo uses the command's whole-degree unit and sign, not raw Servo_Ctl. */
+/* Echo keeps legacy wire scaling, not the TFT's physical-angle estimate. */
 static int16_t units_to_angle(int units)
 {
     int32_t mag = units < 0 ? -(int32_t)units : units;

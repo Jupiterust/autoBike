@@ -140,6 +140,23 @@ int main(void)
     remote("(U,)"); assert(M1_Ctl == 0 && !param.M1_Flag);
     param.M0_Flag = 1;
     remote("(U,)"); assert(fabsf(M1_Ctl - 0.1f) < 0.001f);
+    /* RC actual-angle estimate stays within 15 deg; shared host cap is 120. */
+    assert(Servo_Delta == 120 && SERVO_RC_LIMIT_UNITS == 85);
+    assert(SERVO_RC_LIMIT_UNITS * SERVO_DEG_PER_UNIT <= 15.0f);
+    for (unsigned i = 0; i < 40; i++) remote("(L,)");
+    assert(Servo_Ctl == 85);
+    if (DISP_ROWS >= 10) contains(6, "SERVO~ -14.9deg");
+    for (unsigned i = 0; i < 80; i++) remote("(R,)");
+    assert(Servo_Ctl == -85);
+    if (DISP_ROWS >= 10) contains(6, "SERVO~ +14.9deg");
+    remote("(K,)");
+    assert(servo_con == 1 && !param.M1_Flag && M1_Ctl == 0);
+    for (unsigned i = 0; i < 180; i++) {
+        now_ms += 10; vofa_con();
+        if (i % 10 == 0) remote("(H,)");
+    }
+    render(); assert(Servo_Ctl == 0 && servo_con == 0);
+    if (DISP_ROWS >= 10) contains(6, "SERVO~  +0.0deg");
     remote("(M,)");
     assert(ui_get_mode() == UI_MODE_MENU);
     contains(1, ">av_kp");
@@ -158,8 +175,8 @@ int main(void)
     contains(2, "ROLL"); contains(3, "PITCH"); contains(4, "YAW");
     drive_zero("Zservo   -1.150 deg");
     if (DISP_ROWS >= 10) {
-        contains(5, "SPDset  +4.00 t/s");
-        contains(6, "SPDact"); contains(7, "FLY");
+        contains(5, "SPD S+4.00 A");
+        contains(6, "SERVO~"); contains(7, "FLY");
         assert(colors[5] == DISP_ORANGE && colors[6] == DISP_CYAN &&
                colors[7] == DISP_MAGENTA);
     }
@@ -177,8 +194,8 @@ int main(void)
     M1_Ctl = 2.5f; odrive_vel1_turns = -1.25f; odrive.now_speed0 = -123.5f;
     render();
     if (DISP_ROWS >= 10) {
-        contains(5, "SPDset  +2.50 t/s");
-        contains(6, "SPDact  -1.25 t/s");
+        contains(5, "SPD S+2.50 A-1.25");
+        contains(6, "SERVO~");
         contains(7, "FLY  -123.5 enc/T");
         assert(colors[5] == DISP_ORANGE && colors[6] == DISP_CYAN &&
                colors[7] == DISP_MAGENTA);

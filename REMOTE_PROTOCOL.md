@@ -290,8 +290,8 @@ is required.
  *   'M'  MODE     -> menu                          -> drive
  *   'U'  up       M1_Ctl += 0.1                    previous item
  *   'D'  down     M1_Ctl -= 0.1                    next item
- *   'L'  left     Servo_Ctl -= UI_SERVO_STEP       value -= step
- *   'R'  right    Servo_Ctl += UI_SERVO_STEP       value += step
+ *   'L'  left     Servo_Ctl += UI_SERVO_STEP       value -= step
+ *   'R'  right    Servo_Ctl -= UI_SERVO_STEP       value += step
  *   'K'  OK       stop: M1_Ctl=0, M1_Flag=0,       run the action item
  *                 steering ramps back to centre    (LOAD calm / LOAD wind)
  *   'H'  (none)   heartbeat, ~10 Hz from the handset, both modes
@@ -313,8 +313,8 @@ and therefore cannot get out of sync with the bike.**
 | `M` | MODE | no | switch to menu mode | switch to drive mode |
 | `U` | up | no | `M1_Ctl += 0.1` (forward / faster) | previous menu item |
 | `D` | down | no | `M1_Ctl -= 0.1` (reverse / slower) | next menu item |
-| `L` | left | no | `Servo_Ctl -= 5` (steer left) | selected value `-= step` |
-| `R` | right | no | `Servo_Ctl += 5` (steer right) | selected value `+= step` |
+| `L` | left | no | `Servo_Ctl += 5` (steer left, about 0.875 degrees) | selected value `-= step` |
+| `R` | right | no | `Servo_Ctl -= 5` (steer right, about 0.875 degrees) | selected value `+= step` |
 | `K` | OK | no | **stop**: `M1_Ctl = 0`, `M1_Flag = 0`, steering ramps back to centre | run the selected action item (`LOAD calm` / `LOAD wind`); no effect on ordinary value items |
 | `H` | *(none)* | no | heartbeat only - see section 4 | same |
 | `I` | *(none)* | **yes** | jump to menu item number | jump to menu item number |
@@ -323,7 +323,9 @@ and therefore cannot get out of sync with the bike.**
 Limits enforced on the bike side (the handset does not need to track them):
 
 - `M1_Ctl` is clamped to **[-4.0, +4.0] motor turns/s ([-240, +240] rpm)**, step 0.1 turns/s (6 rpm). The final command after turn assistance is also clamped to this range.
-- `Servo_Ctl` is clamped to **[-80, +80]** (`Servo_Delta` = 80), step 5.
+- RC L/R keys clamp `Servo_Ctl` to **[-85, +85]**, step 5. The actual servo-shaft travel target is **+/-15 degrees about the existing straight-ahead pose**. Measured calibration: 120 PWM units ~=21 physical degrees, so the integer limit rounds down to 85 units (~14.875 degrees). One press is about 0.875 degrees. This linear/symmetric estimate is not sensor feedback or endpoint measurement. Do not assume the existing centre is the servo's mechanical 90-degree centre.
+- The TFT's cyan `SERVO~` row shows estimated physical shaft degrees, positive RIGHT: `-Servo_Ctl * 21 / 120`. RC endpoints display -14.9/+14.9 degrees. Orange `SPD S... A...` combines setpoint and actual rear speed, both still motor turns/s (unit omitted on screen). The existing PWM centre remains about 824us; RC endpoints are about 671/977us.
+- This limit change is **RC-only**. The shared PWM limit `Servo_Delta` remains 120 so USART2 host command limits, mapping, boundary replies and echoes stay unchanged: +/-120 wire values map to +/-120 internal units (~21 physical degrees), NOT +/-120 physical degrees. In RC mode a +/-85 echo corresponds to about +/-14.875 physical degrees. The host echo is signed little-endian int16, with no x10 scaling; it is NOT the TFT's calibrated angle. Host protocol physical-angle migration requires a separate change. Legacy VOFA numeric tuning keys are not handset L/R and still use the shared envelope.
 - Menu values are clamped per item, see 3.5.
 - `U` / `D` **refuse to spin the rear wheel while the balance loop is off**
   (`param.M0_Flag == 0`), which normally means the bike is lying down. The frame
@@ -398,7 +400,7 @@ static const menu_item_t MENU[] =
     { "fw_kp", &param.fly_wheel_speed_kp,   -1.0f,  0.0f,   0.005f,  MENU_ACT_NONE },
     { "fw_ki", &param.fly_wheel_speed_ki,   -0.5f,  0.0f,   0.002f,  MENU_ACT_NONE },
     { "fw_kd", &param.fly_wheel_speed_kd,   -0.5f,  0.5f,   0.002f,  MENU_ACT_NONE },
-    { "zero",  &param.angular_zero,         -5.0f,  5.0f,   0.01f,   MENU_ACT_NONE },
+    { "zero",  &param.angular_zero,         -5.0f,  5.0f,   0.005f,  MENU_ACT_NONE },
     { "sgain", &Servo_Gain_K,                0.0f,  0.01f,  0.0001f, MENU_ACT_NONE },
     { "LOADcalm", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_CALM },
     { "LOADwind", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_LOAD_WIND },
@@ -420,7 +422,7 @@ static const menu_item_t MENU[] =
 | 6 | `fw_kp` | -1.0 | 0.0 | 0.005 |
 | 7 | `fw_ki` | -0.5 | 0.0 | 0.002 |
 | 8 | `fw_kd` | -0.5 | 0.5 | 0.002 |
-| 9 | `zero` | -5.0 | 5.0 | 0.01 |
+| 9 | `zero` | -5.0 | 5.0 | 0.0050 |
 | 10 | `sgain` | 0.0 | 0.01 | 0.0001 |
 | 11 | `LOAD calm` | *action item - press OK* | | |
 | 12 | `LOAD wind` | *action item - press OK* | | |

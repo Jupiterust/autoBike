@@ -17,7 +17,7 @@ typedef struct { float set_speed1, now_speed0; } odrive_t;
 typedef struct { unsigned gState; } UART_HandleTypeDef;
 typedef enum { HAL_OK, HAL_ERROR, HAL_BUSY } HAL_StatusTypeDef;
 #define HAL_UART_STATE_READY 0u
-#define Servo_Delta 120
+#include "../../USER/Servo/servo_limits.h"
 #define Servo_Center_Mid 180
 #ifdef TEST_REAL_UI
 #include "ui.h"

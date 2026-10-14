@@ -275,18 +275,25 @@ static void ui_page_drive(void)
     {
         /* Motor turns/s, not m/s or rpm. FLY keeps the existing encoder
          * counts/control-period unit (enc/T), not ODrive velocity feedback. */
-        ui_row_color(5, DISP_ORANGE, "SPDset %+6.2f t/s", (double)M1_Ctl);
-        ui_row_color(6, DISP_CYAN, "SPDact %+6.2f t/s", (double)odrive_vel1_turns);
+        /* S=setpoint, A=actual feedback; both still motor turns/s.
+         * Unit suffix omitted only on screen to fit the combined row. */
+        ui_row_color(5, DISP_ORANGE, "SPD S%+5.2f A%+5.2f",
+                     (double)M1_Ctl, (double)odrive_vel1_turns);
+        /* Actual shaft-angle estimate, NOT the legacy host wire number.
+         * Positive RIGHT; '~' means no position sensor is available. */
+        ui_row_color(6, DISP_CYAN, "SERVO~%+6.1fdeg",
+                     (double)(-Servo_Ctl * SERVO_DEG_PER_UNIT));
         ui_row_color(7, DISP_MAGENTA, "FLY %+7.1f enc/T", (double)odrive.now_speed0);
-        ui_row(8, "zero%+7.3f s%+4d", (double)param.angular_zero, Servo_Ctl);
+        ui_row(8, "zero%+7.3f", (double)param.angular_zero);
         ui_servo_zero(9);
         ui_blank_from(10);
     }
     else if (DISP_ROWS > DISP_UI_ROWS)
     {
         /* Compact fallback for other panel geometries. */
-        ui_row_color(5, DISP_ORANGE, "spd%5.2f>%5.2f s%+4d",
-               (double)M1_Ctl, (double)odrive_vel1_turns, Servo_Ctl);
+        ui_row_color(5, DISP_ORANGE, "spd%4.1f>%4.1f S~%+5.1f",
+               (double)M1_Ctl, (double)odrive_vel1_turns,
+               (double)(-Servo_Ctl * SERVO_DEG_PER_UNIT));
         ui_row_color(6, DISP_MAGENTA, "zero%7.2f fly%6.1f",
                (double)param.angular_zero, (double)odrive.now_speed0);
         ui_servo_zero(7);
@@ -367,8 +374,8 @@ static void ui_drive_steer(int d)
 {
     int v = Servo_Ctl + d;
 
-    if (v >  Servo_Delta) v =  Servo_Delta;
-    if (v < -Servo_Delta) v = -Servo_Delta;
+    if (v >  SERVO_RC_LIMIT_UNITS) v =  SERVO_RC_LIMIT_UNITS;
+    if (v < -SERVO_RC_LIMIT_UNITS) v = -SERVO_RC_LIMIT_UNITS;
 
     Servo_Ctl = v;
     servo_con = 0;          /* a manual step cancels an auto-centre in flight */
