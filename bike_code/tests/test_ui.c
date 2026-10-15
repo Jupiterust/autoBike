@@ -169,14 +169,15 @@ int main(void)
     }
     remote("(S,)"); contains(1, "HOST M0:1");
     assert(ui_get_mode() == UI_MODE_DRIVE);
-    command(60, 240);
+    command(1050, 240); /* +10.50 shaft degrees -> -60 internal units */
     for (unsigned i = 0; i < 30; i++) tick(0);
     render(); assert(M1_Ctl == 4.0f && odrive.set_speed1 == 4.0f);
+    assert(Servo_Ctl == -60);
     contains(2, "ROLL"); contains(3, "PITCH"); contains(4, "YAW");
     drive_zero("Zservo   -1.150 deg");
     if (DISP_ROWS >= 10) {
         contains(5, "SPD S+4.00 A");
-        contains(6, "SERVO~"); contains(7, "FLY");
+        contains(6, "SERVO~ +10.5deg"); contains(7, "FLY");
         assert(colors[5] == DISP_ORANGE && colors[6] == DISP_CYAN &&
                colors[7] == DISP_MAGENTA);
     }

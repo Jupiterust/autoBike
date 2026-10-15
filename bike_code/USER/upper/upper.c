@@ -51,23 +51,24 @@ static void put_i16(uint8_t *p, int16_t value)
     p[1] = (uint8_t)(u >> 8);
 }
 
-/* Legacy integer wire scale, NOT physical degrees. Right-positive wire
- * maps 1:1 to left-positive PWM units with inverted sign (see upper.h). */
-static int angle_to_units(int16_t angle)
+/* Right-positive shaft centidegrees -> left-positive PWM units.
+ * Round the magnitude so positive/negative commands are symmetric. */
+static int cdeg_to_units(int16_t angle)
 {
     int32_t mag = angle < 0 ? -(int32_t)angle : angle;
     int units = (int)((mag * UPPER_STEER_REFERENCE_UNITS
-                   + UPPER_STEER_REFERENCE_DEG / 2)
-                  / UPPER_STEER_REFERENCE_DEG);
+                   + UPPER_STEER_REFERENCE_CDEG / 2)
+                  / UPPER_STEER_REFERENCE_CDEG);
     if (units > Servo_Delta) units = Servo_Delta;
     return angle > 0 ? -units : units;
 }
 
-/* Echo keeps legacy wire scaling, not the TFT's physical-angle estimate. */
-static int16_t units_to_angle(int units)
+/* Applied PWM output -> estimated shaft centidegrees, half away from zero.
+ * Use the post-slew output, not the requested angle; no position sensor. */
+static int16_t units_to_cdeg(int units)
 {
     int32_t mag = units < 0 ? -(int32_t)units : units;
-    int16_t angle = (int16_t)((mag * UPPER_STEER_REFERENCE_DEG
+    int16_t angle = (int16_t)((mag * UPPER_STEER_REFERENCE_CDEG
                             + UPPER_STEER_REFERENCE_UNITS / 2)
                            / UPPER_STEER_REFERENCE_UNITS);
     return units > 0 ? (int16_t)-angle : angle;
@@ -134,11 +135,11 @@ static void accept_command(int16_t servo, int16_t rpm)
     /* Handset mode ignores host driving commands, including their freshness.
      * Queries are still answered. Switching always requires a NEW command. */
     if (!upper_Flag) return;
-    if (servo < -UPPER_STEER_LIMIT_DEG) {
-        servo = -UPPER_STEER_LIMIT_DEG;
+    if (servo < -UPPER_STEER_LIMIT_CDEG) {
+        servo = -UPPER_STEER_LIMIT_CDEG;
         clamped = 1;
-    } else if (servo > UPPER_STEER_LIMIT_DEG) {
-        servo = UPPER_STEER_LIMIT_DEG;
+    } else if (servo > UPPER_STEER_LIMIT_CDEG) {
+        servo = UPPER_STEER_LIMIT_CDEG;
         clamped = 1;
     }
     if (rpm > UPPER_RPM_MAX) {
@@ -218,7 +219,7 @@ uint8_t upper_control_tick(void)
         } else if (command_seen && !timed_out) {
             /* Reapply the absolute target every tick: balance() overwrites
              * Servo_Ctl with the intermediate slew-limited position. */
-            Servo_Ctl = angle_to_units(target_servo);
+            Servo_Ctl = cdeg_to_units(target_servo);
             M1_Ctl = (float)target_rpm / 60.0f;
             param.M1_Flag = target_rpm > 0;
         }
@@ -269,7 +270,7 @@ static echo_t current_echo(void)
     __set_PRIMASK(pri);
     if (seen && (uint32_t)(now - last) <= UPPER_TIMEOUT_MS)
         result.status |= UPPER_LINK_OK;
-    result.servo = units_to_angle(units);
+    result.servo = units_to_cdeg(units);
     rpm = feedback * 60.0f;
     if (feedback_valid
      && (uint32_t)(now - feedback_ms) <= UPPER_RPM_FEEDBACK_MAX_AGE_MS
@@ -328,8 +329,8 @@ void upper_task(void)
 
     if (boundary_pending) {
         tx[0] = 0xAA; tx[1] = 0x56;
-        put_i16(tx + 2, -UPPER_STEER_LIMIT_DEG);
-        put_i16(tx + 4, UPPER_STEER_LIMIT_DEG);
+        put_i16(tx + 2, -UPPER_STEER_LIMIT_CDEG);
+        put_i16(tx + 4, UPPER_STEER_LIMIT_CDEG);
         put_i16(tx + 6, 0); /* minimum stable speed not calibrated */
         put_i16(tx + 8, UPPER_RPM_MAX);
         tx[10] = upper_crc8(tx, 10);

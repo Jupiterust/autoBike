@@ -279,7 +279,7 @@ static void ui_page_drive(void)
          * Unit suffix omitted only on screen to fit the combined row. */
         ui_row_color(5, DISP_ORANGE, "SPD S%+5.2f A%+5.2f",
                      (double)M1_Ctl, (double)odrive_vel1_turns);
-        /* Actual shaft-angle estimate, NOT the legacy host wire number.
+        /* Shaft-angle estimate in degrees; host wire values use deg * 100.
          * Positive RIGHT; '~' means no position sensor is available. */
         ui_row_color(6, DISP_CYAN, "SERVO~%+6.1fdeg",
                      (double)(-Servo_Ctl * SERVO_DEG_PER_UNIT));

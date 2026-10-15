@@ -4,7 +4,7 @@
 /* Measured at the servo shaft relative to the EXISTING straight-ahead pose:
  * 120 internal PWM units ~= 21 degrees. Linear, symmetric extrapolation is
  * an estimate, NOT position feedback or verification of the new endpoints.
- * Host command/echo scaling is intentionally unchanged in this RC-only step. */
+ * Both the TFT degree display and host centidegree protocol use this scale. */
 #define SERVO_CAL_UNITS       120
 #define SERVO_CAL_DEG         21
 #define SERVO_RC_LIMIT_DEG    20

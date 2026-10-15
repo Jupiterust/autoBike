@@ -169,25 +169,86 @@ static void test_owner_and_switch_mailbox(void)
 static void test_absolute_slew_and_direction(void)
 {
     reset(); host();
-    for (unsigned i = 0; i < 100; i++) { command(-120, 120); tick(0); }
+    for (unsigned i = 0; i < 100; i++) { command(-2100, 120); tick(0); }
     assert(Servo_Ctl == 120 && M1_Ctl == 2.0f);
     assert(param.M1_Flag && (echo() & UPPER_MOTOR_EN));
-    assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
-    command(120, 120);
+    assert(read_i16(sent + 2) == -2100 && read_i16(sent + 4) == 120);
+    command(2100, 120);
     for (unsigned i = 0; i < 60; i++) tick(0);
     assert(Servo_Ctl == -120); /* target survives the intermediate slew values */
-    assert(!(echo() & (UPPER_MEASURED_RPM | UPPER_MEASURED_ANGLE)));
-    /* RC is now limited to 114 units; host range/mapping MUST stay +/-120. */
-    command(171, 120);
+    assert(!(echo() & (UPPER_MEASURED_RPM | UPPER_MEASURED_ANGLE | UPPER_CLAMPED)));
+    /* Host +/-2100 centidegrees keeps the +/-120 PWM envelope; RC caps at 114. */
+    command(2101, 120);
     for (unsigned i = 0; i < 80; i++) tick(0);
     assert(Servo_Ctl == -120);
     assert(echo() & UPPER_CLAMPED);
-    assert(read_i16(sent + 2) == 120);
-    command(-171, 120);
+    assert(read_i16(sent + 2) == 2100);
+    command(-2101, 120);
     for (unsigned i = 0; i < 80; i++) tick(0);
     assert(Servo_Ctl == 120);
     assert(echo() & UPPER_CLAMPED);
-    assert(read_i16(sent + 2) == -120);
+    assert(read_i16(sent + 2) == -2100);
+}
+static void test_servo_centidegree_commands(void)
+{
+    /* Literal expectations cover sign, quantisation, legacy-value migration,
+     * physical endpoints and the entire int16 input range's extremes. */
+    const struct { int16_t command, applied, echoed; uint8_t clamped; } cases[] = {
+        {0, 0, 0, 0},
+        {8, 0, 0, 0}, {-8, 0, 0, 0},
+        {9, -1, 18, 0}, {-9, 1, -18, 0},
+        {26, -1, 18, 0}, {-26, 1, -18, 0},
+        {27, -2, 35, 0}, {-27, 2, -35, 0},
+        {120, -7, 123, 0}, {-120, 7, -123, 0},
+        {525, -30, 525, 0}, {-525, 30, -525, 0},
+        {1000, -57, 998, 0}, {-1000, 57, -998, 0},
+        {2000, -114, 1995, 0}, {-2000, 114, -1995, 0},
+        {2100, -120, 2100, 0}, {-2100, 120, -2100, 0},
+        {2101, -120, 2100, 1}, {-2101, 120, -2100, 1},
+        {INT16_MAX, -120, 2100, 1}, {INT16_MIN, 120, -2100, 1}
+    };
+    for (unsigned i = 0; i < sizeof cases / sizeof cases[0]; i++) {
+        reset(); host(); command(cases[i].command, 0);
+        for (unsigned j = 0; j < 30; j++) tick(0);
+        assert(Servo_Ctl == cases[i].applied);
+        assert(Servoduty == Servo_Center_Mid + cases[i].applied);
+        assert(echo() == (UPPER_LINK_OK | (cases[i].clamped ? UPPER_CLAMPED : 0)));
+        assert(read_i16(sent + 2) == cases[i].echoed);
+    }
+    /* Published binary example: +10.00 deg request, +9.98 deg applied echo. */
+    const uint8_t request[] = {0xAA,0x55,0xE8,0x03,0x78,0x00,0xBE,0x5A};
+    const uint8_t reply[] = {0xAA,0x55,0xE6,0x03,0x78,0x00,0x05,0x7A,0x5A};
+    reset(); host(); feed(request, sizeof request);
+    for (unsigned i = 0; i < 30; i++) tick(0);
+    assert(echo() == (UPPER_LINK_OK | UPPER_MOTOR_EN));
+    assert(sent_size == sizeof reply && memcmp(sent, reply, sizeof reply) == 0);
+}
+static void test_servo_applied_echo_and_roundtrip(void)
+{
+    reset(); host(); command(2100, 0); tick(0);
+    assert(Servo_Ctl == -5); /* first slew step, not the requested endpoint */
+    assert(echo() == UPPER_LINK_OK);
+    assert(read_i16(sent + 2) == 88); /* 5 PWM units ~= +0.875 deg */
+
+    /* RC-mode echo uses the SAME physical scale, without a host command. */
+    reset(); param.M0_Flag = 1;
+    Servo_Ctl = 114;
+    assert(echo() == 0 && read_i16(sent + 2) == -1995);
+    Servo_Ctl = -114;
+    assert(echo() == 0 && read_i16(sent + 2) == 1995);
+    param.M0_Flag = 0;
+    assert(echo() == 0 && read_i16(sent + 2) == 0);
+
+    /* Every reachable PWM position survives echo -> command quantisation. */
+    for (int units = -120; units <= 120; units++) {
+        int16_t expected = (int16_t)roundf(-(float)units * 17.5f);
+        reset(); param.M0_Flag = 1; Servo_Ctl = units;
+        assert(echo() == 0 && read_i16(sent + 2) == expected);
+        host(); command(expected, 0);
+        for (unsigned i = 0; i < 30; i++) tick(0);
+        assert(Servo_Ctl == units);
+        assert(echo() == UPPER_LINK_OK && read_i16(sent + 2) == expected);
+    }
 }
 static void test_clamp_assist_and_stop(void)
 {
@@ -210,7 +271,7 @@ static void test_invalid_and_nested_frames(void)
     const uint8_t bad_tail[] = {0xAA,0x55,0,0,0,0,0xDD,0};
     const uint8_t nested[] = {0xAA,0x55,0xAA,0x57,0x38,0x5A,0,0};
     reset(); host();
-    command(-120, 120); tick(0);
+    command(-2100, 120); tick(0);
     feed(bad_crc, sizeof bad_crc);
     feed(bad_tail, sizeof bad_tail);
     command(0, -1);
@@ -229,12 +290,15 @@ static void test_invalid_and_nested_frames(void)
 static void test_query_bounds_and_freshness(void)
 {
     const uint8_t query[] = {0xAA,0x57,0x38,0x5A};
+    const uint8_t reply[] = {0xAA,0x56,0xCC,0xF7,0x34,0x08,
+                             0x00,0x00,0xF0,0x00,0xAD,0x5A};
     reset();
     feed(query, sizeof query); upper_task();
     assert(sent_size == 12 && sent[1] == 0x56);
-    assert(read_i16(sent + 2) == -120 && read_i16(sent + 4) == 120);
+    assert(read_i16(sent + 2) == -2100 && read_i16(sent + 4) == 2100);
     assert(read_i16(sent + 6) == 0 && read_i16(sent + 8) == 240);
     assert(sent[10] == upper_crc8(sent, 10) && sent[11] == 0x5A);
+    assert(memcmp(sent, reply, sizeof reply) == 0);
     tx_done(); host();
     command(0, 120); tick(0);
     now_ms = 100;
@@ -253,16 +317,16 @@ static void test_query_bounds_and_freshness(void)
 static void test_balance_and_restart_gates(void)
 {
     reset(); host();
-    param.M0_Flag = 0; command(-120, 120); tick(0);
+    param.M0_Flag = 0; command(-2100, 120); tick(0);
     assert(!param.M1_Flag && M1_Ctl == 0 && Servo_Ctl == 0);
     param.M0_Flag = 1; tick(0);
     assert(M1_Ctl == 0); /* no resurrection of a command received while off */
-    command(-120, 120); tick(0);
+    command(-2100, 120); tick(0);
     param.M0_Flag = 0; tick(0);
     assert(M1_Ctl == 0 && odrive.set_speed1 == 0);
     param.M0_Flag = 1; tick(0);
     assert(!param.M1_Flag);
-    restart_flag = true; command(-120, 120); tick(0);
+    restart_flag = true; command(-2100, 120); tick(0);
     restart_flag = false; tick(0);
     assert(M1_Ctl == 0 && Servo_Ctl == 0);
 }
@@ -363,7 +427,7 @@ static void test_measured_rpm_and_fallback(void)
 
 static void test_protection_stop_status(void)
 {
-    reset(); host(); command(30, 120); tick(0);
+    reset(); host(); command(525, 120); tick(0);
     odrive_vel1_turns = 1.0f;
     odrive_vel1_valid = 1;
     param.M0_Flag = 0; tick(0);
@@ -497,6 +561,8 @@ int main(void)
     test_crc_boot();
     test_owner_and_switch_mailbox();
     test_absolute_slew_and_direction();
+    test_servo_centidegree_commands();
+    test_servo_applied_echo_and_roundtrip();
     test_clamp_assist_and_stop();
     test_invalid_and_nested_frames();
     test_query_bounds_and_freshness();
@@ -508,6 +574,6 @@ int main(void)
     test_240rpm_limits();
     test_attitude_mapping_and_validity();
     test_attitude_queue_and_parser();
-    puts("14 upper/remote/CH100 protocol test groups passed");
+    puts("16 upper/remote/CH100 protocol test groups passed");
     return 0;
 }
