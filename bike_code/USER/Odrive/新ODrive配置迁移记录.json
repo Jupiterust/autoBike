@@ -1,0 +1,891 @@
+{
+  "port": "/dev/cu.usbmodem2064396658471",
+  "time": "2026-10-26T06:30:01-0500",
+  "source": "车上ODrive版本与参数查询记录.md; UART from current STM32 USART3 source",
+  "target": {
+    "axis0.controller.config.vel_gain": 0.27,
+    "axis0.controller.config.vel_integrator_gain": 0.3,
+    "axis0.controller.config.control_mode": 2,
+    "axis0.controller.config.input_mode": 2,
+    "axis0.controller.config.vel_ramp_rate": 80,
+    "axis0.motor.config.current_lim": 120,
+    "axis0.controller.config.vel_limit": 50,
+    "axis0.motor.config.torque_constant": 0.04,
+    "axis1.controller.config.vel_gain": 0.27,
+    "axis1.controller.config.vel_integrator_gain": 0.3,
+    "axis1.controller.config.control_mode": 2,
+    "axis1.controller.config.input_mode": 2,
+    "axis1.controller.config.vel_ramp_rate": 80,
+    "axis1.motor.config.current_lim": 120,
+    "axis1.controller.config.vel_limit": 50,
+    "axis1.motor.config.torque_constant": 0.04,
+    "config.enable_uart": 1,
+    "config.uart_baudrate": 460800
+  },
+  "events": [
+    {
+      "command": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_gain",
+      "text": "0.166667",
+      "hex": "302e3136363636370d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_integrator_gain",
+      "text": "0.333333",
+      "hex": "302e3333333333330d0a"
+    },
+    {
+      "command": "r axis0.controller.config.control_mode",
+      "text": "3",
+      "hex": "330d0a"
+    },
+    {
+      "command": "r axis0.controller.config.input_mode",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_ramp_rate",
+      "text": "1.000000",
+      "hex": "312e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.current_lim",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_limit",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_gain",
+      "text": "0.166667",
+      "hex": "302e3136363636370d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_integrator_gain",
+      "text": "0.333333",
+      "hex": "302e3333333333330d0a"
+    },
+    {
+      "command": "r axis1.controller.config.control_mode",
+      "text": "3",
+      "hex": "330d0a"
+    },
+    {
+      "command": "r axis1.controller.config.input_mode",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_ramp_rate",
+      "text": "1.000000",
+      "hex": "312e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.current_lim",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_limit",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r config.enable_uart",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r config.uart_baudrate",
+      "text": "115200",
+      "hex": "3131353230300d0a"
+    },
+    {
+      "command": "r axis0.motor.is_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "command": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "command": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "command": "r axis1.motor.is_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "command": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "command": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "command": "w axis0.controller.config.vel_gain 0.27",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "w axis0.controller.config.vel_integrator_gain 0.3",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "w axis0.controller.config.control_mode 2",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "w axis0.controller.config.input_mode 2",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "w axis0.controller.config.vel_ramp_rate 80",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "w axis0.motor.config.current_lim 120",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "w axis0.controller.config.vel_limit 50",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "w axis0.motor.config.torque_constant 0.04",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "w axis1.controller.config.vel_gain 0.27",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "w axis1.controller.config.vel_integrator_gain 0.3",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "w axis1.controller.config.control_mode 2",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "w axis1.controller.config.input_mode 2",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "w axis1.controller.config.vel_ramp_rate 80",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "w axis1.motor.config.current_lim 120",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "w axis1.controller.config.vel_limit 50",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "w axis1.motor.config.torque_constant 0.04",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis1.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "w config.enable_uart 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r config.enable_uart",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "w config.uart_baudrate 460800",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r config.uart_baudrate",
+      "text": "460800",
+      "hex": "3436303830300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r config.enable_uart",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r config.uart_baudrate",
+      "text": "460800",
+      "hex": "3436303830300d0a"
+    },
+    {
+      "command": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "ss",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "command": "r axis0.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r config.enable_uart",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r config.uart_baudrate",
+      "text": "460800",
+      "hex": "3436303830300d0a"
+    },
+    {
+      "command": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis0.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis0.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_gain",
+      "text": "0.270000",
+      "hex": "302e3237303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_integrator_gain",
+      "text": "0.300000",
+      "hex": "302e3330303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.control_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.input_mode",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_ramp_rate",
+      "text": "80.000000",
+      "hex": "38302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.current_lim",
+      "text": "120.00000",
+      "hex": "3132302e30303030300d0a"
+    },
+    {
+      "command": "r axis1.controller.config.vel_limit",
+      "text": "50.000000",
+      "hex": "35302e3030303030300d0a"
+    },
+    {
+      "command": "r axis1.motor.config.torque_constant",
+      "text": "0.040000",
+      "hex": "302e3034303030300d0a"
+    },
+    {
+      "command": "r config.enable_uart",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r config.uart_baudrate",
+      "text": "460800",
+      "hex": "3436303830300d0a"
+    },
+    {
+      "command": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "command": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "command": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    }
+  ],
+  "before": {
+    "axis0.controller.config.vel_gain": "0.166667",
+    "axis0.controller.config.vel_integrator_gain": "0.333333",
+    "axis0.controller.config.control_mode": "3",
+    "axis0.controller.config.input_mode": "1",
+    "axis0.controller.config.vel_ramp_rate": "1.000000",
+    "axis0.motor.config.current_lim": "10.000000",
+    "axis0.controller.config.vel_limit": "2.000000",
+    "axis0.motor.config.torque_constant": "0.040000",
+    "axis1.controller.config.vel_gain": "0.166667",
+    "axis1.controller.config.vel_integrator_gain": "0.333333",
+    "axis1.controller.config.control_mode": "3",
+    "axis1.controller.config.input_mode": "1",
+    "axis1.controller.config.vel_ramp_rate": "1.000000",
+    "axis1.motor.config.current_lim": "10.000000",
+    "axis1.controller.config.vel_limit": "2.000000",
+    "axis1.motor.config.torque_constant": "0.040000",
+    "config.enable_uart": "1",
+    "config.uart_baudrate": "115200",
+    "axis0.motor.is_calibrated": "0",
+    "axis0.encoder.is_ready": "0",
+    "axis0.motor.config.pole_pairs": "7",
+    "axis0.encoder.config.cpr": "8192",
+    "axis0.motor.error": "0",
+    "axis0.encoder.error": "0",
+    "axis0.controller.error": "0",
+    "axis0.error": "0d",
+    "axis1.motor.is_calibrated": "0",
+    "axis1.encoder.is_ready": "0",
+    "axis1.motor.config.pole_pairs": "7",
+    "axis1.encoder.config.cpr": "8192",
+    "axis1.motor.error": "0",
+    "axis1.encoder.error": "0",
+    "axis1.controller.error": "0",
+    "axis1.error": "0d"
+  },
+  "ram_readback_verified": true,
+  "save_command_sent": true,
+  "persistent_readback_verified": true
+}

@@ -1,0 +1,4708 @@
+{
+  "events": [
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:43-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "w axis0.requested_state 4",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:53-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:54-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:54-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:55-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:55-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:56-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:56-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:57-0500",
+      "cmd": "r axis0.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:33:58-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "w axis1.requested_state 4",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:05-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:06-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:06-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:07-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:07-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:08-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:08-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:09-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:09-0500",
+      "cmd": "r axis1.current_state",
+      "text": "4",
+      "hex": "340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:10-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "w axis0.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:16-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:17-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:17-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:18-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:18-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:19-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:19-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:20-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:20-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.error",
+      "text": "256d",
+      "hex": "323536640d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:21-0500",
+      "cmd": "w axis0.requested_state 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "w axis0.motor.config.pole_pairs 20",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "w axis1.motor.config.pole_pairs 20",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:56-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:34:57-0500",
+      "cmd": "w axis0.encoder.error 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:34:57-0500",
+      "cmd": "w axis0.error 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "w axis0.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:01-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:02-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:02-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:03-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:03-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:04-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:04-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:05-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:05-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:06-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:06-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:07-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:07-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:08-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:08-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:09-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:09-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:10-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "w axis1.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:35:30-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:31-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:31-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:32-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:32-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:33-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:33-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:34-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:34-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:35-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:35-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:36-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:36-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:37-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:38-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:38-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:39-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:39-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:35:40-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:08-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.motor.config.pre_calibrated 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.encoder.config.pre_calibrated 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.config.startup_motor_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.config.startup_encoder_index_search 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.config.startup_encoder_offset_calibration 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis0.config.startup_closed_loop_control 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis1.motor.config.pre_calibrated 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis1.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis1.encoder.config.pre_calibrated 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis1.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis1.config.startup_motor_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "w axis1.config.startup_encoder_index_search 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:09-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:10-0500",
+      "cmd": "w axis1.config.startup_encoder_offset_calibration 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:10-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:10-0500",
+      "cmd": "w axis1.config.startup_closed_loop_control 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:10-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:10-0500",
+      "cmd": "ss",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:36:18-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:18-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:33-0500",
+      "cmd": "r axis0.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:33-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.error",
+      "text": "256d",
+      "hex": "323536640d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "2",
+      "hex": "320d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:36:38-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "w axis0.requested_state 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "w axis1.requested_state 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.encoder.calib_scan_response",
+      "text": "3268.0000",
+      "hex": "333236382e303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.encoder.config.calib_range",
+      "text": "0.020000",
+      "hex": "302e3032303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.motor.config.direction",
+      "text": "-1",
+      "hex": "2d310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.encoder.vel_estimate",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.encoder.calib_scan_response",
+      "text": "2031.0000",
+      "hex": "323033312e303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.encoder.config.calib_range",
+      "text": "0.020000",
+      "hex": "302e3032303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.motor.config.direction",
+      "text": "-1",
+      "hex": "2d310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.encoder.vel_estimate",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:22-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.446264",
+      "hex": "32342e3434363236340d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis0.requested_state 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis0.config.startup_encoder_offset_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis0.config.startup_closed_loop_control 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis1.requested_state 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis1.config.startup_encoder_offset_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis1.config.startup_closed_loop_control 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis1.encoder.error 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:40-0500",
+      "cmd": "w axis1.error 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "w axis1.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:37:46-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:47-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:47-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:48-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:48-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:49-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:49-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:50-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:50-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:51-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:51-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:52-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:52-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:53-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:53-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:54-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:54-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:55-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:56-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:37:56-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:19-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "w axis0.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "w axis1.requested_state 7",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.415649",
+      "hex": "32342e3431353634390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:20-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.430958",
+      "hex": "32342e3433303935380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.492188",
+      "hex": "32342e3439323138380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:21-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.492188",
+      "hex": "32342e3439323138380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.476881",
+      "hex": "32342e3437363838310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:22-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.461573",
+      "hex": "32342e3436313537330d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.415649",
+      "hex": "32342e3431353634390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:23-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.415649",
+      "hex": "32342e3431353634390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.415649",
+      "hex": "32342e3431353634390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:24-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.553419",
+      "hex": "32342e3535333431390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.430958",
+      "hex": "32342e3433303935380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:25-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.476881",
+      "hex": "32342e3437363838310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.553419",
+      "hex": "32342e3535333431390d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:26-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.430958",
+      "hex": "32342e3433303935380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.492188",
+      "hex": "32342e3439323138380d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:27-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.446264",
+      "hex": "32342e3434363236340d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.476881",
+      "hex": "32342e3437363838310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:28-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.522802",
+      "hex": "32342e3532323830320d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r vbus_voltage",
+      "text": "24.461573",
+      "hex": "32342e3436313537330d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis0.encoder.calib_scan_response",
+      "text": "3267.0000",
+      "hex": "333236372e303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:29-0500",
+      "cmd": "r axis1.encoder.calib_scan_response",
+      "text": "3235.0000",
+      "hex": "333233352e303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.current_state",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.motor.config.pre_calibrated 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.encoder.config.pre_calibrated 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.config.startup_motor_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.config.startup_encoder_index_search 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.config.startup_encoder_offset_calibration 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "w axis0.config.startup_closed_loop_control 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:57-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.motor.config.pre_calibrated 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.encoder.config.pre_calibrated 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.config.startup_motor_calibration 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.config.startup_encoder_index_search 0",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.config.startup_encoder_offset_calibration 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "w axis1.config.startup_closed_loop_control 1",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:38:58-0500",
+      "cmd": "ss",
+      "text": "",
+      "hex": ""
+    },
+    {
+      "time": "2026-10-26T06:39:04-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:04-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:08-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:08-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:09-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:09-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:10-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:10-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:11-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:11-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:12-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:12-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:13-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:13-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:14-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:14-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:15-0500",
+      "cmd": "r axis0.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:15-0500",
+      "cmd": "r axis1.current_state",
+      "text": "7",
+      "hex": "370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.vel_estimate",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.controller.input_vel",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.vel_estimate",
+      "text": "0.000000",
+      "hex": "302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis0.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:16-0500",
+      "cmd": "r axis1.encoder.config.direction",
+      "text": "invalid property",
+      "hex": "696e76616c69642070726f70657274790d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.phase_resistance",
+      "text": "0.043635",
+      "hex": "302e3034333633350d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.phase_inductance",
+      "text": "0.000016",
+      "hex": "302e3030303031360d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis0.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.current_state",
+      "text": "8",
+      "hex": "380d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.error",
+      "text": "0d",
+      "hex": "30640d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.controller.error",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.is_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.is_ready",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.calibration_current",
+      "text": "10.000000",
+      "hex": "31302e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.resistance_calib_max_voltage",
+      "text": "2.000000",
+      "hex": "322e3030303030300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.pole_pairs",
+      "text": "20",
+      "hex": "32300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.config.mode",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.config.cpr",
+      "text": "8192",
+      "hex": "383139320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_distance",
+      "text": "50.265484",
+      "hex": "35302e3236353438340d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.config.calib_scan_omega",
+      "text": "12.566371",
+      "hex": "31322e3536363337310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.phase_resistance",
+      "text": "0.056867",
+      "hex": "302e3035363836370d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.phase_inductance",
+      "text": "0.000022",
+      "hex": "302e3030303032320d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.motor.config.pre_calibrated",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.encoder.config.pre_calibrated",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.config.startup_motor_calibration",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.config.startup_encoder_index_search",
+      "text": "0",
+      "hex": "300d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.config.startup_encoder_offset_calibration",
+      "text": "1",
+      "hex": "310d0a"
+    },
+    {
+      "time": "2026-10-26T06:39:28-0500",
+      "cmd": "r axis1.config.startup_closed_loop_control",
+      "text": "1",
+      "hex": "310d0a"
+    }
+  ],
+  "axis0_motor_success": true,
+  "axis1_motor_success": true,
+  "axis0_encoder_success": true,
+  "axis1_encoder_success": true,
+  "startup_saved": true,
+  "boot_calibration_and_closed_loop_verified": true
+}
