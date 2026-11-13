@@ -1,0 +1,11 @@
+# ============================================================
+# Remote_2 — 本工程专属忽略规则
+# ============================================================
+
+# Makefile 只使用 Drivers/CMSIS/Device/ST 与 Drivers/CMSIS/Include，
+# 以下 CubeMX 包附带组件不参与构建，避免把数百个示例文件纳入版本库。
+Drivers/CMSIS/DSP/
+Drivers/CMSIS/NN/
+Drivers/CMSIS/RTOS2/
+Drivers/CMSIS/Core_A/
+Drivers/CMSIS/Lib/

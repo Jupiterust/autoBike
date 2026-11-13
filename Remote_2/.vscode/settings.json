@@ -1,0 +1,11 @@
+{
+    "files.encoding": "utf8",
+    "files.eol": "\r\n",
+    "files.associations": {
+        "*.h": "c",
+        "*.ld": "plaintext"
+    },
+    "cortex-debug.openocdPath": "/opt/homebrew/bin/openocd",
+    "cortex-debug.armToolchainPath": "/opt/homebrew/bin",
+    "cortex-debug.gdbPath": "/opt/homebrew/bin/arm-none-eabi-gdb"
+}

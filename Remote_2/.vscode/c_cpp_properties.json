@@ -1,0 +1,31 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Remote_2",
+            "includePath": [
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/USER/oled",
+                "${workspaceFolder}/USER/key",
+                "${workspaceFolder}/USER/led",
+                "${workspaceFolder}/USER/bt",
+                "${workspaceFolder}/USER/remote"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F103xB"
+            ],
+            "compilerPath": "/opt/homebrew/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "-mcpu=cortex-m3",
+                "-mthumb"
+            ],
+            "cStandard": "gnu17",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ]
+}
