@@ -222,6 +222,20 @@ int main(void)
     remote("(R,)"); assert(param.angular_zero == 5.0f);
     param.angular_zero = -4.998f;
     remote("(L,)"); assert(param.angular_zero == -5.0f);
+    remote("(I,14)"); contains(3, ">WIND CALM");
+    param.M0_Flag = 0;
+    param.M1_Flag = 1;
+    Servo_Gain_K = 0.003f;
+    remote("(R,)"); contains(3, ">WIND ON");
+    remote("(R,)"); contains(3, ">WIND ON");
+    assert(param.angular_v_kp == 1.2f && param.fly_wheel_speed_ki == -0.065f);
+    assert(param.M0_Flag == 0 && param.M1_Flag == 1);
+    param.M0_Flag = 1;
+    remote("(L,)"); contains(3, ">WIND CALM");
+    assert(param.angular_v_kp == 1.4f && param.fly_wheel_speed_ki == -0.081f);
+    assert(param.M0_Flag == 1 && param.M1_Flag == 1);
+    assert(Servo_Gain_K == 0.003f);
+    assert(param.angular_zero == -5.0f);
     printf("UI integration passed: %u rows, PERF=%u\n",
            (unsigned)DISP_ROWS, (unsigned)UI_SHOW_PERF);
     return 0;

@@ -60,6 +60,7 @@ static volatile uint8_t rc_btn_seen = 0;
 #define MENU_ACT_LOAD_CALM  1
 #define MENU_ACT_LOAD_WIND  2
 #define MENU_ACT_TEST_STEP  3
+#define MENU_ACT_WIND_MODE  4
 
 typedef struct
 {
@@ -93,12 +94,14 @@ static const menu_item_t MENU[] =
      * the menu rather than on a remote button so the handset firmware, which is
      * written against a published contract, does not have to change. */
     { "TEST step", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_TEST_STEP },
+    { "WIND", NULL, 0.0f, 0.0f, 0.0f, MENU_ACT_WIND_MODE },
 };
 
 #define MENU_N      ((uint8_t)(sizeof(MENU) / sizeof(MENU[0])))
 #define MENU_WINDOW 3       /* items visible at once (rows 1..3) */
 
 static uint8_t menu_sel = 0;
+static uint8_t menu_wind = 0;
 
 static float clampf(float v, float lo, float hi)
 {
@@ -107,8 +110,9 @@ static float clampf(float v, float lo, float hi)
     return v;
 }
 
-/* The two gain sets, the same numbers vofa_apply()'s '2'/'3' keys load, so a
- * menu load and a VOFA key leave the bike in exactly the same state.
+/* Use the same balance gains as the existing preset actions. The WIND row
+ * changes the balance gains only. LOADcalm and LOADwind also restore the
+ * shared calibration values.
  *
  * These ~13 stores have to land as one unit: balance() runs from the UART8 RX
  * ISR every 2.5 ms and would otherwise be able to execute one tick on a mix of
@@ -119,7 +123,7 @@ static float clampf(float v, float lo, float hi)
  * into the speed loop.  PRIMASK is saved and restored rather than blindly
  * re-enabled, so this stays correct if it is ever called with interrupts
  * already masked. */
-static void menu_load_preset(uint8_t wind)
+static void menu_load_preset(uint8_t wind, uint8_t full_preset)
 {
     uint32_t pri = __get_PRIMASK();
 
@@ -150,12 +154,17 @@ static void menu_load_preset(uint8_t wind)
         param.fly_wheel_speed_kd =  0.0f;
     }
 
-    /* Mechanical zero, not a gain: both presets load the current one so a
-       preset load cannot silently revert it. See param_init() in Balane.c. */
-    param.angular_zero = -1.40f;
-    param.Steer_Kp     =  1.0f;
-    param.Steer_Ki     =  0.0f;
-    param.Steer_Kd     =  0.0f;
+    if (full_preset)
+    {
+        /* Mechanical zero, not a gain: both presets load the current one so a
+           preset load cannot silently revert it. See param_init() in Balane.c. */
+        param.angular_zero = -1.40f;
+        param.Steer_Kp     =  1.0f;
+        param.Steer_Ki     =  0.0f;
+        param.Steer_Kd     =  0.0f;
+        Servo_Gain_K      =  0.0055f; /* same sgain for calm and wind presets */
+    }
+    menu_wind = wind;
 
     __set_PRIMASK(pri);
 }
@@ -323,6 +332,10 @@ static void ui_page_menu(void)
         if (m->var)
             ui_row((uint8_t)(1 + i), "%c%-6s%10.4f",
                    (top + i == menu_sel) ? '>' : ' ', m->name, *m->var);
+        else if (m->action == MENU_ACT_WIND_MODE)
+            ui_row((uint8_t)(1 + i), "%c%-4s %-4s [LR]",
+                   (top + i == menu_sel) ? '>' : ' ', m->name,
+                   menu_wind ? "ON" : "CALM");
         else
             ui_row((uint8_t)(1 + i), "%c%-9s  [OK]",
                    (top + i == menu_sel) ? '>' : ' ', m->name);
@@ -334,6 +347,8 @@ static void ui_page_menu(void)
     m = &MENU[menu_sel];
     if (m->var)
         ui_row(4, "M0:%d step %.4f", (int)param.M0_Flag, m->step);
+    else if (m->action == MENU_ACT_WIND_MODE)
+        ui_row(4, "L:CALM R:WIND");
     else if (m->action == MENU_ACT_TEST_STEP)
         /* The pulse is refused unless the balance loop is closed, so say so
          * instead of letting OK look broken. */
@@ -392,6 +407,11 @@ static void ui_menu_nudge(int dir)
 {
     const menu_item_t *m = &MENU[menu_sel];
 
+    if (m->action == MENU_ACT_WIND_MODE)
+    {
+        menu_load_preset(dir > 0, 0);
+        return;
+    }
     if (m->var == NULL)
         return;
 
@@ -402,8 +422,8 @@ static void ui_menu_action(void)
 {
     switch (MENU[menu_sel].action)
     {
-    case MENU_ACT_LOAD_CALM: menu_load_preset(0); break;
-    case MENU_ACT_LOAD_WIND: menu_load_preset(1); break;
+    case MENU_ACT_LOAD_CALM: menu_load_preset(0, 1); break;
+    case MENU_ACT_LOAD_WIND: menu_load_preset(1, 1); break;
     case MENU_ACT_TEST_STEP: (void)test_pulse_start(); break;
     default:                                      break;
     }
